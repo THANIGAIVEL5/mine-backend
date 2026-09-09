@@ -1301,6 +1301,166 @@
         console.log('User is authenticated with token:', token);
       }
     });
+
+    // Real-Time Chat Assistant Logic
+    const chatToggleBtn = document.getElementById('chat-toggle-btn');
+    const chatWindow = document.getElementById('chat-window');
+    const chatCloseBtn = document.getElementById('chat-close-btn');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const chatSendBtn = document.getElementById('chat-send-btn');
+    const chatBadge = document.getElementById('chat-badge');
+
+    if (chatToggleBtn && chatWindow) {
+      chatToggleBtn.addEventListener('click', () => {
+        chatWindow.classList.toggle('hidden');
+        if (!chatWindow.classList.contains('hidden')) {
+          chatInput.focus();
+          if (chatBadge) chatBadge.classList.add('hidden');
+        }
+      });
+
+      chatCloseBtn.addEventListener('click', () => {
+        chatWindow.classList.add('hidden');
+      });
+    }
+
+    function appendMessage(sender, text, isAi = false, time = '') {
+      if (!chatMessages) return;
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `flex flex-col ${isAi ? 'items-start' : 'items-end'} mb-3`;
+      
+      const timeStr = time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const senderColor = isAi ? 'text-[#00f5ff]' : 'text-emerald-400';
+      const bubbleBg = isAi ? 'bg-[#151922] border border-[#00f5ff]/30 text-slate-100' : 'bg-emerald-950/70 border border-emerald-500/40 text-emerald-100';
+
+      msgDiv.innerHTML = `
+        <div class="flex items-center gap-1.5 text-[10px] uppercase font-mono ${senderColor} mb-1">
+          <span>${sender}</span>
+          <span class="text-slate-500">• ${timeStr}</span>
+        </div>
+        <div class="max-w-[85%] rounded-lg px-3.5 py-2 text-xs font-sans whitespace-pre-line leading-relaxed shadow-lg ${bubbleBg}">
+          ${text}
+        </div>
+      `;
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function sendUserChatMessage(customText = null) {
+      const text = customText || (chatInput ? chatInput.value.trim() : '');
+      if (!text) return;
+      if (chatInput) chatInput.value = '';
+
+      // Send via WebSocket if connected
+      if (typeof socket !== 'undefined' && socket.connected) {
+        socket.emit('chat_message', { message: text, user: 'Mine Operator' });
+      } else {
+        // Fallback to REST API
+        appendMessage('Mine Operator', text, false);
+        fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text })
+        })
+        .then(res => res.json())
+        .then(data => {
+          appendMessage('TERRA-SENTINEL AI', data.reply, true);
+        })
+        .catch(err => {
+          appendMessage('TERRA-SENTINEL AI', 'Communication error: ' + err.message, true);
+        });
+      }
+    }
+
+    if (chatSendBtn) {
+      chatSendBtn.addEventListener('click', () => sendUserChatMessage());
+    }
+    if (chatInput) {
+      chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') sendUserChatMessage();
+      });
+    }
+
+    // Handle incoming chat broadcasts from server
+    if (typeof socket !== 'undefined') {
+      socket.on('chat_broadcast', (data) => {
+        appendMessage(data.sender, data.text, data.isAi, data.timestamp);
+        if (chatWindow && chatWindow.classList.contains('hidden') && chatBadge) {
+          chatBadge.classList.remove('hidden');
+        }
+      });
+    }
+
+    window.sendQuickChat = function(query) {
+      if (chatWindow && chatWindow.classList.contains('hidden')) {
+        chatWindow.classList.remove('hidden');
+      }
+      sendUserChatMessage(query);
+    };
   </script>
+
+  <!-- Floating Cyber HUD AI Chat Assistant Widget -->
+  <div class="fixed bottom-5 right-5 z-50 font-mono">
+    <!-- Chat Toggle Button -->
+    <button id="chat-toggle-btn" class="relative flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#0a0e17]/90 border border-[#00f5ff]/60 text-[#00f5ff] hover:bg-[#00f5ff]/10 hover:border-[#00f5ff] transition-all shadow-[0_0_20px_rgba(0,245,255,0.3)] backdrop-blur-md">
+      <span class="relative flex h-3 w-3">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00f5ff] opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-[#00f5ff]"></span>
+      </span>
+      <span class="material-symbols-outlined text-lg">smart_toy</span>
+      <span class="text-xs font-bold tracking-wider uppercase">Terra AI Chat</span>
+      <span id="chat-badge" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-[#0a0e17]"></span>
+    </button>
+
+    <!-- Chat Modal Window -->
+    <div id="chat-window" class="hidden absolute bottom-14 right-0 w-80 sm:w-96 h-[460px] rounded-xl bg-[#0a0e17]/95 border border-[#00f5ff]/40 shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-xl flex flex-col overflow-hidden">
+      <!-- Chat Header -->
+      <div class="flex items-center justify-between px-3.5 py-2.5 bg-[#151922] border-b border-[#00f5ff]/20">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[#00f5ff] text-base">psychology</span>
+          <div>
+            <h4 class="text-xs font-bold text-white tracking-wide">SENTINEL AI CHAT</h4>
+            <div class="flex items-center gap-1.5 text-[9px] text-[#00f5ff]">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>GEOTECHNICAL ADVISOR ACTIVE</span>
+            </div>
+          </div>
+        </div>
+        <button id="chat-close-btn" class="text-slate-400 hover:text-white p-1 rounded transition">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      </div>
+
+      <!-- Quick Action Chips -->
+      <div class="flex gap-1.5 px-3 py-2 overflow-x-auto bg-[#0f131c]/60 border-b border-slate-800 text-[10px] scrollbar-none whitespace-nowrap">
+        <button onclick="sendQuickChat('What is current mine status?')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-[#00f5ff]/20 hover:text-[#00f5ff] text-slate-300 transition">📊 Mine Status</button>
+        <button onclick="sendQuickChat('Check gas and CO levels')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-[#00f5ff]/20 hover:text-[#00f5ff] text-slate-300 transition">💨 Gas & CO</button>
+        <button onclick="sendQuickChat('What is the emergency evacuation protocol?')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-red-500/20 hover:text-red-400 text-slate-300 transition">🚨 Evacuation</button>
+        <button onclick="sendQuickChat('Explain current subsidence risk')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-[#00f5ff]/20 hover:text-[#00f5ff] text-slate-300 transition">🏔️ Subsidence</button>
+      </div>
+
+      <!-- Chat Messages Scrollable Feed -->
+      <div id="chat-messages" class="flex-1 p-3.5 overflow-y-auto space-y-2">
+        <div class="flex flex-col items-start mb-3">
+          <div class="flex items-center gap-1.5 text-[10px] uppercase font-mono text-[#00f5ff] mb-1">
+            <span>TERRA-SENTINEL AI</span>
+            <span class="text-slate-500">• LIVE</span>
+          </div>
+          <div class="max-w-[85%] rounded-lg px-3.5 py-2 text-xs font-sans leading-relaxed bg-[#151922] border border-[#00f5ff]/30 text-slate-100 shadow-lg">
+            Welcome Operator. I am your real-time Geotechnical & Strata Safety AI. Ask any questions about current sensor readings, gas thresholds, or emergency protocols.
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Input Area -->
+      <div class="p-2.5 bg-[#151922] border-t border-[#00f5ff]/20 flex items-center gap-2">
+        <input id="chat-input" type="text" placeholder="Ask Geotechnical AI..." class="flex-1 bg-[#0a0e17] border border-slate-700 focus:border-[#00f5ff] focus:outline-none text-xs text-white px-3 py-2 rounded-lg font-sans placeholder-slate-500" />
+        <button id="chat-send-btn" class="bg-[#00f5ff] hover:bg-[#00f5ff]/80 text-[#0a0e17] p-2 rounded-lg font-bold transition flex items-center justify-center shadow-[0_0_10px_rgba(0,245,255,0.4)]">
+          <span class="material-symbols-outlined text-sm">send</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

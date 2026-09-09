@@ -56,10 +56,16 @@ async function initAi() {
 initAi();
 
 const authRoutes = require('./routes/auth');
+const { router: chatRoutes, generateGeotechnicalReply } = require('./routes/chat');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -78,10 +84,51 @@ app.get('/explainable-ml', (req, res) => res.render('explainable-ml'));
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/chat', chatRoutes);
 
-// WebSockets for live telemetry
+// WebSockets for live telemetry and real-time chat
 io.on('connection', (socket) => {
-  console.log('Client connected for live telemetry');
+  console.log('Client connected for live telemetry & chat');
+
+  // Handle incoming chat messages via WebSocket
+  socket.on('chat_message', (data) => {
+    const text = (data && data.message) || (typeof data === 'string' ? data : '');
+    const user = (data && data.user) || 'Operator';
+    
+    if (!text) return;
+
+    const currentTelemetry = {
+      phase,
+      pitch,
+      roll,
+      rms,
+      co,
+      disp,
+      temp,
+      sump
+    };
+
+    // Broadcast user's message
+    io.emit('chat_broadcast', {
+      sender: user,
+      text: text,
+      timestamp: new Date().toLocaleTimeString(),
+      isAi: false
+    });
+
+    // Generate intelligent geotechnical response
+    const reply = generateGeotechnicalReply(text, currentTelemetry);
+
+    // Emit AI response after a brief realistic thinking delay
+    setTimeout(() => {
+      io.emit('chat_broadcast', {
+        sender: 'TERRA-SENTINEL AI',
+        text: reply,
+        timestamp: new Date().toLocaleTimeString(),
+        isAi: true
+      });
+    }, 250);
+  });
 });
 
 // State Machine Scenario Variables
