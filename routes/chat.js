@@ -12,8 +12,18 @@ function generateGeotechnicalReply(message, telemetry = {}) {
   const disp = telemetry.disp !== undefined ? Number(telemetry.disp).toFixed(2) : '0.10';
   const temp = telemetry.temp !== undefined ? Number(telemetry.temp).toFixed(1) : '38.6';
 
-  // 1. Current Status / Readings
-  if (msg.includes('status') || msg.includes('reading') || msg.includes('telemetry') || msg.includes('current') || msg.includes('condition')) {
+  // 1. Evacuation / Emergency / Protocols (Highest Priority)
+  if (/\b(evacuat\w*|emergency|emergencies|protocol|protocols|alarm|alarms|danger|dangerous|help|escape|sos|klaxon)\b/i.test(msg)) {
+    return `[EMERGENCY RESPONSE PROTOCOL - DGMS STANDARDS]\n` +
+      `1. Sound continuous 3-tone evacuation klaxon for North & South Working Faces.\n` +
+      `2. All subterranean personnel must immediately don SCSR (Self-Contained Self-Rescuers, 60-min rated).\n` +
+      `3. Follow primary illuminated escapeway toward Sub-Level 3 Refuge Bay (Coordinates: Ref-Bay-3B).\n` +
+      `4. Surface hoist operator: Maintain auxiliary winch in standby. Isolate 3.3kV main bus feeder to avoid spark ignition.\n` +
+      `5. Incident commander contact: Surface Control Room (Ext. 101 / Wireless Ch-1).`;
+  }
+
+  // 2. Current Status / Readings
+  if (/\b(status|reading|readings|telemetry|current|condition|conditions)\b/i.test(msg)) {
     return `[TERRA-SENTINEL MONITORING REPORT]\n` +
       `• Operational Phase: ${phase}\n` +
       `• Strata Displacement: ${disp} mm (${disp > 0.3 ? 'ELEVATED STRAIN' : 'Nominal'})\n` +
@@ -24,8 +34,8 @@ function generateGeotechnicalReply(message, telemetry = {}) {
       `System status is ${phase === 'CRITICAL' ? 'CRITICAL - IMMEDIATE ATTENTION REQUIRED' : phase === 'WARNING' ? 'under heightened surveillance' : 'normal and compliant with safety guidelines'}.`;
   }
 
-  // 2. Gas / CO / Ventilation / Air Quality
-  if (msg.includes('gas') || msg.includes('co') || msg.includes('carbon monoxide') || msg.includes('methane') || msg.includes('air') || msg.includes('ventilation')) {
+  // 3. Gas / CO / Ventilation / Air Quality
+  if (/\b(gas|gases|co|co2|carbon monoxide|methane|ch4|nh3|air|ventilation|atmosphere|atmospheric|fumes)\b/i.test(msg)) {
     return `[ATMOSPHERIC SAFETY ASSESSMENT]\n` +
       `Current Carbon Monoxide reading is ${co} ppm.\n` +
       `• DGMS Mandated 8-hr TWA Limit: 25 ppm\n` +
@@ -34,18 +44,8 @@ function generateGeotechnicalReply(message, telemetry = {}) {
       (co > 30 ? `⚠️ WARNING: CO levels elevated at ${co} ppm. Auxiliary ventilation fans must be ramped up immediately.` : `✅ Atmospheric condition is within safe permissible limits.`);
   }
 
-  // 3. Evacuation / Emergency / Protocols
-  if (msg.includes('evacuat') || msg.includes('emergency') || msg.includes('alarm') || msg.includes('danger') || msg.includes('help') || msg.includes('escape')) {
-    return `[EMERGENCY RESPONSE PROTOCOL - DGMS STANDARDS]\n` +
-      `1. Sound continuous 3-tone evacuation klaxon for North & South Working Faces.\n` +
-      `2. All subterranean personnel must immediately don SCSR (Self-Contained Self-Rescuers, 60-min rated).\n` +
-      `3. Follow primary illuminated escapeway toward Sub-Level 3 Refuge Bay (Coordinates: Ref-Bay-3B).\n` +
-      `4. Surface hoist operator: Maintain auxiliary winch in standby. Isolate 3.3kV main bus feeder to avoid spark ignition.\n` +
-      `5. Incident commander contact: Surface Control Room (Ext. 101 / Wireless Ch-1).`;
-  }
-
   // 4. Subsidence / Strata / InSAR / Void Collapse
-  if (msg.includes('subsidence') || msg.includes('strata') || msg.includes('collapse') || msg.includes('insar') || msg.includes('roof') || msg.includes('pillar')) {
+  if (/\b(subsidence|strata|collapse|collapsing|insar|roof|roofs|pillar|pillars|displacement|strain|geotech|geotechnical)\b/i.test(msg)) {
     return `[SUBSIDENCE & ROOF STABILITY ADVISORY]\n` +
       `• Current Roof Convergence / Displacement: ${disp} mm\n` +
       `• Predictive Model: Dual Random Forest + InSAR Sentinel-1 interferometric velocity mapping.\n` +
@@ -54,7 +54,7 @@ function generateGeotechnicalReply(message, telemetry = {}) {
   }
 
   // 5. Explainable AI / ML Model
-  if (msg.includes('ai') || msg.includes('model') || msg.includes('ml') || msg.includes('explain') || msg.includes('shap') || msg.includes('algorithm')) {
+  if (/\b(ai|model|models|ml|explain|explainable|shap|treeshap|algorithm|xgboost|rf)\b/i.test(msg)) {
     return `[EXPLAINABLE ML PIPELINE ARCHITECTURE]\n` +
       `• Core Models: XGBoost Classifier + Random Forest Regressor calibrated on SIH 2026 coalfield subsidence datasets.\n` +
       `• Explainability Engine: TreeSHAP (SHapley Additive exPlanations) generating local feature attribution per sensor tick.\n` +
