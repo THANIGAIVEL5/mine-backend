@@ -4,8 +4,8 @@ from typing import Dict, Any, Optional
 
 class TerraSentinelMasterAI:
     def __init__(self):
-        self.name = 'TERRA-SENTINEL MASTER AI (HYPER-REASONING ENGINE v4.0)'
-        self.status = 'ACTIVE // UNLIMITED LOCAL REASONING CORE // ZERO-TOKEN-LIMIT'
+        self.name = 'TERRA-SENTINEL MASTER AI (SmolLM2 1.7B NEURAL CORE)'
+        self.status = 'ACTIVE // SmolLM2 1.7B ON-DEVICE REASONING // ZERO-TOKEN-LIMIT'
 
     async def analyze_telemetry_stream(self, telemetry: Dict[str, Any]) -> str:
         phase = telemetry.get('phase', 'STABLE')

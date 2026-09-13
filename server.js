@@ -15,7 +15,7 @@ const authRoutes = require('./routes/auth');
 const { router: chatRoutes, masterAi } = require('./routes/chat');
 
 // Local Neural Model Setup for the Master AI Controller
-const LOCAL_MODEL = process.env.LOCAL_AI_MODEL || 'onnx-community/Qwen2.5-0.5B-Instruct';
+const LOCAL_MODEL = process.env.LOCAL_AI_MODEL || 'HuggingFaceTB/SmolLM2-1.7B-Instruct';
 let activeModelName = LOCAL_MODEL;
 let aiGenerator = null;
 let latestAiAnalysis = "[TERRA-SENTINEL MASTER AI] Telemetry baseline nominal. All 5 sensor nodes synchronized.";

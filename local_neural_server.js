@@ -2,7 +2,7 @@ const http = require('http');
 const { pipeline } = require('@huggingface/transformers');
 
 let generator = null;
-const MODEL_NAME = process.env.LOCAL_AI_MODEL || 'onnx-community/Qwen2.5-0.5B-Instruct';
+const MODEL_NAME = process.env.LOCAL_AI_MODEL || 'HuggingFaceTB/SmolLM2-1.7B-Instruct';
 
 async function loadModel() {
   console.log(`[NEURAL SERVER] Initializing on-device language model: ${MODEL_NAME}...`);

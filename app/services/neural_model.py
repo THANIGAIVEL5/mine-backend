@@ -3,10 +3,12 @@ import json
 import asyncio
 from typing import Dict, Any, Optional
 
-class QwenNeuralBackend:
-    def __init__(self, model_name: str = "onnx-community/Qwen2.5-0.5B-Instruct"):
+class SmolLM2NeuralBackend:
+    def __init__(self, model_name: str = "HuggingFaceTB/SmolLM2-1.7B-Instruct"):
         self.model_name = model_name
         self.is_ready = True
+
+QwenNeuralBackend = SmolLM2NeuralBackend
 
     async def generate_response(self, user_prompt: str, telemetry: Dict[str, Any]) -> Optional[str]:
         telemetry_context = (
