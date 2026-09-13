@@ -29,7 +29,8 @@ const server = http.createServer(async (req, res) => {
           return res.end(JSON.stringify({ error: 'Model loading in progress' }));
         }
 
-        const output = await generator(prompt, {
+        const inputData = (payload.messages && payload.messages.length > 0) ? payload.messages : (payload.prompt || '');
+        const output = await generator(inputData, {
           max_new_tokens: maxTokens,
           temperature: 0.7,
           do_sample: true
