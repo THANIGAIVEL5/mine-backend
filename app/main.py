@@ -4,7 +4,7 @@ import asyncio
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Dict, Any
 
@@ -109,9 +109,9 @@ async def get_index(request: Request):
 async def get_explainable_ml(request: Request):
     return templates.TemplateResponse(request=request, name="explainable-ml.ejs")
 
-@app.get("/gods-eye-view", response_class=HTMLResponse)
-async def get_gods_eye_view(request: Request):
-    return templates.TemplateResponse(request=request, name="gods-eye-view.ejs")
+@app.get("/gods-eye-view")
+async def get_gods_eye_view():
+    return RedirectResponse(url="/", status_code=302)
 
 @app.get("/api/health")
 async def health_check():

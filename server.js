@@ -93,10 +93,7 @@ app.get('/explainable-ml', (req, res) => res.render('explainable-ml', {
   activePage: 'ml'
 }));
 
-app.get('/gods-eye-view', (req, res) => res.render('gods-eye-view', {
-  title: "TERRA-PULSE OS // GOD'S EYE VIEW - 3D Satellite & Spatial Intel",
-  activePage: 'gods-eye'
-}));
+app.get('/gods-eye-view', (req, res) => res.redirect('/'));
 
 // REST API Routes
 app.use('/api/auth', authRoutes);
