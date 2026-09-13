@@ -1,37 +1,32 @@
 /* =========================================================
-   TERRA-PULSE OS - Tactical Geotechnical HUD Stylesheet
+   TERRA-PULSE OS - Tailwind CSS v4 Engine Stylesheet
    ========================================================= */
 
-@layer base {
-  html, body {
-    margin: 0;
-    padding: 0;
-  }
-  body {
-    overscroll-behavior: none;
-  }
-  main > :first-child {
-    margin-top: 0 !important;
-  }
-  main > :last-child {
-    margin-bottom: 0 !important;
-  }
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #00f5ff;
+  --color-primary-container: #00f5ff;
+  --color-secondary: #f59e0b;
+  --color-secondary-fixed: #fbbf24;
+  --color-tertiary: #10b981;
+  --color-surface: #070b10;
+  --color-surface-dim: #05080c;
+  --color-surface-container: #0b1219;
+  --color-surface-container-high: #111a24;
+  --color-surface-container-highest: #1e293b;
+  --color-surface-variant: #131b22;
+  --color-on-surface: #f8fafc;
+  --color-on-surface-variant: #94a3b8;
+  --color-error: #ef4444;
+  --color-error-container: #450a0a;
+
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Space Grotesk', sans-serif;
 }
 
-/* Hide scrollbars while maintaining scroll functionality */
-::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* Ultra Glassmorphism styling */
-.hud-bracket, .ultra-glass {
+@utility ultra-glass {
   position: relative;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 40%, rgba(11, 15, 25, 0.55) 100%) !important;
   backdrop-filter: blur(24px) saturate(220%) !important;
@@ -44,84 +39,17 @@
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-.hud-bracket:hover, .ultra-glass:hover {
-  border-color: rgba(0, 245, 255, 0.5) !important;
-  box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.5), 0 16px 48px 0 rgba(0, 245, 255, 0.25) !important;
+.hud-bracket {
+  @apply ultra-glass;
 }
 
-.hud-bracket::before {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: -1px;
-  width: 8px;
-  height: 8px;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  pointer-events: none;
+/* Hide scrollbars while maintaining scroll functionality */
+::-webkit-scrollbar {
+  display: none;
 }
-.hud-bracket::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  right: -1px;
-  width: 8px;
-  height: 8px;
-  border-bottom: 2px solid #ffffff;
-  border-right: 2px solid #ffffff;
-  pointer-events: none;
-}
-
-/* Danger variant of corner brackets */
-.hud-bracket-danger::before {
-  border-top-color: #ffffff;
-  border-left-color: #ffffff;
-}
-.hud-bracket-danger::after {
-  border-bottom-color: #ffffff;
-  border-right-color: #ffffff;
-}
-
-/* Discrete text corner markers */
-.hud-bracket-tl {
-  position: absolute;
-  top: 4px;
-  left: 6px;
-  font-family: monospace;
-  font-size: 11px;
-  color: #ffffff;
-  opacity: 0.6;
-  pointer-events: none;
-}
-.hud-bracket-tr {
-  position: absolute;
-  top: 4px;
-  right: 6px;
-  font-family: monospace;
-  font-size: 11px;
-  color: #ffffff;
-  opacity: 0.6;
-  pointer-events: none;
-}
-.hud-bracket-bl {
-  position: absolute;
-  bottom: 4px;
-  left: 6px;
-  font-family: monospace;
-  font-size: 11px;
-  color: #ffffff;
-  opacity: 0.6;
-  pointer-events: none;
-}
-.hud-bracket-br {
-  position: absolute;
-  bottom: 4px;
-  right: 6px;
-  font-family: monospace;
-  font-size: 11px;
-  color: #ffffff;
-  opacity: 0.6;
-  pointer-events: none;
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* CRT / Phosphor Scanline Overlay */
@@ -134,7 +62,7 @@
 /* Leaflet GIS Tactical Map & Dark HUD Styling */
 .leaflet-container {
   background: #070c09 !important;
-  font-family: 'Space Grotesk', sans-serif !important;
+  font-family: var(--font-display) !important;
 }
 .leaflet-popup-content-wrapper, .leaflet-popup-tip {
   background: #081018 !important;
@@ -168,12 +96,8 @@
 
 /* Evacuation Path Flow Animation */
 @keyframes evacFlow {
-  from {
-    stroke-dashoffset: 24;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
+  from { stroke-dashoffset: 24; }
+  to { stroke-dashoffset: 0; }
 }
 .evac-path-flow {
   animation: evacFlow 1.2s linear infinite;
@@ -181,14 +105,8 @@
 
 /* Tactical Map Radar Pulse */
 @keyframes radarPulse {
-  0% {
-    transform: scale(0.6);
-    opacity: 0.9;
-  }
-  100% {
-    transform: scale(2.8);
-    opacity: 0;
-  }
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.8); opacity: 0; }
 }
 .marker-radar-pulse {
   animation: radarPulse 2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
@@ -208,3 +126,4 @@
 .klaxon-active {
   animation: klaxonStrobe 0.8s ease-in-out infinite;
 }
+
