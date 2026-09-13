@@ -260,24 +260,7 @@ class TelemetryClient {
     const rule3Bar = this.el('rule-3-bar');
     if (rule3Bar) rule3Bar.style.width = `${Math.min(100, ((data.co || 20) / 30) * 100)}%`;
 
-    // Tactical Map Beacon Animation & Subsidence Displacement Vector
-    const node03Ping = this.el('node-03-ping');
-    if (node03Ping) node03Ping.style.animationDuration = `${Math.max(0.2, 1.5 - (data.rms || 0.15) * 2)}s`;
 
-    const node03Dot = this.el('node-03-dot');
-    if (node03Dot) {
-      const intense = (data.rms || 0.15) > 0.3 ? 'shadow-[0_0_24px_#ff0033]' : 'shadow-[0_0_16px_#ff3366]';
-      node03Dot.className = `w-4 h-4 rounded-full bg-[#ff3366] ${intense} border-2 border-white transition-all duration-500`;
-    }
-
-    const subsidenceTrail = this.el('subsidence-trail');
-    const subsidenceArrow = this.el('subsidence-arrow');
-    if (subsidenceTrail && subsidenceArrow) {
-      const dx = (data.disp || 0) * 2;
-      const dy = (data.disp || 0) * 2;
-      subsidenceTrail.setAttribute('d', `M 368,212 L 374,218 L ${382 + dx},${224 + dy} L ${390 + dx},${230 + dy}`);
-      subsidenceArrow.setAttribute('transform', `translate(${dx}, ${dy})`);
-    }
 
     // Real-time 3D Cesium Strata Subsidence Vector Update
     if (this.subsidenceVectorEntity && typeof Cesium !== 'undefined') {

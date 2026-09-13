@@ -169,15 +169,6 @@
                   </div>
                 </div>
 
-                <!-- Bottom-Left Tactical Emergency Action Button -->
-                <div class="absolute bottom-3 left-3 pointer-events-auto">
-                  <button onclick="triggerEvacuationProtocol()" class="bg-gradient-to-r from-rose-600 via-red-600 to-rose-700 hover:from-rose-500 hover:to-red-500 border-2 border-white text-white font-['Space_Grotesk'] text-[12px] font-bold uppercase px-3.5 py-2 rounded shadow-[0_0_24px_rgba(244,63,94,0.75)] flex items-center gap-2 transition active:scale-95 cursor-pointer">
-                    <span class="material-symbols-outlined text-[18px] animate-ping absolute opacity-50">emergency</span>
-                    <span class="material-symbols-outlined text-[18px]">emergency</span>
-                    <span>EXECUTE DGMS EVACUATION DISPATCH</span>
-                  </button>
-                </div>
-
                 <!-- Bottom-Right Infused Protocol GIS Legend -->
                 <div class="absolute bottom-3 right-3 pointer-events-none bg-[#07090e]/95 backdrop-blur-md p-2.5 rounded border border-white/20 flex flex-col gap-1 shadow-2xl">
                   <span class="font-['JetBrains_Mono'] text-[9px] uppercase text-zinc-300 font-bold tracking-wider">DGMS INFUSED PROTOCOL LEGEND</span>
@@ -202,128 +193,6 @@
                       <span class="w-2.5 h-2.5 rounded bg-slate-700 border border-slate-500"></span>
                       <span class="text-zinc-400">Sector 4B Subterranean Stope Panel</span>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Synthetic 2D SVG Schematic Subterranean Layer (Visible when SCHEMATIC is selected) -->
-              <div id="svg-schematic-layer" class="absolute inset-0 w-full h-full pointer-events-auto">
-                <!-- Coordinate Grid Layer -->
-                <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-25" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <pattern height="40" id="hud-grid" patternunits="userSpaceOnUse" width="40">
-                      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#22c55e" stroke-dasharray="2,3" stroke-width="0.5" stroke-opacity="0.3"></path>
-                      <circle cx="0" cy="0" fill="#22c55e" opacity="0.5" r="1"></circle>
-                    </pattern>
-                    <radialgradient cx="48%" cy="58%" id="subsidence-heat" r="40%">
-                      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.42"></stop>
-                      <stop offset="30%" stop-color="#f59e0b" stop-opacity="0.25"></stop>
-                      <stop offset="65%" stop-color="#10b981" stop-opacity="0.10"></stop>
-                      <stop offset="100%" stop-color="#070c09" stop-opacity="0"></stop>
-                    </radialgradient>
-                  </defs>
-                  <rect fill="url(#hud-grid)" height="100%" width="100%"></rect>
-                  <circle cx="48%" cy="58%" fill="url(#subsidence-heat)" r="170"></circle>
-                  <!-- Concentric Range Rings centered around Node 03 (384, 232) -->
-                  <circle cx="384" cy="232" fill="none" opacity="0.35" r="45" stroke="#f43f5e" stroke-dasharray="3,3" stroke-width="1.2"></circle>
-                  <circle cx="384" cy="232" fill="none" opacity="0.25" r="90" stroke="#f59e0b" stroke-dasharray="4,4" stroke-width="1"></circle>
-                  <circle cx="384" cy="232" fill="none" opacity="0.15" r="140" stroke="#10b981" stroke-width="1"></circle>
-                </svg>
-
-                <!-- Geological Gallery Contours & Shaft Vector Schematics -->
-                <svg class="absolute inset-0 w-full h-full pointer-events-none" preserveaspectratio="none" viewbox="0 0 800 400">
-                  <!-- Surface Vegetation & Topographic Hill Rim (Moss Green) -->
-                  <path d="M 50,70 Q 200,40 380,80 T 750,60" fill="none" stroke="#4d7c0f" stroke-dasharray="4,4" stroke-width="1.5" stroke-opacity="0.7"></path>
-                  <!-- Overburden Sandstone Contour Bench 1 (Sandstone Amber) -->
-                  <path d="M 70,140 Q 240,110 420,150 T 730,130" fill="none" stroke="#d97706" stroke-width="1.6" stroke-opacity="0.75"></path>
-                  <!-- Weathered Shale Bed Contour Bench 2 (Terracotta Earth) -->
-                  <path d="M 90,210 Q 280,180 440,220 T 710,190" fill="none" stroke="#b45309" stroke-width="1.8" stroke-opacity="0.8"></path>
-                  <!-- Subterranean Anthracite Coal Seam Strata (Deep Slate Charcoal) -->
-                  <path d="M 120,280 Q 320,250 460,290 T 680,260" fill="none" stroke="#475569" stroke-width="2.2" stroke-opacity="0.9"></path>
-                  
-                  <!-- Underground Main Haulage Incline (Illuminated Safety Amber) -->
-                  <path d="M 220,110 L 390,230 L 520,330 L 610,350" fill="none" stroke="#f59e0b" stroke-dasharray="6,4" stroke-opacity="0.85" stroke-width="2.5"></path>
-                  <!-- Sub-Gallery Drainage / Sump Channel (Aquifer Cyan Blue) -->
-                  <path d="M 390,230 L 320,310 L 260,340" fill="none" stroke="#0284c7" stroke-dasharray="3,3" stroke-opacity="0.8" stroke-width="1.8"></path>
-                  
-                  <!-- Node 03 Breadcrumb Subsidence Displacement Trail (Natural Hazard Crimson) -->
-                  <path id="subsidence-trail" class="transition-all duration-500" d="M 368,212 L 374,218 L 382,224 L 390,230" fill="none" stroke="#f43f5e" stroke-linecap="round" stroke-width="3.5"></path>
-                  <!-- Arrowhead for displacement vector -->
-                  <polygon id="subsidence-arrow" class="transition-all duration-500" fill="#f43f5e" points="390,230 382,225 385,233"></polygon>
-                  <circle cx="368" cy="212" fill="#fda4af" opacity="0.7" r="3"></circle>
-                  <circle cx="374" cy="218" fill="#fb7185" opacity="0.9" r="3"></circle>
-                  <circle cx="382" cy="224" fill="#f43f5e" r="3.5"></circle>
-                </svg>
-
-                <!-- Node 01: North Ridge (Natural Forest Emerald - Safe) -->
-                <div id="map-node-1" onclick="selectNode(1)" class="absolute top-[80px] left-[200px] flex flex-col items-center group cursor-pointer transition-transform hover:scale-110">
-                  <div class="relative flex items-center justify-center">
-                    <span class="absolute w-7 h-7 rounded-full bg-emerald-500/30 animate-ping"></span>
-                    <span class="w-3.5 h-3.5 rounded-full bg-emerald-400 shadow-[0_0_12px_#10b981] border-2 border-emerald-950"></span>
-                  </div>
-                  <div class="mt-1 bg-[#041a11]/95 border border-emerald-500/40 px-2 py-0.5 rounded text-center backdrop-blur-sm shadow-md">
-                    <span class="font-['JetBrains_Mono'] text-[9px] block text-emerald-300 font-bold">NODE-01</span>
-                    <span class="font-['JetBrains_Mono'] text-[8px] text-emerald-400/90 font-medium">SHAFT #2 [STABLE]</span>
-                  </div>
-                </div>
-
-                <!-- Node 02: Haul Road (Natural Earth Amber - Watch) -->
-                <div id="map-node-2" onclick="selectNode(2)" class="absolute top-[125px] left-[550px] flex flex-col items-center group cursor-pointer transition-transform hover:scale-110">
-                  <div class="relative flex items-center justify-center">
-                    <span class="absolute w-7 h-7 rounded-full bg-amber-500/30 animate-pulse"></span>
-                    <span class="w-3.5 h-3.5 rounded-full bg-amber-400 shadow-[0_0_12px_#f59e0b] border-2 border-amber-950"></span>
-                  </div>
-                  <div class="mt-1 bg-[#221603]/95 border border-amber-500/40 px-2 py-0.5 rounded text-center backdrop-blur-sm shadow-md">
-                    <span class="font-['JetBrains_Mono'] text-[9px] block text-amber-300 font-bold">NODE-02</span>
-                    <span class="font-['JetBrains_Mono'] text-[8px] text-amber-400/90 font-medium">OVERBURDEN [WATCH]</span>
-                  </div>
-                </div>
-
-                <!-- Node 03: Selected Focus (Natural Ruby Crimson - CRITICAL STOPE PILLAR 4B) -->
-                <div id="map-node-3" onclick="selectNode(3)" class="absolute top-[205px] left-[360px] flex flex-col items-center group cursor-pointer z-30 transition-transform hover:scale-110">
-                  <div class="relative flex items-center justify-center">
-                    <span id="node-03-ping" class="absolute w-14 h-14 rounded-full bg-rose-500/40 animate-ping" style="animation-duration: 1s;"></span>
-                    <span class="absolute w-9 h-9 rounded-full bg-rose-500/25 border border-rose-400"></span>
-                    <span id="node-03-dot" class="w-4 h-4 rounded-full bg-rose-500 shadow-[0_0_20px_#f43f5e] border-2 border-white transition-all duration-500"></span>
-                  </div>
-                  <!-- Target reticle around selected Node 03 -->
-                  <div class="absolute -top-4 -left-4 w-12 h-12 pointer-events-none border border-rose-500/60 rounded-full animate-spin" style="animation-duration: 8s;"></div>
-                  <!-- Tag Callout -->
-                  <div class="mt-2 bg-[#2a080f]/95 border-2 border-rose-500 px-3 py-1.5 rounded shadow-[0_0_24px_rgba(244,63,94,0.4)] text-center flex flex-col items-center backdrop-blur-md">
-                    <div class="flex items-center gap-1.5">
-                      <span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></span>
-                      <span class="font-['JetBrains_Mono'] text-[10px] text-rose-300 font-bold uppercase tracking-wider">NODE-03 • ACTIVE FOCUS</span>
-                    </div>
-                    <span class="font-['Space_Grotesk'] text-white font-bold tracking-tight text-[13px]">PILLAR 4B STOPE</span>
-                    <span class="font-['JetBrains_Mono'] text-[9px] text-rose-200">ΔX/ΔY CRITICAL CREEP: +0.42m</span>
-                  </div>
-                </div>
-
-                <!-- Node 04: Sump Basin (Natural Water Cyan - Safe Aquifer) -->
-                <div id="map-node-4" onclick="selectNode(4)" class="absolute top-[310px] left-[250px] flex flex-col items-center group cursor-pointer transition-transform hover:scale-110">
-                  <div class="relative flex items-center justify-center">
-                    <span class="absolute w-6 h-6 rounded-full bg-cyan-500/30 animate-ping"></span>
-                    <span class="w-3.5 h-3.5 rounded-full bg-cyan-400 shadow-[0_0_12px_#06b6d4] border-2 border-cyan-950"></span>
-                  </div>
-                  <div class="mt-1 bg-[#031c26]/95 border border-cyan-500/40 px-2 py-0.5 rounded text-center backdrop-blur-sm shadow-md">
-                    <span class="font-['JetBrains_Mono'] text-[9px] block text-cyan-300 font-bold">NODE-04</span>
-                    <span class="font-['JetBrains_Mono'] text-[8px] text-cyan-400/90 font-medium">SUMP BASIN [AQUIFER OK]</span>
-                  </div>
-                </div>
-
-                <!-- Node 05: Active Subterranean Haulage Drift Sensor (Teal / Emerald) -->
-                <div id="map-node-5" onclick="selectNode(5)" class="absolute top-[70px] right-[40px] flex flex-col items-center group cursor-pointer transition-transform hover:scale-110">
-                  <div class="w-4 h-4 rounded-full bg-[#042f2e] border border-teal-500/50 flex items-center justify-center">
-                    <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
-                  </div>
-                  <div class="mt-1 bg-[#022c22]/95 border border-teal-500/40 px-3 py-1.5 rounded flex flex-col items-center shadow-lg backdrop-blur-md">
-                    <div class="flex items-center gap-1.5">
-                      <span class="font-['JetBrains_Mono'] text-[10px] text-teal-300 uppercase font-bold">NODE-05</span>
-                      <span class="bg-teal-500/20 text-teal-300 border border-teal-500/30 text-[8px] px-1 py-0.5 rounded font-bold uppercase tracking-wider">CONNECTED</span>
-                    </div>
-                    <span class="font-['JetBrains_Mono'] text-[9px] text-teal-400/90 uppercase text-center mt-0.5">
-                      HAULAGE DRIFT 12 [SYNCED]
-                    </span>
                   </div>
                 </div>
               </div>
@@ -454,11 +323,8 @@
 
             <!-- Action overrides -->
             <div class="mt-3 flex items-center gap-2">
-              <button onclick="alert('EMERGENCY EVACUATION ALARM BROADCAST: Siren activated for Sector 4B Shaft 12.');" class="flex-1 bg-gradient-to-r from-[#ff3366] to-[#c30044] hover:from-[#c30044] hover:to-[#ff3366] text-white font-['JetBrains_Mono'] font-bold text-[12px] py-2 rounded uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-[0_0_16px_rgba(255,51,102,0.4)] border border-[#ff3366]">
-                <span class="material-symbols-outlined text-[16px]">campaign</span> DISPATCH EVAC ALARM
-              </button>
-              <button onclick="this.innerText='ACKNOWLEDGED'; this.classList.add('text-emerald-400');" class="bg-neutral-900 hover:bg-neutral-800 border border-white/30 text-white font-['JetBrains_Mono'] text-[11px] px-3 py-2 rounded uppercase font-bold transition-all">
-                ACKNOWLEDGE
+              <button onclick="this.innerText='ANOMALY ACKNOWLEDGED'; this.classList.remove('bg-neutral-900','hover:bg-neutral-800','text-white'); this.classList.add('bg-emerald-500/20','border-emerald-500/60','text-emerald-300');" class="w-full bg-neutral-900 hover:bg-neutral-800 border border-white/30 text-white font-['JetBrains_Mono'] text-[11px] py-2 rounded uppercase font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                <span class="material-symbols-outlined text-[15px]">check_circle</span> ACKNOWLEDGE ANOMALY AUDIT
               </button>
             </div>
           </div>
