@@ -6,9 +6,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="/css/hud.css" rel="stylesheet"/>
-<!-- Leaflet GIS Real Satellite & Tactical Map Engine -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<!-- CesiumJS Photorealistic 3D Globe Engine (God's Eye View - Bilawal Sidhu) -->
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Cesium.js"></script>
+<style>
+  /* God's Eye View Optical Shader Overlays */
+  .optic-flir {
+    filter: contrast(180%) invert(85%) hue-rotate(180deg) saturate(250%) brightness(1.1);
+  }
+  .optic-nvg {
+    filter: contrast(160%) sepia(100%) hue-rotate(75deg) saturate(600%) brightness(1.15);
+  }
+  .optic-crt {
+    filter: contrast(170%) brightness(0.85) grayscale(80%) sepia(20%) hue-rotate(110deg);
+  }
+  .cesium-viewer-bottom, .cesium-credit-logoContainer, .cesium-credit-expand-link {
+    display: none !important;
+  }
+  .cesium-widget, .cesium-widget canvas {
+    width: 100% !important;
+    height: 100% !important;
+    touch-action: none;
+  }
+</style>
 <!-- Tailwind CSS Engine with Complete Design System Tokens -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">

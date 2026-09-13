@@ -93,30 +93,36 @@
             <div class="flex items-center justify-between px-4 py-2.5 bg-[#07090e]/90 border-b border-white/20">
               <div class="flex items-center gap-3">
                 <div class="w-7 h-7 rounded bg-neutral-900 border border-white/30 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-white text-[18px]">layers</span>
+                  <span class="material-symbols-outlined text-white text-[18px]">travel_explore</span>
                 </div>
                 <div>
-                  <span class="font-['Space_Grotesk'] text-[15px] text-white uppercase font-bold tracking-wide">Jharia Coalfield Geotechnical Surface &amp; Gallery Grid</span>
+                  <div class="flex items-center gap-2">
+                    <span class="font-['Space_Grotesk'] text-[15px] text-white uppercase font-bold tracking-wide">GOD'S EYE VIEW // 3D PHOTOREALISTIC GLOBE</span>
+                    <span class="px-1.5 py-0.2 rounded text-[8px] bg-white/10 text-white border border-white/20 font-bold">CESIUMJS 3D ENGINE</span>
+                  </div>
                   <div class="flex items-center gap-3 font-['JetBrains_Mono'] text-[10px] text-on-surface-variant">
                     <span>LAT: 23.7957° N</span>
                     <span>LNG: 86.4304° E</span>
                     <span class="text-secondary font-semibold">GRID REF: IN-JH-CHAS-4B</span>
-                    <span class="bg-neutral-900 border border-white/30 px-1.5 py-0.5 rounded text-white font-bold">LAYER: SUBSURFACE STOPE + InSAR</span>
+                    <span class="bg-neutral-900 border border-white/30 px-1.5 py-0.5 rounded text-white font-bold">ARC-GIS HIGH-RES 3D STRATA</span>
                   </div>
                 </div>
               </div>
-              <!-- Real GIS Map & Protocol Controls -->
+              <!-- God's Eye View 3D Globe & Optics Controls -->
               <div class="flex flex-wrap items-center gap-2">
-                <!-- Layer Mode Switcher -->
+                <!-- Optical Shader Filters (God's Eye View) -->
                 <div class="flex items-center bg-[#07090e] border border-white/20 rounded p-0.5 gap-1">
-                  <button onclick="setMapMode('satellite')" id="btn-layer-sat" class="bg-white text-black font-bold font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1 rounded transition shadow-[0_0_10px_rgba(255,255,255,0.4)] cursor-pointer">
-                    🛰️ SATELLITE
+                  <button onclick="setOptic('normal')" id="btn-optic-normal" class="bg-white text-black font-bold font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition shadow-[0_0_10px_rgba(255,255,255,0.4)] cursor-pointer">
+                    👁️ OPTICAL
                   </button>
-                  <button onclick="setMapMode('dark')" id="btn-layer-dark" class="bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1 rounded transition active:scale-95 cursor-pointer">
-                    🗺️ DARK GIS
+                  <button onclick="setOptic('flir')" id="btn-optic-flir" class="bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition active:scale-95 cursor-pointer">
+                    🔥 FLIR
                   </button>
-                  <button onclick="setMapMode('schematic')" id="btn-layer-schem" class="bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1 rounded transition active:scale-95 cursor-pointer">
-                    📐 SCHEMATIC
+                  <button onclick="setOptic('nvg')" id="btn-optic-nvg" class="bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition active:scale-95 cursor-pointer">
+                    🟢 NVG
+                  </button>
+                  <button onclick="setOptic('crt')" id="btn-optic-crt" class="bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition active:scale-95 cursor-pointer">
+                    📺 CRT
                   </button>
                 </div>
 
@@ -130,19 +136,23 @@
                   <span class="material-symbols-outlined text-[15px]">campaign</span> EVACUATE PROTOCOL
                 </button>
 
-                <button onclick="recenterMap()" class="bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-white font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1.5 rounded flex items-center gap-1 transition-all shadow-[0_0_10px_rgba(255,255,255,0.1)] active:scale-95 cursor-pointer">
-                  <span class="material-symbols-outlined text-[13px]">my_location</span> RE-CENTER
+                <!-- Target Focus / Re-Center -->
+                <button onclick="recenterMap()" title="Focus Chasnala Sector 4B Mine (HotKey: C)" class="bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-white font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1.5 rounded flex items-center gap-1 transition-all shadow-[0_0_10px_rgba(255,255,255,0.1)] active:scale-95 cursor-pointer">
+                  <span class="material-symbols-outlined text-[13px]">my_location</span> 3D TARGET FOCUS
+                </button>
+                <button onclick="resetGlobe()" title="Orbital Space View (HotKey: Esc)" class="bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1.5 rounded flex items-center gap-1 transition-all active:scale-95 cursor-pointer">
+                  <span class="material-symbols-outlined text-[13px]">public</span> ORBIT
                 </button>
                 <a href="/gods-eye-view" onclick="if(location.protocol==='file:'){location.href='gods-eye-view.html'; return false;}" class="bg-white hover:bg-zinc-200 text-black font-['JetBrains_Mono'] text-[10px] uppercase font-bold px-2.5 py-1.5 rounded flex items-center gap-1 transition-all active:scale-95">
-                  <span class="material-symbols-outlined text-[13px]">travel_explore</span> GOD'S EYE 3D
+                  <span class="material-symbols-outlined text-[13px]">open_in_full</span> FULLSCREEN 3D
                 </a>
               </div>
             </div>
 
-            <!-- Tactical Map Container (Supports Real GIS Satellite & Synthetic Stope Overlay) -->
-            <div id="map-canvas-container" class="relative w-full h-[480px] bg-[#070c09] overflow-hidden select-none transition-all duration-500">
-              <!-- Real Leaflet Satellite & Tactical GIS Map Layer -->
-              <div id="real-leaflet-map" class="absolute inset-0 w-full h-full z-10 transition-opacity duration-300"></div>
+            <!-- God's Eye View Tactical 3D Map Container -->
+            <div id="map-canvas-container" class="relative w-full h-[520px] bg-[#020408] overflow-hidden select-none transition-all duration-500">
+              <!-- God's Eye View CesiumJS 3D Photorealistic Globe Layer -->
+              <div id="gods-eye-globe-container" class="absolute inset-0 w-full h-full z-10 transition-opacity duration-300"></div>
 
               <!-- DGMS Protocol Infused Tactical HUD Overlay -->
               <div class="absolute inset-0 pointer-events-none z-20">

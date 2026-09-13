@@ -1,4 +1,8 @@
-declare const L: any;
+declare const Cesium: any;
+
+const MINE_LAT = 23.795741;
+const MINE_LON = 86.430412;
+const MINE_ALT = 185.0;
 
 interface TelemetryData {
   pitch: number;
@@ -34,21 +38,20 @@ class TelemetryClient {
   private waveOffset: number = 0;
   private is3DActive: boolean = false;
   private activeNodeIndex: number = 3;
-  private leafletMap: any = null;
-  private currentMapMode: string = 'satellite';
-  private protocolLayerGroup: any = null;
-  private nodeLayerGroup: any = null;
-  private satelliteLayer: any = null;
-  private darkLayer: any = null;
+  private cesiumViewer: any = null;
+  private currentOptic: string = 'normal';
+  private protocolEntities: any[] = [];
+  private nodeEntities: { [key: number]: any } = {};
+  private strataEntities: any[] = [];
+  private subsidenceVectorEntity: any = null;
   private isProtocolLayerVisible: boolean = true;
-  private markers: { [key: number]: any } = {};
   private pollingStarted: boolean = false;
 
   constructor() {
     this.initSocket();
     this.initClock();
     this.initOscilloscope();
-    this.initRealMap();
+    this.initCesiumGlobe();
   }
 
   private el(id: string): HTMLElement | null {
@@ -275,6 +278,17 @@ class TelemetryClient {
       subsidenceTrail.setAttribute('d', `M 368,212 L 374,218 L ${382 + dx},${224 + dy} L ${390 + dx},${230 + dy}`);
       subsidenceArrow.setAttribute('transform', `translate(${dx}, ${dy})`);
     }
+
+    // Real-time 3D Cesium Strata Subsidence Vector Update
+    if (this.subsidenceVectorEntity && typeof Cesium !== 'undefined') {
+      const dispOffset = (data.disp || 0.42) * 0.0001;
+      const pitchOffset = (data.pitch || 0) * 0.00005;
+      const rollOffset = (data.roll || 0) * 0.00005;
+      this.subsidenceVectorEntity.polyline.positions = Cesium.Cartesian3.fromDegreesArrayHeights([
+        MINE_LON, MINE_LAT, MINE_ALT + 30,
+        MINE_LON + 0.0008 + rollOffset, MINE_LAT - 0.0012 + pitchOffset, MINE_ALT - 35 - dispOffset * 1000
+      ]);
+    }
   }
 
   private initClock() {
@@ -363,13 +377,38 @@ class TelemetryClient {
     const nodeNames = ["NODE-01 (Shaft #2)", "NODE-02 (Overburden)", "NODE-03 (Pillar 4B Stope)", "NODE-04 (Sump Basin)", "NODE-05 (Haulage Drift #12 - Online)"];
     const headerTitle = this.el('node-focus-title');
     if (headerTitle) headerTitle.innerText = `Active Telemetry Stream: ${nodeNames[nodeNum - 1]}`;
+
+    // Smoothly fly Cesium 3D camera to selected sensor node
+    if (this.cesiumViewer && typeof Cesium !== 'undefined') {
+      const targetEntity = this.nodeEntities[nodeNum];
+      if (targetEntity) {
+        this.cesiumViewer.flyTo(targetEntity, {
+          offset: new Cesium.HeadingPitchRange(
+            Cesium.Math.toRadians(20.0),
+            Cesium.Math.toRadians(-35.0),
+            650.0
+          ),
+          duration: 1.8
+        });
+      }
+    }
+  }
+
+  public flyToMine() {
+    if (!this.cesiumViewer || typeof Cesium === 'undefined') return;
+    this.cesiumViewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(MINE_LON, MINE_LAT, 2500),
+      orientation: {
+        heading: Cesium.Math.toRadians(15.0),
+        pitch: Cesium.Math.toRadians(-45.0),
+        roll: 0.0
+      },
+      duration: 2.0
+    });
   }
 
   public recenterMap() {
-    if (this.leafletMap) {
-      this.leafletMap.setView([23.795741, 86.430412], 16, { animate: true });
-      this.leafletMap.invalidateSize();
-    }
+    this.flyToMine();
     const container = this.el('map-canvas-container');
     if (container) {
       container.classList.add('scale-[1.01]');
@@ -377,206 +416,403 @@ class TelemetryClient {
     }
   }
 
-  public toggle3DContour() {
-    this.is3DActive = !this.is3DActive;
-    const btn = this.el('btn-3d-contour');
-    const container = this.el('map-canvas-container');
-    if (btn) {
-      if (this.is3DActive) {
-        btn.classList.add('bg-amber-500/30', 'text-white', 'border-amber-400');
-        if (container) container.style.transform = 'perspective(900px) rotateX(12deg)';
-      } else {
-        btn.classList.remove('bg-amber-500/30', 'text-white', 'border-amber-400');
-        if (container) container.style.transform = 'none';
+  public resetGlobe() {
+    if (!this.cesiumViewer || typeof Cesium === 'undefined') return;
+    this.cesiumViewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(MINE_LON, MINE_LAT, 15000000),
+      orientation: {
+        heading: 0,
+        pitch: Cesium.Math.toRadians(-90.0),
+        roll: 0.0
+      },
+      duration: 2.5
+    });
+  }
+
+  public setOptic(type: string) {
+    this.currentOptic = type;
+    const container = this.el('gods-eye-globe-container');
+    const buttons = ['normal', 'flir', 'nvg', 'crt'];
+    
+    buttons.forEach(b => {
+      const btn = this.el(`btn-optic-${b}`);
+      if (btn) {
+        if (b === type) {
+          btn.className = 'bg-white text-black font-bold font-[\'JetBrains_Mono\'] text-[10px] uppercase px-2 py-1 rounded transition shadow-[0_0_10px_rgba(255,255,255,0.4)] cursor-pointer';
+        } else {
+          btn.className = 'bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 font-[\'JetBrains_Mono\'] text-[10px] uppercase px-2 py-1 rounded transition active:scale-95 cursor-pointer';
+        }
+      }
+    });
+
+    if (container) {
+      container.classList.remove('optic-flir', 'optic-nvg', 'optic-crt');
+      if (type !== 'normal') {
+        container.classList.add(`optic-${type}`);
       }
     }
-  }
-
-  private initRealMap() {
-    const mapEl = this.el('real-leaflet-map');
-    if (!mapEl || typeof L === 'undefined') return;
-
-    try {
-      const mineCenter = [23.795741, 86.430412];
-      this.leafletMap = L.map('real-leaflet-map', {
-        center: mineCenter,
-        zoom: 16,
-        zoomControl: false,
-        attributionControl: false
-      });
-
-      L.control.zoom({ position: 'topright' }).addTo(this.leafletMap);
-
-      this.satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        maxZoom: 19,
-        attribution: 'Esri World Imagery'
-      });
-
-      this.darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        attribution: 'CartoDB Dark'
-      });
-
-      this.satelliteLayer.addTo(this.leafletMap);
-      this.protocolLayerGroup = L.layerGroup();
-      this.nodeLayerGroup = L.layerGroup();
-
-      this.renderDgmsProtocolLayers();
-      this.renderRealMapNodes();
-
-      this.protocolLayerGroup.addTo(this.leafletMap);
-      this.nodeLayerGroup.addTo(this.leafletMap);
-
-      setTimeout(() => {
-        if (this.leafletMap) this.leafletMap.invalidateSize();
-      }, 400);
-    } catch (e) {
-      console.warn('Real GIS Map init notice:', e);
-    }
-  }
-
-  private renderDgmsProtocolLayers() {
-    if (!this.protocolLayerGroup) return;
-    this.protocolLayerGroup.clearLayers();
-
-    const stopeCenter = [23.795741, 86.430412];
-    const evacCircle = L.circle(stopeCenter, {
-      radius: 220,
-      color: '#ef4444',
-      weight: 2.5,
-      dashArray: '6, 6',
-      fillColor: '#ef4444',
-      fillOpacity: 0.18
-    });
-    this.protocolLayerGroup.addLayer(evacCircle);
-
-    const watchCircle = L.circle(stopeCenter, {
-      radius: 450,
-      color: '#f59e0b',
-      weight: 1.5,
-      dashArray: '8, 8',
-      fillColor: '#f59e0b',
-      fillOpacity: 0.08
-    });
-    this.protocolLayerGroup.addLayer(watchCircle);
-
-    const stopePolygon = L.polygon([
-      [23.7942, 86.4285],
-      [23.7972, 86.4278],
-      [23.7980, 86.4326],
-      [23.7952, 86.4338]
-    ], {
-      color: '#64748b',
-      weight: 2,
-      dashArray: '4, 4',
-      fillColor: '#0f172a',
-      fillOpacity: 0.45
-    });
-    this.protocolLayerGroup.addLayer(stopePolygon);
-
-    const corridorAlpha = L.polyline([
-      [23.795741, 86.430412], [23.797400, 86.428800],
-      [23.798541, 86.426912], [23.801200, 86.425000]
-    ], { color: '#10b981', weight: 4, dashArray: '8, 8' });
-    this.protocolLayerGroup.addLayer(corridorAlpha);
-
-    const corridorBeta = L.polyline([
-      [23.795741, 86.430412], [23.796600, 86.432800],
-      [23.797241, 86.434612], [23.799500, 86.433500]
-    ], { color: '#00f5ff', weight: 3.5, dashArray: '8, 8' });
-    this.protocolLayerGroup.addLayer(corridorBeta);
-  }
-
-  private renderRealMapNodes() {
-    if (!this.nodeLayerGroup) return;
-    this.nodeLayerGroup.clearLayers();
-
-    const nodesData = [
-      { id: 1, name: "NODE-01 (Shaft #2)", coords: [23.798541, 86.426912], color: "#10b981", status: "NOMINAL", rate: "0.12 mm/d", desc: "Shaft #2 North Drift Collar" },
-      { id: 2, name: "NODE-02 (Overburden)", coords: [23.797241, 86.434612], color: "#f59e0b", status: "WATCH", rate: "1.45 mm/d", desc: "Haul Road Overburden Bench" },
-      { id: 3, name: "NODE-03 (Pillar 4B Stope)", coords: [23.795741, 86.430412], color: "#ef4444", status: "CRITICAL EXCURSION", rate: "2.85 mm/d", desc: "Active Extraction Stope Pillar 4B", isFocus: true },
-      { id: 4, name: "NODE-04 (Sump Basin)", coords: [23.792641, 86.428212], color: "#0ea5e9", status: "NOMINAL", rate: "0.08 mm/d", desc: "Sub-Gallery Sump Basin Aquifer" },
-      { id: 5, name: "NODE-05 (North-East Incline)", coords: [23.800241, 86.435912], color: "#64748b", status: "OFFLINE", rate: "N/A", desc: "Old Sector Workings - Packet Timeout" }
-    ];
-
-    nodesData.forEach(n => {
-      let iconHtml = `<div style="width:16px;height:16px;background:${n.color};border-radius:50%"></div>`;
-      if (n.isFocus) {
-        iconHtml = `<div style="width:24px;height:24px;background:${n.color};border-radius:50%;border:2px solid white"></div>`;
-      }
-      const icon = L.divIcon({
-        className: `custom-node-marker-${n.id}`,
-        html: iconHtml,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12]
-      });
-      const marker = L.marker(n.coords, { icon });
-      this.markers[n.id] = marker;
-      this.nodeLayerGroup.addLayer(marker);
-    });
   }
 
   public setMapMode(mode: string) {
-    this.currentMapMode = mode;
-    const realMapEl = this.el('real-leaflet-map');
-    const btnSat = this.el('btn-layer-sat');
-    const btnDark = this.el('btn-layer-dark');
-    const btnSchem = this.el('btn-layer-schem');
-
-    [btnSat, btnDark, btnSchem].forEach(b => {
-      if (b) {
-        b.className = "bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1 rounded transition active:scale-95 cursor-pointer";
-      }
-    });
-
     if (mode === 'satellite') {
-      if (btnSat) btnSat.className = "bg-white text-black font-bold font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1 rounded transition shadow-[0_0_10px_rgba(255,255,255,0.4)] cursor-pointer";
-      if (realMapEl) {
-        realMapEl.style.display = 'block';
-        realMapEl.style.opacity = '1';
-        realMapEl.style.pointerEvents = 'auto';
-      }
-      if (this.leafletMap) {
-        if (this.darkLayer && this.leafletMap.hasLayer(this.darkLayer)) this.leafletMap.removeLayer(this.darkLayer);
-        if (this.satelliteLayer && !this.leafletMap.hasLayer(this.satelliteLayer)) this.satelliteLayer.addTo(this.leafletMap);
-        this.leafletMap.invalidateSize();
-      }
+      this.setOptic('normal');
     } else if (mode === 'dark') {
-      if (btnDark) btnDark.className = "bg-white text-black font-bold font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1 rounded transition shadow-[0_0_10px_rgba(255,255,255,0.4)] cursor-pointer";
-      if (realMapEl) {
-        realMapEl.style.display = 'block';
-        realMapEl.style.opacity = '1';
-        realMapEl.style.pointerEvents = 'auto';
-      }
-      if (this.leafletMap) {
-        if (this.satelliteLayer && this.leafletMap.hasLayer(this.satelliteLayer)) this.leafletMap.removeLayer(this.satelliteLayer);
-        if (this.darkLayer && !this.leafletMap.hasLayer(this.darkLayer)) this.darkLayer.addTo(this.leafletMap);
-        this.leafletMap.invalidateSize();
-      }
+      this.setOptic('crt');
     } else if (mode === 'schematic') {
-      if (btnSchem) btnSchem.className = "bg-white text-black font-bold font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1 rounded transition shadow-[0_0_10px_rgba(255,255,255,0.4)] cursor-pointer";
-      if (realMapEl) {
-        realMapEl.style.display = 'none';
-        realMapEl.style.opacity = '0';
-        realMapEl.style.pointerEvents = 'none';
+      this.setOptic('nvg');
+    } else {
+      this.setOptic(mode);
+    }
+  }
+
+  public toggle3DContour() {
+    this.is3DActive = !this.is3DActive;
+    const btn = this.el('btn-3d-contour');
+    this.strataEntities.forEach(ent => {
+      if (ent) ent.show = !ent.show;
+    });
+    if (btn) {
+      if (this.is3DActive) {
+        btn.classList.add('bg-amber-500/30', 'text-white', 'border-amber-400');
+      } else {
+        btn.classList.remove('bg-amber-500/30', 'text-white', 'border-amber-400');
       }
     }
   }
 
+  private initHotkeys() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target && ((e.target as HTMLElement).tagName === 'INPUT' || (e.target as HTMLElement).tagName === 'TEXTAREA')) return;
+      switch (e.key) {
+        case '1': this.setOptic('normal'); break;
+        case '2': this.setOptic('flir'); break;
+        case '3': this.setOptic('nvg'); break;
+        case '4': this.setOptic('crt'); break;
+        case 'c':
+        case 'C': this.recenterMap(); break;
+        case 'Escape': this.resetGlobe(); break;
+      }
+    });
+  }
+
+  private initCesiumGlobe() {
+    const mapEl = this.el('gods-eye-globe-container');
+    if (!mapEl || typeof Cesium === 'undefined') return;
+
+    try {
+      this.cesiumViewer = new Cesium.Viewer('gods-eye-globe-container', {
+        imageryProvider: new Cesium.UrlTemplateImageryProvider({
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          maximumLevel: 19,
+          credit: 'Esri, Maxar, Earthstar Geographics'
+        }),
+        baseLayerPicker: false,
+        geocoder: false,
+        homeButton: false,
+        infoBox: false,
+        sceneModePicker: false,
+        selectionIndicator: false,
+        timeline: false,
+        navigationHelpButton: false,
+        animation: false,
+        shouldAnimate: true
+      });
+
+      // Space lighting & realistic atmospheric sky
+      this.cesiumViewer.scene.globe.enableLighting = true;
+      this.cesiumViewer.scene.globe.depthTestAgainstTerrain = false;
+      this.cesiumViewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#020408');
+
+      // 1. Subterranean Coal Seam Volume (Anthracite Black)
+      const seamEntity = this.cesiumViewer.entities.add({
+        name: 'Chasnala Main Coal Seam #14 (Subterranean Anthracite)',
+        position: Cesium.Cartesian3.fromDegrees(MINE_LON, MINE_LAT, MINE_ALT - 25),
+        cylinder: {
+          length: 18.0,
+          topRadius: 180.0,
+          bottomRadius: 210.0,
+          material: Cesium.Color.fromCssColorString('#18181b').withAlpha(0.85),
+          outline: true,
+          outlineColor: Cesium.Color.fromCssColorString('#3f3f46').withAlpha(0.6)
+        }
+      });
+      this.strataEntities.push(seamEntity);
+
+      // 2. Overburden Sandstone Caprock (Warm Terracotta/Ochre)
+      const caprockEntity = this.cesiumViewer.entities.add({
+        name: 'Overburden Sandstone Stratum',
+        position: Cesium.Cartesian3.fromDegrees(MINE_LON, MINE_LAT, MINE_ALT + 8),
+        cylinder: {
+          length: 12.0,
+          topRadius: 240.0,
+          bottomRadius: 260.0,
+          material: Cesium.Color.fromCssColorString('#d97706').withAlpha(0.35),
+          outline: true,
+          outlineColor: Cesium.Color.fromCssColorString('#b45309').withAlpha(0.7)
+        }
+      });
+      this.strataEntities.push(caprockEntity);
+
+      // 3. Subsurface Mine Sump Basin (Crystalline Blue)
+      const sumpEntity = this.cesiumViewer.entities.add({
+        name: 'REL_35 Underground Sump Basin (Water Table Reservoir)',
+        position: Cesium.Cartesian3.fromDegrees(MINE_LON - 0.0022, MINE_LAT - 0.0031, MINE_ALT - 42),
+        cylinder: {
+          length: 8.0,
+          topRadius: 90.0,
+          bottomRadius: 90.0,
+          material: Cesium.Color.fromCssColorString('#0284c7').withAlpha(0.65),
+          outline: true,
+          outlineColor: Cesium.Color.fromCssColorString('#38bdf8')
+        }
+      });
+      this.strataEntities.push(sumpEntity);
+
+      // 4. DGMS Safety Protocol Layers
+      const evacCylinder = this.cesiumViewer.entities.add({
+        name: 'DGMS 220m Critical Evacuation Zone',
+        position: Cesium.Cartesian3.fromDegrees(MINE_LON, MINE_LAT, MINE_ALT + 1),
+        cylinder: {
+          length: 2.0,
+          topRadius: 220.0,
+          bottomRadius: 220.0,
+          material: Cesium.Color.fromCssColorString('#ef4444').withAlpha(0.20),
+          outline: true,
+          outlineColor: Cesium.Color.fromCssColorString('#ef4444')
+        }
+      });
+      this.protocolEntities.push(evacCylinder);
+
+      const watchCylinder = this.cesiumViewer.entities.add({
+        name: 'DGMS 450m Geotechnical Watch Boundary',
+        position: Cesium.Cartesian3.fromDegrees(MINE_LON, MINE_LAT, MINE_ALT),
+        cylinder: {
+          length: 1.0,
+          topRadius: 450.0,
+          bottomRadius: 450.0,
+          material: Cesium.Color.fromCssColorString('#f59e0b').withAlpha(0.08),
+          outline: true,
+          outlineColor: Cesium.Color.fromCssColorString('#f59e0b')
+        }
+      });
+      this.protocolEntities.push(watchCylinder);
+
+      const corridorAlpha = this.cesiumViewer.entities.add({
+        name: 'Escape Corridor Alpha (Incline Portal)',
+        polyline: {
+          positions: Cesium.Cartesian3.fromDegreesArrayHeights([
+            MINE_LON, MINE_LAT, MINE_ALT + 15,
+            MINE_LON - 0.0016, MINE_LAT + 0.0017, MINE_ALT + 18,
+            MINE_LON - 0.0035, MINE_LAT + 0.0028, MINE_ALT + 22.5,
+            MINE_LON - 0.0054, MINE_LAT + 0.0055, MINE_ALT + 30
+          ]),
+          width: 3.5,
+          material: new Cesium.PolylineGlowMaterialProperty({
+            glowPower: 0.3,
+            color: Cesium.Color.fromCssColorString('#10b981')
+          })
+        }
+      });
+      this.protocolEntities.push(corridorAlpha);
+
+      const corridorBeta = this.cesiumViewer.entities.add({
+        name: 'Escape Corridor Beta (Hoist Alpha)',
+        polyline: {
+          positions: Cesium.Cartesian3.fromDegreesArrayHeights([
+            MINE_LON, MINE_LAT, MINE_ALT + 15,
+            MINE_LON + 0.0024, MINE_LAT + 0.0009, MINE_ALT + 25,
+            MINE_LON + 0.0042, MINE_LAT + 0.0015, MINE_ALT + 45
+          ]),
+          width: 3.0,
+          material: new Cesium.PolylineGlowMaterialProperty({
+            glowPower: 0.3,
+            color: Cesium.Color.fromCssColorString('#00f5ff')
+          })
+        }
+      });
+      this.protocolEntities.push(corridorBeta);
+
+      // 5. 3D Sensor Node Markers
+      // Node 01: Shaft #2 North Drift
+      this.nodeEntities[1] = this.cesiumViewer.entities.add({
+        name: 'NODE-01: Shaft #2 North Drift',
+        position: Cesium.Cartesian3.fromDegrees(MINE_LON - 0.0035, MINE_LAT + 0.0028, MINE_ALT + 22.5),
+        point: {
+          pixelSize: 12,
+          color: Cesium.Color.fromCssColorString('#10b981'),
+          outlineColor: Cesium.Color.fromCssColorString('#064e3b'),
+          outlineWidth: 2
+        },
+        label: {
+          text: 'NODE-01 [SHAFT #2 OK]',
+          font: '10px JetBrains Mono, monospace',
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+          fillColor: Cesium.Color.fromCssColorString('#6ee7b7'),
+          outlineColor: Cesium.Color.BLACK,
+          outlineWidth: 2,
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+          pixelOffset: new Cesium.Cartesian2(0, -14)
+        }
+      });
+
+      // Node 02: Haul Road Overburden Bench
+      this.nodeEntities[2] = this.cesiumViewer.entities.add({
+        name: 'NODE-02: Overburden Haul Road',
+        position: Cesium.Cartesian3.fromDegrees(MINE_LON + 0.0042, MINE_LAT + 0.0015, MINE_ALT + 45.0),
+        point: {
+          pixelSize: 12,
+          color: Cesium.Color.fromCssColorString('#f59e0b'),
+          outlineColor: Cesium.Color.fromCssColorString('#78350f'),
+          outlineWidth: 2
+        },
+        label: {
+          text: 'NODE-02 [OVERBURDEN WATCH]',
+          font: '10px JetBrains Mono, monospace',
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+          fillColor: Cesium.Color.fromCssColorString('#fcd34d'),
+          outlineColor: Cesium.Color.BLACK,
+          outlineWidth: 2,
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+          pixelOffset: new Cesium.Cartesian2(0, -14)
+        }
+      });
+
+      // Node 03: Sector 4B Extraction Stope Pillar (Critical Excursion Anchor)
+      this.nodeEntities[3] = this.cesiumViewer.entities.add({
+        name: 'TARGET: NODE-03 SEC-4B [ACTIVE STOPE PILLAR]',
+        position: Cesium.Cartesian3.fromDegrees(MINE_LON, MINE_LAT, MINE_ALT + 30.0),
+        point: {
+          pixelSize: 16,
+          color: Cesium.Color.fromCssColorString('#ef4444'),
+          outlineColor: Cesium.Color.WHITE,
+          outlineWidth: 3
+        },
+        label: {
+          text: 'TARGET: NODE-03 SEC-4B\n[ACTIVE STOPE PILLAR]',
+          font: '11px JetBrains Mono, monospace',
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+          fillColor: Cesium.Color.fromCssColorString('#fca5a5'),
+          outlineColor: Cesium.Color.BLACK,
+          outlineWidth: 2,
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+          pixelOffset: new Cesium.Cartesian2(0, -20)
+        }
+      });
+
+      // Node 04: Sub-Gallery Sump Basin Aquifer
+      this.nodeEntities[4] = this.cesiumViewer.entities.add({
+        name: 'NODE-04: Sub-Gallery Sump Basin',
+        position: Cesium.Cartesian3.fromDegrees(MINE_LON - 0.0022, MINE_LAT - 0.0031, MINE_ALT - 30.0),
+        point: {
+          pixelSize: 12,
+          color: Cesium.Color.fromCssColorString('#0ea5e9'),
+          outlineColor: Cesium.Color.fromCssColorString('#0c4a6e'),
+          outlineWidth: 2
+        },
+        label: {
+          text: 'NODE-04 [SUMP RESERVOIR]',
+          font: '10px JetBrains Mono, monospace',
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+          fillColor: Cesium.Color.fromCssColorString('#7dd3fc'),
+          outlineColor: Cesium.Color.BLACK,
+          outlineWidth: 2,
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+          pixelOffset: new Cesium.Cartesian2(0, -14)
+        }
+      });
+
+      // Node 05: Haulage Drift #12 North-East Incline
+      this.nodeEntities[5] = this.cesiumViewer.entities.add({
+        name: 'NODE-05: Haulage Drift #12 Incline',
+        position: Cesium.Cartesian3.fromDegrees(MINE_LON + 0.0055, MINE_LAT + 0.0045, MINE_ALT + 10.0),
+        point: {
+          pixelSize: 12,
+          color: Cesium.Color.fromCssColorString('#14b8a6'),
+          outlineColor: Cesium.Color.fromCssColorString('#134e4a'),
+          outlineWidth: 2
+        },
+        label: {
+          text: 'NODE-05 [DRIFT 12 ONLINE]',
+          font: '10px JetBrains Mono, monospace',
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+          fillColor: Cesium.Color.fromCssColorString('#99f6e4'),
+          outlineColor: Cesium.Color.BLACK,
+          outlineWidth: 2,
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+          pixelOffset: new Cesium.Cartesian2(0, -14)
+        }
+      });
+
+      // 6. 3D Strata Subsidence Displacement Vector Ray
+      this.subsidenceVectorEntity = this.cesiumViewer.entities.add({
+        name: 'Differential Strata Subsidence Vector',
+        polyline: {
+          positions: Cesium.Cartesian3.fromDegreesArrayHeights([
+            MINE_LON, MINE_LAT, MINE_ALT + 30,
+            MINE_LON + 0.0008, MINE_LAT - 0.0012, MINE_ALT - 35
+          ]),
+          width: 4,
+          material: new Cesium.PolylineGlowMaterialProperty({
+            glowPower: 0.35,
+            color: Cesium.Color.fromCssColorString('#f43f5e')
+          })
+        }
+      });
+
+      // Load live GeoJSON Spatial Mine Layer
+      this.loadGeoJsonLayer();
+
+      // Fly directly to Mine on startup
+      this.flyToMine();
+
+      // Initialize keyboard hotkeys
+      this.initHotkeys();
+
+    } catch (err: any) {
+      console.warn('Cesium WebGL init notice:', err?.message || err);
+    }
+  }
+
+  private loadGeoJsonLayer() {
+    if (!this.cesiumViewer || typeof Cesium === 'undefined') return;
+    Cesium.GeoJsonDataSource.load('/api/telemetry/geojson', {
+      stroke: Cesium.Color.fromCssColorString('#ef4444'),
+      fill: Cesium.Color.fromCssColorString('#ef4444').withAlpha(0.3),
+      strokeWidth: 3,
+      markerSize: 24
+    }).then((dataSource: any) => {
+      this.cesiumViewer.dataSources.add(dataSource);
+      const entities = dataSource.entities.values;
+      for (let i = 0; i < entities.length; i++) {
+        const entity = entities[i];
+        const hexColor = (entity.properties && entity.properties.color && entity.properties.color.getValue()) || '#10b981';
+        if (entity.billboard) {
+          entity.billboard.color = Cesium.Color.fromCssColorString(hexColor);
+        }
+        if (entity.point) {
+          entity.point.color = Cesium.Color.fromCssColorString(hexColor);
+        }
+      }
+      console.log('[GEV Engine] Live GeoJSON telemetry nodes loaded into 3D globe.');
+    }).catch((e: any) => {
+      console.warn('[GEV Engine] GeoJSON layer notice:', e?.message || e);
+    });
+  }
+
   public toggleProtocolLayer() {
-    if (!this.leafletMap || !this.protocolLayerGroup) return;
     this.isProtocolLayerVisible = !this.isProtocolLayerVisible;
+    this.protocolEntities.forEach(ent => {
+      if (ent) ent.show = this.isProtocolLayerVisible;
+    });
     const btn = this.el('btn-toggle-protocol');
 
     if (this.isProtocolLayerVisible) {
-      this.protocolLayerGroup.addTo(this.leafletMap);
       if (btn) {
         btn.innerHTML = `<span class="material-symbols-outlined text-[13px] text-emerald-400">shield</span> PROTOCOL: ARMED`;
         btn.classList.add('border-emerald-500/50', 'text-emerald-300');
         btn.classList.remove('border-white/20', 'text-zinc-400');
       }
     } else {
-      this.leafletMap.removeLayer(this.protocolLayerGroup);
       if (btn) {
         btn.innerHTML = `<span class="material-symbols-outlined text-[13px]">shield</span> PROTOCOL: OFF`;
         btn.classList.remove('border-emerald-500/50', 'text-emerald-300');
@@ -610,9 +846,7 @@ class TelemetryClient {
       modal.classList.add('flex');
     }
 
-    if (this.leafletMap) {
-      this.leafletMap.setView([23.795741, 86.430412], 16, { animate: true });
-    }
+    this.flyToMine();
 
     const logList = this.el('incident-log-list');
     if (logList) {
@@ -678,6 +912,9 @@ let telemetryClientInstance: TelemetryClient | null = null;
 
 (window as any).selectNode = (num: number) => (window as any).getTelemetryClient().selectNode(num);
 (window as any).recenterMap = () => (window as any).getTelemetryClient().recenterMap();
+(window as any).resetGlobe = () => (window as any).getTelemetryClient().resetGlobe();
+(window as any).flyToMine = () => (window as any).getTelemetryClient().flyToMine();
+(window as any).setOptic = (type: string) => (window as any).getTelemetryClient().setOptic(type);
 (window as any).toggle3DContour = () => (window as any).getTelemetryClient().toggle3DContour();
 (window as any).setMapMode = (mode: string) => (window as any).getTelemetryClient().setMapMode(mode);
 (window as any).toggleProtocolLayer = () => (window as any).getTelemetryClient().toggleProtocolLayer();
