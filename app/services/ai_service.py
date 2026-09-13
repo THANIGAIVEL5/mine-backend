@@ -41,6 +41,34 @@ class TerraSentinelMasterAI:
         else:
             return f"[MASTER AI ACTIVE] Continuous geotechnical telemetry surveillance synchronized across Sector 4B gallery."
 
+    async def query_local_neural_model(self, message: str, telemetry: Dict[str, Any]) -> Optional[str]:
+        prompt = (
+            f"Mine Telemetry State: Phase {telemetry.get('phase', 'STABLE')}, "
+            f"Strata Pitch {float(telemetry.get('pitch', 1.84)):.2f} deg, "
+            f"Vibration RMS {float(telemetry.get('rms', 0.33)):.2f}g, "
+            f"CO Gas {int(telemetry.get('co', 22))} ppm, "
+            f"Roof Displacement {float(telemetry.get('disp', 0.86)):.2f} mm. "
+            f"Operator: {message}. "
+            f"TERRA-SENTINEL Master AI Directive:"
+        )
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                res = await client.post('http://127.0.0.1:5005/generate', json={'prompt': prompt, 'max_tokens': 60})
+                if res.status_code == 200:
+                    data = res.json()
+                    gen_text = data.get('generated_text', '').strip()
+                    if gen_text:
+                        # Extract the response part after prompt
+                        if 'TERRA-SENTINEL Master AI Directive:' in gen_text:
+                            reply = gen_text.split('TERRA-SENTINEL Master AI Directive:')[-1].strip()
+                        else:
+                            reply = gen_text.strip()
+                        if len(reply) > 10:
+                            return reply
+        except Exception:
+            pass
+        return None
+
     async def process_operator_query(self, message: str, telemetry: Dict[str, Any], options: Dict[str, Any] = None) -> Dict[str, Any]:
         options = options or {}
         msg = (message or "").strip().lower()
@@ -54,13 +82,23 @@ class TerraSentinelMasterAI:
                 'isIntervention': True
             }
 
-        # 2. Comprehensive On-Device Natural Language Reasoning Engine (NO API KEY, NO TOKEN LIMIT, NO COST)
+        # 2. Query On-Device Natural Language Neural Model (Qwen2.5-Instruct running on server)
+        neural_reply = await self.query_local_neural_model(message, telemetry)
+        if neural_reply:
+            return {
+                'reply': f"🤖 [ON-DEVICE NEURAL REASONING // Qwen-2.5-Instruct]\n{neural_reply}",
+                'source': 'TERRA-SENTINEL Master AI (On-Device Neural Model: Qwen2.5-0.5B-Instruct)',
+                'isIntervention': False
+            }
+
+        # 3. Comprehensive On-Device Geotechnical Knowledge Core fallback
         reply = self.execute_deep_reasoning(message, telemetry)
         return {
             'reply': reply,
-            'source': 'TERRA-SENTINEL Master AI (Offline Deep-Reasoning Neural Engine v4.0)',
+            'source': 'TERRA-SENTINEL Master AI (Offline Geotechnical Reasoning Engine v4.0)',
             'isIntervention': False
         }
+
 
     def check_intervention_command(self, msg: str, telemetry: Dict[str, Any]) -> Optional[str]:
         is_intervene = any(kw in msg for kw in ['intervene', 'override', 'force', 'manual', 'command:', 'actuate', 'engage'])
