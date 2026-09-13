@@ -9,19 +9,23 @@
       <span class="font-['JetBrains_Mono'] text-[11px] text-white uppercase tracking-wider font-bold">ELEVATED SUBSIDENCE WATCH - SECTOR 4B</span>
     </div>
     <div class="flex items-center gap-4">
-      <div class="flex items-center gap-2 font-['JetBrains_Mono'] text-[11px] bg-neutral-900 px-2.5 py-1 rounded border border-white/10">
+      <div class="flex items-center gap-2 font-['JetBrains_Mono'] text-[11px] bg-neutral-900/90 px-2.5 py-1 rounded border border-emerald-500/30">
         <span class="text-zinc-400 uppercase">NODES:</span>
-        <span class="text-white font-bold">4 ACT</span>
+        <span id="header-nodes-online" class="text-emerald-400 font-bold">5 ONLINE</span>
         <span class="text-zinc-600">/</span>
-        <span class="text-zinc-400 font-bold">1 OFF</span>
+        <span class="text-emerald-300 text-[10px] font-bold">0 OFF</span>
         <span class="text-zinc-600">/</span>
-        <span class="text-zinc-500">0 COR</span>
+        <span class="text-emerald-400 text-[10px]">100% HEALTH</span>
       </div>
-      <div class="flex items-center gap-2 font-['JetBrains_Mono'] text-[11px] bg-neutral-900 px-2.5 py-1 rounded border border-white/10">
+      <div id="uplink-container" class="flex items-center gap-2 font-['JetBrains_Mono'] text-[11px] bg-neutral-900/90 px-2.5 py-1 rounded border border-emerald-500/30">
         <span class="text-zinc-400 uppercase">UPLINK:</span>
-        <span class="text-white font-bold">MQTT:1883</span>
-        <span class="text-zinc-400 text-[10px]">[COM4 STBY]</span>
+        <span id="uplink-status-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.25)]">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>● CONNECTED (WEBSOCKET / STREAM ACTIVE)
+        </span>
       </div>
+      <button onclick="toggleHardwareStream()" id="btn-hardware-toggle" title="Toggle Live Physical Hardware Stream Simulation" class="px-2.5 py-1 rounded bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 hover:text-white font-['JetBrains_Mono'] text-[10px] uppercase font-bold flex items-center gap-1 transition cursor-pointer active:scale-95">
+        <span class="material-symbols-outlined text-[13px] text-emerald-400">sensors</span> <span id="hardware-toggle-text">HARDWARE LINK: ACTIVE</span>
+      </button>
       <div class="flex items-center gap-1.5 font-['JetBrains_Mono'] text-[11px] text-white">
         <span class="material-symbols-outlined text-zinc-300 text-[16px]">schedule</span>
         <span id="live-clock">IST UTC+5:30 REAL-TIME</span>

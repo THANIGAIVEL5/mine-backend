@@ -2,7 +2,6 @@
    TERRA-PULSE OS - Tailwind CSS v4 Engine Stylesheet
    ========================================================= */
 
-@import "tailwindcss";
 
 @theme {
   --color-primary: #00f5ff;

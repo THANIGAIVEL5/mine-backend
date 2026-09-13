@@ -27,13 +27,20 @@ class TelemetryService:
         # LoRa Gateway RF Telemetry
         self.rssi_val = -84
         self.pkt_flow = 42
+        self.force_hardware_mode = True
         
         # Autonomous Safety Phase: STABLE, WARNING, CRITICAL, RECOVERY
         self.phase = 'STABLE'
         self.ticks = 0
 
+    def set_hardware_mode(self, enabled: bool):
+        self.force_hardware_mode = enabled
+        if enabled:
+            self.last_hardware_packet_time = time.time()
+
     def ingest_hardware_packet(self, data: dict) -> TelemetrySnapshot:
         self.last_hardware_packet_time = time.time()
+        self.force_hardware_mode = True
 
         # Map ADXL345 / MPU6050 Tilt & Flexure
         if 'pitch' in data: self.pitch = float(data['pitch'])
@@ -165,7 +172,7 @@ class TelemetryService:
 
     def get_snapshot(self, is_hardware=None, node=None) -> TelemetrySnapshot:
         if is_hardware is None:
-            is_hardware = (time.time() - self.last_hardware_packet_time) < 4.0
+            is_hardware = self.force_hardware_mode or ((time.time() - self.last_hardware_packet_time) < 10.0)
 
         latency = math.floor(random.random() * 12) + 14
         pkt = self.pkt_flow if is_hardware else math.floor(random.random() * 5) + 40

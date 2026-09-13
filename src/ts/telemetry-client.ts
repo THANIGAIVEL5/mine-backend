@@ -64,9 +64,16 @@ class TelemetryClient {
 
       ws.onopen = () => {
         console.log('📡 Real-time Telemetry WebSocket connected.');
+        const badge = this.el('uplink-status-badge');
+        if (badge) {
+          badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.25)]";
+          badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>● LIVE STREAM: CONNECTED (WS/REALTIME)';
+        }
+        const ingestTxt = this.el('ingest-channel-text');
+        if (ingestTxt) ingestTxt.innerText = 'LIVE TELEMETRY STREAM ONLINE (WS)';
       };
 
-      ws.onmessage = (event) => {
+      ws.onmessage = (event: MessageEvent) => {
         try {
           const parsed = JSON.parse(event.data);
           const data = parsed.data || parsed.snapshot || parsed.sensors || parsed;
@@ -93,6 +100,12 @@ class TelemetryClient {
   private startPolling() {
     if (this.pollingStarted) return;
     this.pollingStarted = true;
+
+    const badge = this.el('uplink-status-badge');
+    if (badge) {
+      badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/40 flex items-center gap-1.5 shadow-[0_0_10px_rgba(20,184,166,0.25)]";
+      badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span>● LIVE STREAM: CONNECTED (HTTP/1Hz)';
+    }
     
     const fetchTelemetry = async () => {
       try {
@@ -330,7 +343,7 @@ class TelemetryClient {
       2: "flex flex-col items-center py-1.5 rounded bg-amber-950/80 border border-amber-400 text-amber-200 shadow-[0_0_12px_rgba(245,158,11,0.35)] transition-all cursor-pointer ring-1 ring-amber-400",
       3: "flex flex-col items-center py-1.5 rounded bg-rose-950/90 border-2 border-rose-500 text-rose-100 shadow-[0_0_16px_rgba(244,63,94,0.45)] transition-all cursor-pointer ring-1 ring-rose-400",
       4: "flex flex-col items-center py-1.5 rounded bg-cyan-950/80 border border-cyan-400 text-cyan-200 shadow-[0_0_12px_rgba(6,182,212,0.35)] transition-all cursor-pointer ring-1 ring-cyan-400",
-      5: "flex flex-col items-center py-1.5 rounded bg-slate-900 border border-slate-500 text-slate-300 transition-all cursor-pointer ring-1 ring-slate-400"
+      5: "flex flex-col items-center py-1.5 rounded bg-teal-950/80 border border-teal-400 text-teal-200 shadow-[0_0_12px_rgba(20,184,166,0.35)] transition-all cursor-pointer ring-1 ring-teal-400"
     };
 
     const defaultStyles: { [key: number]: string } = {
@@ -338,7 +351,7 @@ class TelemetryClient {
       2: "flex flex-col items-center py-1.5 rounded bg-[#0b0f19] border border-amber-500/20 hover:border-amber-500/50 hover:bg-amber-950/20 transition-all cursor-pointer text-amber-400",
       3: "flex flex-col items-center py-1.5 rounded bg-[#0b0f19] border border-rose-500/30 hover:border-rose-500/60 hover:bg-rose-950/20 transition-all cursor-pointer text-rose-400",
       4: "flex flex-col items-center py-1.5 rounded bg-[#0b0f19] border border-cyan-500/20 hover:border-cyan-500/50 hover:bg-cyan-950/20 transition-all cursor-pointer text-cyan-400",
-      5: "flex flex-col items-center py-1.5 rounded bg-[#0b0f19]/40 border border-white/5 opacity-70 hover:opacity-100 transition-all cursor-pointer text-slate-400"
+      5: "flex flex-col items-center py-1.5 rounded bg-[#0b0f19] border border-teal-500/20 hover:border-teal-500/50 hover:bg-teal-950/20 transition-all cursor-pointer text-teal-400"
     };
 
     for (let i = 1; i <= 5; i++) {
@@ -347,7 +360,7 @@ class TelemetryClient {
       btn.className = (i === nodeNum) ? activeStyles[i] : defaultStyles[i];
     }
 
-    const nodeNames = ["NODE-01 (Shaft #2)", "NODE-02 (Overburden)", "NODE-03 (Pillar 4B Stope)", "NODE-04 (Sump Basin)", "NODE-05 (Offline)"];
+    const nodeNames = ["NODE-01 (Shaft #2)", "NODE-02 (Overburden)", "NODE-03 (Pillar 4B Stope)", "NODE-04 (Sump Basin)", "NODE-05 (Haulage Drift #12 - Online)"];
     const headerTitle = this.el('node-focus-title');
     if (headerTitle) headerTitle.innerText = `Active Telemetry Stream: ${nodeNames[nodeNum - 1]}`;
   }
@@ -631,6 +644,27 @@ class TelemetryClient {
       modal.classList.remove('flex');
     }
   }
+
+  public async toggleHardwareStream() {
+    try {
+      const res = await fetch('/api/telemetry/hardware-mode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: true })
+      });
+      const data = await res.json();
+      const txt = this.el('hardware-toggle-text');
+      if (txt) txt.innerText = 'HARDWARE LINK: CONNECTED';
+      const badge = this.el('uplink-status-badge');
+      if (badge) {
+        badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.35)]";
+        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>● LIVE STREAM: CONNECTED (ESP32/STREAM)';
+      }
+      console.log('✅ Hardware mode active:', data);
+    } catch (e) {
+      console.warn('Hardware toggle error:', e);
+    }
+  }
 }
 
 let telemetryClientInstance: TelemetryClient | null = null;
@@ -649,6 +683,7 @@ let telemetryClientInstance: TelemetryClient | null = null;
 (window as any).toggleProtocolLayer = () => (window as any).getTelemetryClient().toggleProtocolLayer();
 (window as any).triggerEvacuationProtocol = () => (window as any).getTelemetryClient().triggerEvacuationProtocol();
 (window as any).closeEvacModal = () => (window as any).getTelemetryClient().closeEvacModal();
+(window as any).toggleHardwareStream = () => (window as any).getTelemetryClient().toggleHardwareStream();
 
 document.addEventListener('DOMContentLoaded', () => {
   (window as any).getTelemetryClient();

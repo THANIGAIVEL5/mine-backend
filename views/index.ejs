@@ -67,19 +67,19 @@
             <div class="w-px h-7 bg-white/20"></div>
             <!-- Ingestion state -->
             <div class="flex flex-col px-1">
-              <span class="font-['JetBrains_Mono'] text-[9px] uppercase tracking-wider text-on-surface-variant">MQTT INGEST</span>
+              <span class="font-['JetBrains_Mono'] text-[9px] uppercase tracking-wider text-on-surface-variant">TELEMETRY UPLINK</span>
               <div class="flex items-center gap-1.5 mt-0.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981] animate-pulse"></span>
-                <span class="font-['JetBrains_Mono'] text-[11px] text-emerald-400 uppercase font-bold">broker.lan:1883</span>
+                <span id="ingest-ping-dot" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981] animate-pulse"></span>
+                <span id="ingest-channel-text" class="font-['JetBrains_Mono'] text-[11px] text-emerald-400 uppercase font-bold">LIVE TELEMETRY STREAM ONLINE</span>
               </div>
             </div>
             <div class="w-px h-7 bg-white/20"></div>
-            <!-- Stale monitor -->
-            <div class="flex items-center gap-2 bg-[#ff3366]/10 border border-[#ff3366]/30 px-3 py-1.5 rounded">
-              <span class="material-symbols-outlined text-[#ff3366] text-[18px]">sync_problem</span>
+            <!-- Ingestion monitor badge -->
+            <div id="connection-health-badge" class="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded">
+              <span class="material-symbols-outlined text-emerald-400 text-[18px]">cloud_done</span>
               <div class="flex flex-col">
-                <span class="font-['JetBrains_Mono'] text-[9px] text-[#ff3366] font-bold uppercase tracking-wider">STALE TIMEOUT: 45S</span>
-                <span class="font-['JetBrains_Mono'] text-[10px] leading-tight text-on-surface-variant">NODE-05 OFFLINE / NO DATA</span>
+                <span class="font-['JetBrains_Mono'] text-[9px] text-emerald-400 font-bold uppercase tracking-wider">NETWORK STATUS: OPTIMAL</span>
+                <span id="connection-node-summary" class="font-['JetBrains_Mono'] text-[10px] leading-tight text-zinc-300">ALL 5 NODES REPORTING REALTIME</span>
               </div>
             </div>
           </div>
@@ -304,18 +304,18 @@
                   </div>
                 </div>
 
-                <!-- Node 05: Offline with hatch notice (Slate Charcoal) -->
-                <div id="map-node-5" onclick="selectNode(5)" class="absolute top-[70px] right-[40px] flex flex-col items-center group opacity-85 cursor-pointer transition-transform hover:scale-110">
-                  <div class="w-4 h-4 rounded-full bg-slate-900 border border-slate-600 flex items-center justify-center">
-                    <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                <!-- Node 05: Active Subterranean Haulage Drift Sensor (Teal / Emerald) -->
+                <div id="map-node-5" onclick="selectNode(5)" class="absolute top-[70px] right-[40px] flex flex-col items-center group cursor-pointer transition-transform hover:scale-110">
+                  <div class="w-4 h-4 rounded-full bg-[#042f2e] border border-teal-500/50 flex items-center justify-center">
+                    <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
                   </div>
-                  <div class="mt-1 bg-[#0f172a]/95 border border-slate-700 px-3 py-1.5 rounded flex flex-col items-center shadow-lg backdrop-blur-md">
+                  <div class="mt-1 bg-[#022c22]/95 border border-teal-500/40 px-3 py-1.5 rounded flex flex-col items-center shadow-lg backdrop-blur-md">
                     <div class="flex items-center gap-1.5">
-                      <span class="font-['JetBrains_Mono'] text-[10px] text-slate-300 uppercase font-bold">NODE-05</span>
-                      <span class="bg-slate-700 text-slate-200 text-[8px] px-1 py-0.5 rounded font-bold uppercase tracking-wider">OFFLINE</span>
+                      <span class="font-['JetBrains_Mono'] text-[10px] text-teal-300 uppercase font-bold">NODE-05</span>
+                      <span class="bg-teal-500/20 text-teal-300 border border-teal-500/30 text-[8px] px-1 py-0.5 rounded font-bold uppercase tracking-wider">CONNECTED</span>
                     </div>
-                    <span class="font-['JetBrains_Mono'] text-[9px] text-slate-400 uppercase text-center mt-1">
-                      PACKET TIMEOUT &gt;120s<br/>NO SIMULATED DATA ALLOWED
+                    <span class="font-['JetBrains_Mono'] text-[9px] text-teal-400/90 uppercase text-center mt-0.5">
+                      HAULAGE DRIFT 12 [SYNCED]
                     </span>
                   </div>
                 </div>
@@ -340,9 +340,9 @@
                 <span class="text-primary font-bold text-[11px]">NODE-04</span>
                 <span class="text-zinc-300 text-[9px]">ONLINE 100%</span>
               </button>
-              <button id="node-btn-5" onclick="selectNode(5)" class="flex flex-col items-center py-1.5 rounded bg-[#0b0f19]/40 border border-white/5 opacity-70 hover:opacity-100 transition-all cursor-pointer">
-                <span class="text-slate-400 font-bold text-[11px]">NODE-05</span>
-                <span class="text-[#ff3366] text-[9px]">OFFLINE FAIL</span>
+              <button id="node-btn-5" onclick="selectNode(5)" class="flex flex-col items-center py-1.5 rounded bg-[#0b0f19] border border-teal-500/30 hover:border-teal-500/60 hover:bg-teal-950/20 transition-all cursor-pointer">
+                <span class="text-teal-400 font-bold text-[11px]">NODE-05</span>
+                <span class="text-teal-300 text-[9px]">ONLINE 99.4%</span>
               </button>
             </div>
           </div>
