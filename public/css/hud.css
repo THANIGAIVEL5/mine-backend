@@ -30,16 +30,25 @@
   scrollbar-width: none;
 }
 
-/* Corner bracket HUD ornaments */
-.hud-bracket {
+/* Ultra Glassmorphism styling */
+.hud-bracket, .ultra-glass {
   position: relative;
-  background: rgba(11, 15, 25, 0.45) !important;
-  backdrop-filter: blur(16px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05), 0 8px 32px 0 rgba(0, 0, 0, 0.6) !important;
-  border-radius: 12px !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 40%, rgba(11, 15, 25, 0.55) 100%) !important;
+  backdrop-filter: blur(24px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(220%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.45) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3), inset 0 -1px 2px rgba(0, 0, 0, 0.4), 0 12px 40px 0 rgba(0, 0, 0, 0.7) !important;
+  border-radius: 14px !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
+
+.hud-bracket:hover, .ultra-glass:hover {
+  border-color: rgba(0, 245, 255, 0.5) !important;
+  box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.5), 0 16px 48px 0 rgba(0, 245, 255, 0.25) !important;
+}
+
 .hud-bracket::before {
   content: '';
   position: absolute;
