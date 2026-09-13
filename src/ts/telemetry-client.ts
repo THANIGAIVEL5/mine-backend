@@ -500,12 +500,16 @@ class TelemetryClient {
     if (!mapEl || typeof Cesium === 'undefined') return;
 
     try {
+      const esriAsync = Cesium.ArcGisMapServerImageryProvider.fromUrl(
+        'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
+        { enablePickFeatures: false }
+      ).catch((err: any) => {
+        console.warn('Esri World Imagery fallback to OSM:', err);
+        return Cesium.OpenStreetMapImageryProvider.fromUrl('https://tile.openstreetmap.org/');
+      });
+
       this.cesiumViewer = new Cesium.Viewer('gods-eye-globe-container', {
-        imageryProvider: new Cesium.UrlTemplateImageryProvider({
-          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-          maximumLevel: 19,
-          credit: 'Esri, Maxar, Earthstar Geographics'
-        }),
+        baseLayer: Cesium.ImageryLayer.fromProviderAsync(esriAsync),
         baseLayerPicker: false,
         geocoder: false,
         homeButton: false,
@@ -518,7 +522,8 @@ class TelemetryClient {
         shouldAnimate: true
       });
 
-      // Space lighting & realistic atmospheric sky
+      // Avoid blue globe by setting dark slate baseColor and background
+      this.cesiumViewer.scene.globe.baseColor = Cesium.Color.fromCssColorString('#0b101b');
       this.cesiumViewer.scene.globe.enableLighting = true;
       this.cesiumViewer.scene.globe.depthTestAgainstTerrain = false;
       this.cesiumViewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#020408');
