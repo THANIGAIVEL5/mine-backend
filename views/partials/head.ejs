@@ -9,6 +9,59 @@
 <!-- Leaflet GIS Real Satellite & Tactical Map Engine -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<!-- Tailwind CSS v4 Engine -->
-<script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+<!-- Tailwind CSS Engine with Complete Design System Tokens -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "secondary-fixed-dim": "#f59e0b",
+          "secondary-fixed": "#fbbf24",
+          "error-container": "#450a0a",
+          "on-tertiary-container": "#d1fae5",
+          "tertiary-fixed-dim": "#10b981",
+          "on-background": "#f8fafc",
+          "surface-variant": "#131b22",
+          "surface-bright": "#1e293b",
+          "tertiary-fixed": "#34d399",
+          "inverse-primary": "#0891b2",
+          "surface-container-highest": "#1e293b",
+          "on-secondary": "#451a03",
+          "surface-dim": "#05080c",
+          "on-primary-fixed": "#083344",
+          "primary-fixed-dim": "#22d3ee",
+          "primary-container": "#00f5ff",
+          "outline": "#334155",
+          "outline-variant": "#1e293b",
+          "inverse-surface": "#f8fafc",
+          "secondary": "#f59e0b",
+          "on-error-container": "#fca5a5",
+          "tertiary-container": "#064e3b",
+          "surface-container": "#0b1219",
+          "tertiary": "#10b981",
+          "primary-fixed": "#06b6d4",
+          "surface": "#070b10",
+          "on-surface-variant": "#94a3b8",
+          "primary": "#00f5ff",
+          "surface-container-high": "#111a24",
+          "on-primary-container": "#000000",
+          "surface-container-lowest": "#020408",
+          "surface-container-low": "#070c12",
+          "on-surface": "#f8fafc",
+          "secondary-container": "#78350f",
+          "background": "#05080c",
+          "error": "#ef4444"
+        },
+        fontFamily: {
+          sans: ["Inter", "sans-serif"],
+          mono: ["JetBrains Mono", "monospace"],
+          display: ["Space Grotesk", "sans-serif"]
+        }
+      }
+    }
+  };
+</script>
+
 

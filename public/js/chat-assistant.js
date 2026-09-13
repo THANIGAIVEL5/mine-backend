@@ -1,5 +1,5 @@
-export class ChatAssistantController {
-    socket = null;
+"use strict";
+class ChatAssistantController {
     geminiApiKey = localStorage.getItem('gemini_api_key') || '';
     windowEl = null;
     inputEl = null;
@@ -8,8 +8,7 @@ export class ChatAssistantController {
     maxIconEl = null;
     keyModalEl = null;
     keyInputEl = null;
-    constructor(socketInstance = null) {
-        this.socket = socketInstance;
+    constructor() {
         this.initElements();
         this.bindEvents();
     }
@@ -29,11 +28,10 @@ export class ChatAssistantController {
         }
     }
     bindEvents() {
-        if (this.socket) {
-            this.socket.on('chat_broadcast', (data) => {
-                this.appendMessage(data.sender, data.text, data.isAi, data.timestamp, data.source, data.isIntervention);
-                if (this.windowEl && this.windowEl.classList.contains('hidden') && this.badgeEl) {
-                    this.badgeEl.classList.remove('hidden');
+        if (this.inputEl) {
+            this.inputEl.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    this.sendMessage();
                 }
             });
         }
@@ -43,52 +41,62 @@ export class ChatAssistantController {
             this.initElements();
         if (this.windowEl) {
             this.windowEl.classList.remove('hidden');
-            if (this.inputEl)
-                setTimeout(() => this.inputEl.focus(), 100);
-            if (this.badgeEl)
-                this.badgeEl.classList.add('hidden');
+            this.windowEl.classList.add('flex');
+        }
+        if (this.badgeEl) {
+            this.badgeEl.classList.add('hidden');
+        }
+        if (this.inputEl) {
+            setTimeout(() => this.inputEl?.focus(), 150);
         }
     }
     closeWindow() {
+        if (!this.windowEl)
+            this.initElements();
         if (this.windowEl) {
             this.windowEl.classList.add('hidden');
+            this.windowEl.classList.remove('flex');
         }
     }
     toggleMaximize() {
         if (!this.windowEl)
-            return;
-        const isMax = this.windowEl.classList.toggle('chat-maximized');
-        if (isMax) {
-            this.windowEl.classList.remove('w-80', 'sm:w-[430px]', 'h-[540px]');
-            this.windowEl.classList.add('w-[92vw]', 'sm:w-[680px]', 'h-[75vh]');
-        }
-        else {
-            this.windowEl.classList.remove('w-[92vw]', 'sm:w-[680px]', 'h-[75vh]');
-            this.windowEl.classList.add('w-80', 'sm:w-[430px]', 'h-[540px]');
-        }
-        if (this.maxIconEl) {
-            this.maxIconEl.textContent = isMax ? 'close_fullscreen' : 'open_in_full';
+            this.initElements();
+        if (this.windowEl) {
+            const isMax = this.windowEl.classList.contains('w-[520px]');
+            if (isMax) {
+                this.windowEl.classList.remove('w-[520px]', 'h-[640px]');
+                this.windowEl.classList.add('w-96', 'h-[480px]');
+                if (this.maxIconEl)
+                    this.maxIconEl.innerText = 'fullscreen';
+            }
+            else {
+                this.windowEl.classList.remove('w-96', 'h-[480px]');
+                this.windowEl.classList.add('w-[520px]', 'h-[640px]');
+                if (this.maxIconEl)
+                    this.maxIconEl.innerText = 'fullscreen_exit';
+            }
         }
     }
-    appendMessage(sender, text, isAi = false, time = '', source = '', isIntervention = false) {
+    appendMessage(sender, text, isAi, timeStr = '', source = 'DGMS CMR-2017 & FASTAPI NEURAL CORE', isIntervention = false) {
         if (!this.messagesEl)
             this.initElements();
         if (!this.messagesEl)
             return;
+        timeStr = timeStr || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         const msgDiv = document.createElement('div');
-        msgDiv.className = `flex flex-col ${isAi ? 'items-start' : 'items-end'} mb-3`;
-        const timeStr = time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const senderColor = isIntervention ? 'text-amber-400 font-bold' : (isAi ? 'text-white' : 'text-emerald-400');
-        let bubbleBg = isAi ? 'bg-[#151922] border border-white/30 text-neutral-100' : 'bg-neutral-900/90 border border-neutral-700 text-neutral-100';
-        if (isIntervention) {
-            bubbleBg = 'bg-[#220d14] border-2 border-[#ff3366] text-white shadow-[0_0_20px_rgba(255,51,102,0.35)]';
-        }
+        msgDiv.className = `flex flex-col ${isAi ? 'items-start' : 'items-end'}`;
+        const bubbleBg = isAi
+            ? (isIntervention ? 'bg-amber-950/60 border border-amber-500/60 text-amber-200' : 'bg-surface-variant/80 border border-white/10 text-on-surface')
+            : 'bg-primary/20 border border-primary/40 text-on-surface';
+        const senderColor = isAi
+            ? (isIntervention ? 'text-amber-400' : 'text-primary')
+            : 'text-zinc-400';
         let badgeHtml = '';
-        if (isIntervention) {
-            badgeHtml = `<span class="ml-2 px-1.5 py-0.2 rounded text-[8px] bg-red-950/90 border border-red-500/60 text-red-300 font-mono animate-pulse">⚡ OPERATOR OVERRIDE ACTIVE</span>`;
-        }
-        else if (isAi && source) {
-            badgeHtml = `<span class="ml-2 px-1.5 py-0.2 rounded text-[8px] bg-neutral-900 border border-white/30 text-white font-mono">${source}</span>`;
+        if (isAi) {
+            badgeHtml = `<span class="bg-white/5 border border-white/10 text-[9px] px-1.5 py-0.5 rounded text-zinc-400">${source}</span>`;
+            if (isIntervention) {
+                badgeHtml += `<span class="bg-amber-500/20 border border-amber-500 text-amber-300 text-[9px] px-1.5 py-0.5 rounded animate-pulse">SAFETY INTERVENTION</span>`;
+            }
         }
         msgDiv.innerHTML = `
       <div class="flex items-center gap-1.5 text-[10px] uppercase font-mono ${senderColor} mb-1">
@@ -111,29 +119,19 @@ export class ChatAssistantController {
             return;
         if (this.inputEl)
             this.inputEl.value = '';
-        const payload = {
-            message: text,
-            user: 'Mine Operator',
-            geminiApiKey: this.geminiApiKey || undefined
-        };
-        if (this.socket && this.socket.connected) {
-            this.socket.emit('chat_message', payload);
-        }
-        else {
-            this.appendMessage('Mine Operator', text, false);
-            fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: text })
-            })
-                .then(res => res.json())
-                .then(data => {
-                this.appendMessage('TERRA-SENTINEL MASTER AI', data.reply, true, '', data.source, data.isIntervention);
-            })
-                .catch(err => {
-                this.appendMessage('TERRA-SENTINEL MASTER AI', 'Autonomous interlock notice: ' + err.message, true);
-            });
-        }
+        this.appendMessage('Mine Operator', text, false);
+        fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: text })
+        })
+            .then(res => res.json())
+            .then(data => {
+            this.appendMessage('TERRA-SENTINEL MASTER AI', data.reply || data.text || 'Command processed.', true, '', data.source, data.isIntervention);
+        })
+            .catch(err => {
+            this.appendMessage('TERRA-SENTINEL MASTER AI', 'Autonomous interlock notice: ' + err.message, true);
+        });
     }
     sendQuickChat(query) {
         this.openWindow();
@@ -159,8 +157,7 @@ export class ChatAssistantController {
 let chatControllerInstance = null;
 window.getChatAssistant = function () {
     if (!chatControllerInstance) {
-        const s = (typeof window.socket !== 'undefined' && window.socket) ? window.socket : null;
-        chatControllerInstance = new ChatAssistantController(s);
+        chatControllerInstance = new ChatAssistantController();
     }
     return chatControllerInstance;
 };

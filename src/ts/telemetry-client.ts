@@ -1,9 +1,34 @@
-import { TelemetryData } from './types.js';
-
-declare const io: any;
 declare const L: any;
 
-export class TelemetryClient {
+interface TelemetryData {
+  pitch: number;
+  roll: number;
+  disp: number;
+  rms: number;
+  p2p?: number;
+  fft?: number;
+  temp: number;
+  humidity?: number;
+  co: number;
+  nh3?: number;
+  co2?: number;
+  aqi: number;
+  sump: number;
+  adc_sump?: number;
+  lat?: number;
+  lon?: number;
+  alt?: number;
+  sats?: number;
+  hdop?: number;
+  rssi: number;
+  pkt: number;
+  phase?: string;
+  node?: string;
+  isHardware?: boolean;
+  aiText?: string;
+}
+
+class TelemetryClient {
   private socket: any = null;
   private currentRms: number = 0.15;
   private waveOffset: number = 0;
@@ -17,6 +42,7 @@ export class TelemetryClient {
   private darkLayer: any = null;
   private isProtocolLayerVisible: boolean = true;
   private markers: { [key: number]: any } = {};
+  private pollingStarted: boolean = false;
 
   constructor() {
     this.initSocket();
@@ -31,13 +57,56 @@ export class TelemetryClient {
 
   private initSocket() {
     try {
-      if (typeof io !== 'undefined') {
-        this.socket = io();
-        this.socket.on('telemetry', (data: TelemetryData) => this.handleTelemetry(data));
-      }
+      const loc = window.location;
+      const wsProtocol = loc.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${wsProtocol}//${loc.host}/ws/telemetry`;
+      const ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        console.log('📡 Real-time Telemetry WebSocket connected.');
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const parsed = JSON.parse(event.data);
+          const data = parsed.data || parsed.snapshot || parsed.sensors || parsed;
+          this.handleTelemetry(data);
+        } catch (err) {
+          console.warn('WS parse error:', err);
+        }
+      };
+
+      ws.onerror = (e) => {
+        console.log('WS error, starting fallback polling:', e);
+        this.startPolling();
+      };
+
+      ws.onclose = () => {
+        console.log('WS closed, starting fallback polling');
+        this.startPolling();
+      };
     } catch (e) {
-      console.log('Socket telemetry initialization notice:', e);
+      this.startPolling();
     }
+  }
+
+  private startPolling() {
+    if (this.pollingStarted) return;
+    this.pollingStarted = true;
+    
+    const fetchTelemetry = async () => {
+      try {
+        const res = await fetch('/api/telemetry');
+        const json = await res.json();
+        const data = json.snapshot || json.sensors || json.data || json;
+        this.handleTelemetry(data);
+      } catch (err) {
+        console.warn('Telemetry polling fetch error:', err);
+      }
+    };
+
+    fetchTelemetry();
+    setInterval(fetchTelemetry, 1000);
   }
 
   private handleTelemetry(data: TelemetryData) {
@@ -49,45 +118,45 @@ export class TelemetryClient {
     if (latencyVal) latencyVal.innerHTML = `${Math.floor(Math.random()*12)+14}<span class="text-[11px] text-neutral-400 font-normal ml-1">MS</span>`;
     
     const rssiVal = this.el('rssi-val');
-    if (rssiVal) rssiVal.innerText = data.rssi.toString();
+    if (rssiVal) rssiVal.innerText = (data.rssi !== undefined ? data.rssi : -84).toString();
     
     const pktVal = this.el('pkt-val');
-    if (pktVal) pktVal.innerText = data.pkt.toString();
+    if (pktVal) pktVal.innerText = (data.pkt !== undefined ? data.pkt : 42).toString();
 
     // ADXL345 / MPU6050 Orientation Readouts
     const valPitch = this.el('val-pitch');
-    if (valPitch) valPitch.innerText = `${Number(data.pitch).toFixed(2)}°`;
+    if (valPitch) valPitch.innerText = `${Number(data.pitch || 0).toFixed(2)}°`;
     
     const valRoll = this.el('val-roll');
-    if (valRoll) valRoll.innerText = `${data.roll > 0 ? '+' : ''}${Number(data.roll).toFixed(2)}°`;
+    if (valRoll) valRoll.innerText = `${(data.roll || 0) > 0 ? '+' : ''}${Number(data.roll || 0).toFixed(2)}°`;
     
     const valDisp = this.el('val-disp');
-    if (valDisp) valDisp.innerText = `${Number(data.disp).toFixed(2)}° Σ`;
+    if (valDisp) valDisp.innerText = `${Number(data.disp || 0).toFixed(2)}° Σ`;
 
     // Piezo Vibration Harmonics
     const valRms = this.el('val-rms');
-    if (valRms) valRms.innerText = `${Number(data.rms).toFixed(2)} g`;
-    
+    if (valRms) valRms.innerText = `${Number(data.rms || 0).toFixed(2)} g`;
+
     const valP2p = this.el('val-p2p');
-    if (valP2p) valP2p.innerText = `${Number(data.p2p || data.rms * 3.14).toFixed(2)} g`;
-    
+    if (valP2p) valP2p.innerText = `${Number(data.p2p || (data.rms || 0.15) * 3.14).toFixed(2)} g`;
+
     const valFft = this.el('val-fft');
     if (valFft) valFft.innerText = `${Number(data.fft || 48.0).toFixed(1)} Hz`;
 
     // Temperature & Thermometer column
     const valTemp = this.el('val-temp');
-    if (valTemp) valTemp.innerText = Number(data.temp).toFixed(1);
-    
+    if (valTemp) valTemp.innerText = Number(data.temp || 36.8).toFixed(1);
+
     const tempBar = this.el('temp-bar');
     if (tempBar) {
-      const tempPct = Math.max(0, Math.min(100, (data.temp / 70) * 100));
+      const tempPct = Math.max(0, Math.min(100, ((data.temp || 36.8) / 70) * 100));
       tempBar.style.height = `${tempPct}%`;
     }
 
     // Tilt threshold alarm banner
     const tiltWarning = this.el('tilt-warning');
     if (tiltWarning) {
-      if (Math.abs(data.pitch) > 5.0 || Math.abs(data.roll) > 5.0) {
+      if (Math.abs(data.pitch || 0) > 3.5 || Math.abs(data.roll || 0) > 3.5) {
         tiltWarning.classList.remove('opacity-0');
       } else {
         tiltWarning.classList.add('opacity-0');
@@ -96,46 +165,49 @@ export class TelemetryClient {
 
     // MQ135 Air Quality & Atmospheric Gases
     const valAqi = this.el('val-aqi');
-    if (valAqi) valAqi.innerText = data.aqi.toString();
-    
+    if (valAqi) valAqi.innerText = (data.aqi || 214).toString();
+
     const aqiRing = this.el('aqi-ring');
     if (aqiRing) {
-      const ringVal = Math.min(290, (data.aqi / 300) * 290);
+      const aqiVal = data.aqi || 214;
+      const ringVal = Math.min(290, (aqiVal / 300) * 290);
       aqiRing.setAttribute('stroke-dasharray', `${ringVal} 360`);
-      if (data.aqi > 150) aqiRing.setAttribute('stroke', '#ffba27');
-      if (data.aqi > 250) aqiRing.setAttribute('stroke', '#ff3366');
+      if (aqiVal > 150) aqiRing.setAttribute('stroke', '#ffba27');
+      if (aqiVal > 250) aqiRing.setAttribute('stroke', '#ff3366');
     }
-    
+
     const aqiBand = this.el('aqi-band');
     if (aqiBand) {
-      if (data.aqi > 250) aqiBand.innerText = 'CRITICAL BAND';
-      else if (data.aqi > 150) aqiBand.innerText = 'UNHEALTHY BAND';
+      const aqiVal = data.aqi || 214;
+      if (aqiVal > 250) aqiBand.innerText = 'CRITICAL BAND';
+      else if (aqiVal > 150) aqiBand.innerText = 'UNHEALTHY BAND';
       else aqiBand.innerText = 'NOMINAL BAND';
     }
 
     const valCo = this.el('val-co');
-    if (valCo) valCo.innerText = `${data.co} ppm`;
-    
+    if (valCo) valCo.innerText = `${data.co || 22} ppm`;
+
     const valNh3 = this.el('val-nh3');
     if (valNh3) valNh3.innerText = `${data.nh3 || 4} ppm`;
-    
+
     const valCo2 = this.el('val-co2');
-    if (valCo2) valCo2.innerText = `${data.co2 || (1120 + data.co * 8)} ppm`;
+    if (valCo2) valCo2.innerText = `${data.co2 || (1120 + (data.co || 22) * 8)} ppm`;
 
     // REL_35 Sump Water Level Tank Fill
     const valSump = this.el('val-sump');
-    if (valSump) valSump.innerText = Number(data.sump).toFixed(2);
-    
+    if (valSump) valSump.innerText = Number(data.sump || 1.31).toFixed(2);
+
     const sumpFill = this.el('sump-fill');
     if (sumpFill) {
-      const sumpPct = Math.max(0, Math.min(100, (data.sump / 4.0) * 100));
+      const sumpVal = (data.sump || 1.31);
+      const sumpPct = Math.max(0, Math.min(100, (sumpVal > 10 ? sumpVal / 200 : sumpVal / 4.0) * 100));
       sumpFill.style.height = `${sumpPct}%`;
     }
-    
+
     const valAdcSump = this.el('val-adc-sump');
     if (valAdcSump) {
-      const estAdc = Math.floor(150 + (data.sump / 4.0) * 3050);
-      valAdcSump.innerText = `${(data as any).adc_sump || estAdc} RAW`;
+      const estAdc = Math.floor(150 + ((data.sump || 1.31) / 4.0) * 3050);
+      valAdcSump.innerText = `${data.adc_sump || estAdc} RAW`;
     }
 
     // NEO-6M GNSS Coordinates
@@ -148,11 +220,11 @@ export class TelemetryClient {
     // Artificial Horizon Pitch & Roll Gyro Reticle
     const horizon = this.el('horizon-dynamic-group');
     if (horizon) {
-      horizon.setAttribute('transform', `rotate(${data.roll.toFixed(2)} 80 80) translate(0, ${(-data.pitch * 3).toFixed(2)})`);
+      horizon.setAttribute('transform', `rotate(${(data.roll || 0).toFixed(2)} 80 80) translate(0, ${(-(data.pitch || 0) * 3).toFixed(2)})`);
     }
 
     // Isolation Forest Score & Audit Gauge
-    const anomalyScoreNum = Math.min(1.0, (Math.abs(data.pitch) * 0.1) + (data.rms * 1.5) + (data.co * 0.01));
+    const anomalyScoreNum = Math.min(1.0, (Math.abs(data.pitch || 0) * 0.1) + ((data.rms || 0.15) * 1.5) + ((data.co || 20) * 0.01));
     const anomalyScore = anomalyScoreNum.toFixed(2);
     const isoScore = this.el('iso-score');
     if (isoScore) {
@@ -166,21 +238,19 @@ export class TelemetryClient {
 
     // Transparent Rule Attribution Bars
     const rule1Bar = this.el('rule-1-bar');
-    if (rule1Bar) rule1Bar.style.width = `${Math.min(100, Math.abs(data.pitch) * 20)}%`;
-    
+    if (rule1Bar) rule1Bar.style.width = `${Math.min(100, Math.abs(data.pitch || 0) * 20)}%`;
     const rule2Bar = this.el('rule-2-bar');
-    if (rule2Bar) rule2Bar.style.width = `${Math.min(100, data.rms * 200)}%`;
-    
+    if (rule2Bar) rule2Bar.style.width = `${Math.min(100, (data.rms || 0.15) * 200)}%`;
     const rule3Bar = this.el('rule-3-bar');
-    if (rule3Bar) rule3Bar.style.width = `${Math.min(100, (data.co / 30) * 100)}%`;
+    if (rule3Bar) rule3Bar.style.width = `${Math.min(100, ((data.co || 20) / 30) * 100)}%`;
 
     // Tactical Map Beacon Animation & Subsidence Displacement Vector
     const node03Ping = this.el('node-03-ping');
-    if (node03Ping) node03Ping.style.animationDuration = `${Math.max(0.2, 1.5 - data.rms * 2)}s`;
-    
+    if (node03Ping) node03Ping.style.animationDuration = `${Math.max(0.2, 1.5 - (data.rms || 0.15) * 2)}s`;
+
     const node03Dot = this.el('node-03-dot');
     if (node03Dot) {
-      const intense = data.rms > 0.3 ? 'shadow-[0_0_24px_#ff0033]' : 'shadow-[0_0_16px_#ff3366]';
+      const intense = (data.rms || 0.15) > 0.3 ? 'shadow-[0_0_24px_#ff0033]' : 'shadow-[0_0_16px_#ff3366]';
       node03Dot.className = `w-4 h-4 rounded-full bg-[#ff3366] ${intense} border-2 border-white transition-all duration-500`;
     }
 
@@ -189,7 +259,7 @@ export class TelemetryClient {
     if (subsidenceTrail && subsidenceArrow) {
       const dx = (data.disp || 0) * 2;
       const dy = (data.disp || 0) * 2;
-      subsidenceTrail.setAttribute('d', `M 368,212 L 374,218 L ${382+dx},${224+dy} L ${390+dx},${230+dy}`);
+      subsidenceTrail.setAttribute('d', `M 368,212 L 374,218 L ${382 + dx},${224 + dy} L ${390 + dx},${230 + dy}`);
       subsidenceArrow.setAttribute('transform', `translate(${dx}, ${dy})`);
     }
   }
@@ -216,7 +286,6 @@ export class TelemetryClient {
         const amp = (Math.sin((x + this.waveOffset) * 0.05) * 10) + ((Math.random() - 0.5) * this.currentRms * 150);
         const y = 80 + amp;
         pathData += `L ${x},${y} `;
-
         if (Math.abs(amp) > Math.abs(maxAmp)) {
           maxAmp = amp;
           maxX = x;
@@ -232,10 +301,12 @@ export class TelemetryClient {
         const dot = this.el('wave-peak-dot');
         const line = this.el('wave-peak-line');
         const text = this.el('wave-peak-text');
+
         if (dot) {
           const peakY = 80 + maxAmp;
           dot.setAttribute('cx', maxX.toString());
           dot.setAttribute('cy', peakY.toString());
+
           if (line) {
             line.setAttribute('x1', maxX.toString());
             line.setAttribute('x2', maxX.toString());
@@ -245,7 +316,7 @@ export class TelemetryClient {
           if (text) {
             text.setAttribute('x', (maxX + 6).toString());
             text.setAttribute('y', Math.max(18, peakY - 10).toString());
-            text.textContent = `MAX ${(Math.abs(maxAmp) / 100).toFixed(2)}g`;
+            text.textContent = `MAX ${(Math.abs(maxAmp)/100).toFixed(2)}g`;
           }
         }
       }
@@ -261,6 +332,7 @@ export class TelemetryClient {
       4: "flex flex-col items-center py-1.5 rounded bg-cyan-950/80 border border-cyan-400 text-cyan-200 shadow-[0_0_12px_rgba(6,182,212,0.35)] transition-all cursor-pointer ring-1 ring-cyan-400",
       5: "flex flex-col items-center py-1.5 rounded bg-slate-900 border border-slate-500 text-slate-300 transition-all cursor-pointer ring-1 ring-slate-400"
     };
+
     const defaultStyles: { [key: number]: string } = {
       1: "flex flex-col items-center py-1.5 rounded bg-[#0b0f19] border border-emerald-500/20 hover:border-emerald-500/50 hover:bg-emerald-950/20 transition-all cursor-pointer text-emerald-400",
       2: "flex flex-col items-center py-1.5 rounded bg-[#0b0f19] border border-amber-500/20 hover:border-amber-500/50 hover:bg-amber-950/20 transition-all cursor-pointer text-amber-400",
@@ -313,7 +385,6 @@ export class TelemetryClient {
 
     try {
       const mineCenter = [23.795741, 86.430412];
-
       this.leafletMap = L.map('real-leaflet-map', {
         center: mineCenter,
         zoom: 16,
@@ -334,7 +405,6 @@ export class TelemetryClient {
       });
 
       this.satelliteLayer.addTo(this.leafletMap);
-
       this.protocolLayerGroup = L.layerGroup();
       this.nodeLayerGroup = L.layerGroup();
 
@@ -357,7 +427,6 @@ export class TelemetryClient {
     this.protocolLayerGroup.clearLayers();
 
     const stopeCenter = [23.795741, 86.430412];
-
     const evacCircle = L.circle(stopeCenter, {
       radius: 220,
       color: '#ef4444',
@@ -366,15 +435,6 @@ export class TelemetryClient {
       fillColor: '#ef4444',
       fillOpacity: 0.18
     });
-    evacCircle.bindPopup(`
-      <div class="font-['Space_Grotesk'] text-white">
-        <div class="flex items-center gap-1.5 font-['JetBrains_Mono'] text-[#ef4444] text-[10px] font-bold uppercase">
-          <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-          DGMS REGULATION 124 CRITICAL ZONE
-        </div>
-        <div class="text-[14px] font-bold mt-1 text-white">Mandatory Evacuation Boundary</div>
-      </div>
-    `);
     this.protocolLayerGroup.addLayer(evacCircle);
 
     const watchCircle = L.circle(stopeCenter, {
@@ -400,8 +460,7 @@ export class TelemetryClient {
       fillOpacity: 0.45
     });
     this.protocolLayerGroup.addLayer(stopePolygon);
-    
-    // Add Corridors and Markers simplified
+
     const corridorAlpha = L.polyline([
       [23.795741, 86.430412], [23.797400, 86.428800],
       [23.798541, 86.426912], [23.801200, 86.425000]
@@ -430,16 +489,14 @@ export class TelemetryClient {
     nodesData.forEach(n => {
       let iconHtml = `<div style="width:16px;height:16px;background:${n.color};border-radius:50%"></div>`;
       if (n.isFocus) {
-          iconHtml = `<div style="width:24px;height:24px;background:${n.color};border-radius:50%;border:2px solid white"></div>`;
+        iconHtml = `<div style="width:24px;height:24px;background:${n.color};border-radius:50%;border:2px solid white"></div>`;
       }
-
       const icon = L.divIcon({
         className: `custom-node-marker-${n.id}`,
         html: iconHtml,
         iconSize: [24, 24],
         iconAnchor: [12, 12]
       });
-
       const marker = L.marker(n.coords, { icon });
       this.markers[n.id] = marker;
       this.nodeLayerGroup.addLayer(marker);
@@ -449,11 +506,10 @@ export class TelemetryClient {
   public setMapMode(mode: string) {
     this.currentMapMode = mode;
     const realMapEl = this.el('real-leaflet-map');
-    
     const btnSat = this.el('btn-layer-sat');
     const btnDark = this.el('btn-layer-dark');
     const btnSchem = this.el('btn-layer-schem');
-    
+
     [btnSat, btnDark, btnSchem].forEach(b => {
       if (b) {
         b.className = "bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1 rounded transition active:scale-95 cursor-pointer";
@@ -518,7 +574,7 @@ export class TelemetryClient {
 
   public triggerEvacuationProtocol() {
     try {
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContextClass = (window as any).AudioContext || (window as any).webkitAudioContext;
       if (AudioContextClass) {
         const audioCtx = new AudioContextClass();
         const osc = audioCtx.createOscillator();
