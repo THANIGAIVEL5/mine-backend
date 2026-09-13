@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TERRA-PULSE OS // GOD&#39;S EYE VIEW - 3D Satellite &amp; Spatial Intel</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="/css/hud.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "secondary-fixed-dim": "#f59e0b",
+          "secondary-fixed": "#fbbf24",
+          "error-container": "#450a0a",
+          "on-tertiary-container": "#d1fae5",
+          "tertiary-fixed-dim": "#10b981",
+          "on-background": "#f8fafc",
+          "surface-variant": "#131b22",
+          "surface-bright": "#1e293b",
+          "tertiary-fixed": "#34d399",
+          "inverse-primary": "#0891b2",
+          "surface-container-highest": "#1e293b",
+          "on-secondary": "#451a03",
+          "surface-dim": "#05080c",
+          "on-primary-fixed": "#083344",
+          "primary-fixed-dim": "#22d3ee",
+          "primary-container": "#00f5ff",
+          "outline": "#334155",
+          "outline-variant": "#1e293b",
+          "inverse-surface": "#f8fafc",
+          "secondary": "#f59e0b",
+          "on-error-container": "#fca5a5",
+          "tertiary-container": "#064e3b",
+          "surface-container": "#0b1219",
+          "tertiary": "#10b981",
+          "primary-fixed": "#06b6d4",
+          "surface": "#070b10",
+          "on-surface-variant": "#94a3b8",
+          "primary": "#00f5ff",
+          "surface-container-high": "#111a24",
+          "on-primary-container": "#000000",
+          "surface-container-lowest": "#020408",
+          "surface-container-low": "#070c12",
+          "on-surface": "#f8fafc",
+          "secondary-container": "#78350f",
+          "background": "#05080c",
+          "error": "#ef4444"
+        },
+        borderRadius: {
+          DEFAULT: "0.125rem",
+          lg: "0.25rem",
+          xl: "0.5rem",
+          full: "0.75rem"
+        },
+        fontFamily: {
+          sans: ["Inter", "sans-serif"],
+          mono: ["JetBrains Mono", "monospace"],
+          display: ["Space Grotesk", "sans-serif"],
+          "headline-sm": ["Space Grotesk", "sans-serif"],
+          "headline-md": ["Space Grotesk", "sans-serif"],
+          "headline-lg": ["Space Grotesk", "sans-serif"],
+          "display-hero": ["Space Grotesk", "sans-serif"],
+          "body-md": ["JetBrains Mono", "monospace"],
+          "label-data-sm": ["JetBrains Mono", "monospace"],
+          "label-data-md": ["JetBrains Mono", "monospace"],
+          "telemetry-readout": ["JetBrains Mono", "monospace"]
+        }
+      }
+    }
+  }
+</script>
+
+  <!-- CesiumJS Photorealistic 3D Globe Engine -->
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Cesium.js"></script>
+  <style>
+    /* God's Eye View Optical Shader Overlays */
+    .optic-flir {
+      filter: contrast(180%) invert(85%) hue-rotate(180deg) saturate(250%) brightness(1.1);
+    }
+    .optic-nvg {
+      filter: contrast(160%) sepia(100%) hue-rotate(75deg) saturate(600%) brightness(1.15);
+    }
+    .optic-crt {
+      filter: contrast(170%) brightness(0.85) grayscale(80%) sepia(20%) hue-rotate(110deg);
+    }
+    .cesium-viewer-bottom, .cesium-credit-logoContainer, .cesium-credit-expand-link {
+      display: none !important;
+    }
+    .cesium-widget, .cesium-widget canvas {
+      width: 100% !important;
+      height: 100% !important;
+      touch-action: none;
+    }
+  </style>
+</head>
+<body class="bg-[#07090e] font-['Space_Grotesk'] text-[13px] text-on-surface antialiased selection:bg-primary-container selection:text-black min-h-screen relative overflow-x-hidden">
+  <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_25%_15%,rgba(0,245,255,0.06),transparent_45%),radial-gradient(circle_at_80%_25%,rgba(255,51,102,0.05),transparent_40%),radial-gradient(circle_at_50%_75%,rgba(0,245,255,0.04),transparent_50%)] z-0"></div>
+
+  <!-- Left Tactical Sidebar Component -->
+  <!-- Left Tactical Sidebar Component -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-[#050505]/95 backdrop-blur-xl border-r border-white/10 z-50 flex flex-col justify-between shadow-[4px_0_24px_rgba(0,0,0,0.8)]">
+  <div class="flex flex-col">
+    <!-- Brand / System Title -->
+    <div class="h-20 px-4 flex items-center gap-3 bg-[#0d0d0d] border-b border-white/10 relative">
+      <div class="absolute top-0 left-0 w-1 h-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>
+      <div class="relative flex items-center justify-center w-8 h-8 rounded bg-white/10 border border-white/20">
+        <span class="material-symbols-outlined text-white text-[18px]">radar</span>
+      </div>
+      <div>
+        <span class="font-['JetBrains_Mono'] text-[10px] uppercase tracking-[0.25em] text-white font-bold block">TERRA-PULSE OS</span>
+        <span class="font-['Space_Grotesk'] text-[15px] text-white tracking-tight font-bold">SIH 2026 TACTICAL</span>
+      </div>
+    </div>
+
+    <!-- Sector Assignment Info -->
+    <div class="px-4 py-2.5 bg-[#080808] border-b border-white/5">
+      <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[10px] uppercase text-zinc-400">
+        <span>SECTOR ASSIGNMENT</span>
+        <span class="text-white font-bold px-1.5 py-0.5 rounded bg-white/10 border border-white/20">SEC-4B</span>
+      </div>
+      <div class="font-['JetBrains_Mono'] text-[12px] text-white font-bold mt-1 flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-white"></span>CHASNALA DEEP MINE
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="flex flex-col gap-1 px-3 py-4">
+      <a class="flex items-center justify-between px-3 py-2 rounded border border-transparent hover:border-white/20 text-zinc-400 hover:text-white hover:bg-white/5 transition-all" href="/" onclick="if(location.protocol==='file:'){location.href='index.html'; return false;}">
+        <span class="text-[12px] uppercase tracking-wider font-medium">Live Telemetry &amp; GIS</span>
+        <span class="font-['JetBrains_Mono'] text-[10px] text-zinc-500">01</span>
+      </a>
+      <a class="flex items-center justify-between px-3 py-2 rounded border border-transparent hover:border-white/20 text-zinc-400 hover:text-white hover:bg-white/5 transition-all" href="/explainable-ml" onclick="if(location.protocol==='file:'){location.href='explainable-ml.html'; return false;}">
+        <span class="text-[12px] uppercase tracking-wider font-medium">Explainable ML &amp; Risk</span>
+        <span class="font-['JetBrains_Mono'] text-[10px] text-zinc-400 font-bold">02</span>
+      </a>
+      <a class="flex items-center justify-between px-3 py-2 rounded bg-white/15 text-white border-l-2 border-white font-bold shadow-[inset_2px_0_8px_rgba(255,255,255,0.1)] transition-all group" href="/gods-eye-view" onclick="if(location.protocol==='file:'){location.href='gods-eye-view.html'; return false;}">
+        <span class="text-[12px] uppercase tracking-wider font-medium flex items-center gap-2">
+          <span class="material-symbols-outlined text-[15px] text-white group-hover:rotate-45 transition-transform">travel_explore</span>
+          <span>God's Eye View 3D</span>
+        </span>
+        <span class="font-['JetBrains_Mono'] text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-white border border-white/20 font-bold">SPY SAT</span>
+      </a>
+      <button onclick="openChatWindow()" class="mt-2 flex items-center justify-between px-3 py-2 rounded border border-white/20 hover:border-white bg-white/5 hover:bg-white/15 text-white transition-all text-left shadow-[0_0_12px_rgba(255,255,255,0.08)] group cursor-pointer">
+        <span class="text-[11px] uppercase tracking-wider font-bold flex items-center gap-2">
+          <span class="material-symbols-outlined text-[15px]">terminal</span>
+          <span>AI Command Terminal</span>
+        </span>
+        <span class="font-['JetBrains_Mono'] text-[8px] font-bold px-1.5 py-0.5 rounded bg-white text-black font-mono">INTERVENE</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Ingestion Latency & Core Status -->
+  <div class="p-3 bg-[#0d0d0d] border-t border-white/10 flex flex-col gap-2.5">
+    <div class="bg-[#050505] p-2.5 rounded border border-white/10 flex flex-col gap-1 relative overflow-hidden">
+      <span class="font-['JetBrains_Mono'] text-[10px] uppercase text-zinc-400">INGEST BUS LATENCY</span>
+      <div class="flex items-baseline justify-between">
+        <span class="font-['JetBrains_Mono'] text-[18px] text-white font-bold" id="latency-val">124<span class="text-[11px] text-zinc-400 font-normal ml-1">MS</span></span>
+        <span class="font-['JetBrains_Mono'] text-[10px] text-zinc-400 uppercase font-semibold">SX1278 433MHz</span>
+      </div>
+    </div>
+    <div class="flex items-center justify-between px-1 font-['JetBrains_Mono'] text-[10px] text-zinc-400">
+      <span>SYS SECURE CORE</span>
+      <span class="text-white flex items-center gap-1 font-bold">
+        <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>ONLINE
+      </span>
+    </div>
+  </div>
+</aside>
+
+
+  <!-- Main Content Wrapper -->
+  <div class="pl-64 relative z-10">
+    <!-- Top Tactical HUD Header Component -->
+<header class="fixed top-0 left-64 right-0 h-20 bg-[#080808]/95 backdrop-blur-xl border-b border-white/10 z-40 flex flex-col justify-center px-6 py-2 gap-1.5 shadow-md">
+  <div class="flex items-center justify-between w-full">
+    <div class="flex items-center gap-2 px-3 py-1 rounded bg-white/10 border border-white/20">
+      <div class="relative flex items-center justify-center w-2.5 h-2.5">
+        <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping absolute"></span>
+        <span class="w-2 rounded-full bg-white h-2"></span>
+      </div>
+      <span class="font-['JetBrains_Mono'] text-[11px] text-white uppercase tracking-wider font-bold">ELEVATED SUBSIDENCE WATCH - SECTOR 4B</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2 font-['JetBrains_Mono'] text-[11px] bg-neutral-900 px-2.5 py-1 rounded border border-white/10">
+        <span class="text-zinc-400 uppercase">NODES:</span>
+        <span class="text-white font-bold">4 ACT</span>
+        <span class="text-zinc-600">/</span>
+        <span class="text-zinc-400 font-bold">1 OFF</span>
+        <span class="text-zinc-600">/</span>
+        <span class="text-zinc-500">0 COR</span>
+      </div>
+      <div class="flex items-center gap-2 font-['JetBrains_Mono'] text-[11px] bg-neutral-900 px-2.5 py-1 rounded border border-white/10">
+        <span class="text-zinc-400 uppercase">UPLINK:</span>
+        <span class="text-white font-bold">MQTT:1883</span>
+        <span class="text-zinc-400 text-[10px]">[COM4 STBY]</span>
+      </div>
+      <div class="flex items-center gap-1.5 font-['JetBrains_Mono'] text-[11px] text-white">
+        <span class="material-symbols-outlined text-zinc-300 text-[16px]">schedule</span>
+        <span id="live-clock">IST UTC+5:30 REAL-TIME</span>
+      </div>
+      <div class="w-7 h-7 rounded bg-white/10 border border-white/20 flex items-center justify-center">
+        <span class="material-symbols-outlined text-white text-[16px]">person</span>
+      </div>
+    </div>
+  </div>
+  <div class="flex items-center justify-between w-full pt-1 border-t border-white/5">
+    <div class="flex items-center gap-3 font-['JetBrains_Mono'] text-[10px]">
+      <span class="text-white uppercase tracking-widest font-semibold flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>GOD&#39;S EYE VIEW: SPY SATELLITE 3D SPATIAL INTELLIGENCE
+      </span>
+      <span class="w-1 h-1 rounded-full bg-zinc-600"></span>
+      <span class="text-zinc-400 uppercase">ORBITAL SURVEILLANCE: CHASNALA DEEP MINE</span>
+    </div>
+    <div class="font-['JetBrains_Mono'] text-[10px] text-zinc-400 flex items-center gap-2">
+      <span class="text-white font-bold flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>CHASNALA SHAFT 4B ACTIVE STREAM
+      </span>
+    </div>
+  </div>
+</header>
+
+
+    <main class="relative pt-24 w-full px-6 bg-[#07090e]">
+      <div class="flex flex-col w-full pb-12 gap-4">
+
+        <!-- SATELLITE MISSION CONTROL & PAIRING RIBBON -->
+        <div class="hud-bracket flex flex-col xl:flex-row items-stretch justify-between gap-3 bg-[#0d0d0d] p-3 rounded border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded bg-white/10 border border-white/20 flex items-center justify-center">
+              <span class="material-symbols-outlined text-white text-[24px]">travel_explore</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-['JetBrains_Mono'] text-[11px] uppercase tracking-wider text-white font-bold">GOD'S EYE VIEW // 3D SPATIAL INTEL</span>
+                <span class="px-1.5 py-0.2 rounded text-[8px] bg-white/10 text-white border border-white/20 font-bold">PAIRED WITH SIH 2026</span>
+                <span id="gev-instance-badge" class="px-1.5 py-0.2 rounded text-[8px] bg-neutral-900 text-zinc-400 border border-white/10 font-mono">CHECKING LOCAL GEV INSTANCE...</span>
+              </div>
+              <h1 class="font-['Space_Grotesk'] text-[17px] text-white font-bold tracking-tight">
+                Chasnala Deep Mine Sector 4B Photorealistic 3D Strata &amp; Overhead Orbital Recon
+              </h1>
+            </div>
+          </div>
+
+          <!-- Pairing & Optics Action Bar -->
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Optics Filter Group -->
+            <div class="flex items-center bg-[#050505] border border-white/10 rounded p-1 gap-1">
+              <span class="text-[9px] font-mono text-zinc-400 px-1 uppercase">OPTICS:</span>
+              <button onclick="setOptic('normal')" id="btn-optic-normal" class="px-2 py-1 rounded bg-white text-black border border-white text-[10px] font-bold uppercase transition active:scale-95">Optical</button>
+              <button onclick="setOptic('flir')" id="btn-optic-flir" class="px-2 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-zinc-300 text-[10px] font-bold uppercase transition active:scale-95">FLIR / Thermal</button>
+              <button onclick="setOptic('nvg')" id="btn-optic-nvg" class="px-2 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-zinc-300 text-[10px] font-bold uppercase transition active:scale-95">NVG Green</button>
+              <button onclick="setOptic('crt')" id="btn-optic-crt" class="px-2 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-zinc-300 text-[10px] font-bold uppercase transition active:scale-95">CRT Recon</button>
+            </div>
+
+            <!-- God's Eye View Local Pairing Button -->
+            <button onclick="openPairingModal()" class="px-3 py-1.5 rounded bg-white hover:bg-zinc-200 text-black font-bold text-[11px] uppercase flex items-center gap-1.5 transition active:scale-95">
+              <span class="material-symbols-outlined text-[15px]">cable</span>
+              <span>Pair Local Instance</span>
+            </button>
+            
+            <a href="https://github.com/bilawalsidhu/gods-eye-view" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-white text-[11px] font-bold uppercase flex items-center gap-1.5 transition">
+              <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+              <span>GitHub Repo</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 3D GLOBE / SATELLITE CANVAS SECTION -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
+          <!-- 3D SPY SATELLITE GLOBE DISPLAY (8 COLS) -->
+          <div class="hud-bracket xl:col-span-8 flex flex-col bg-[#0a0a0a] rounded border border-white/10 overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.8)] relative">
+            <!-- HUD Overlays on top of the 3D Canvas -->
+            <div class="absolute top-3 left-3 z-20 flex flex-col gap-1 pointer-events-none">
+              <div class="bg-[#050505]/95 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded text-[10px] font-mono flex flex-col gap-0.5 shadow-lg">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                  <span class="text-white font-bold">TARGET: CHASNALA DEEP MINE SEC-4B</span>
+                </div>
+                <div class="text-zinc-400">COORDINATES: <span class="text-white font-bold" id="hud-coords">23.795741° N, 86.430412° E</span></div>
+                <div class="text-zinc-400">ELEVATION: <span class="text-white font-bold" id="hud-alt">184.20 m MSL</span></div>
+              </div>
+            </div>
+
+            <!-- Right HUD Mini Target Reticle -->
+            <div class="absolute top-3 right-3 z-20 flex items-center gap-2">
+              <button onclick="flyToMine()" class="px-2.5 py-1 rounded bg-[#050505]/95 hover:bg-neutral-800 border border-white/20 text-white text-[10px] font-mono font-bold uppercase flex items-center gap-1 backdrop-blur-md transition shadow-md cursor-pointer">
+                <span class="material-symbols-outlined text-[13px]">my_location</span>
+                <span>Orbit Mine</span>
+              </button>
+              <button onclick="toggleGlobeOrIframe()" id="btn-toggle-source" class="px-2.5 py-1 rounded bg-[#050505]/95 hover:bg-neutral-800 border border-white/20 text-zinc-300 text-[10px] font-mono font-bold uppercase flex items-center gap-1 backdrop-blur-md transition shadow-md cursor-pointer">
+                <span class="material-symbols-outlined text-[13px]">swap_horiz</span>
+                <span id="source-toggle-text">Switch to Paired GEV App</span>
+              </button>
+            </div>
+
+            <!-- Reticle Crosshair in Center of Globe -->
+            <div class="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
+              <div class="relative w-28 h-28 border border-white/20 rounded-full flex items-center justify-center">
+                <div class="absolute w-12 h-12 border border-white/30 rounded-full animate-ping"></div>
+                <div class="w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_8px_white]"></div>
+                <!-- Cross ticks -->
+                <div class="absolute -top-3 w-px h-3 bg-white/40"></div>
+                <div class="absolute -bottom-3 w-px h-3 bg-white/40"></div>
+                <div class="absolute -left-3 h-px w-3 bg-white/40"></div>
+                <div class="absolute -right-3 h-px w-3 bg-white/40"></div>
+              </div>
+            </div>
+
+            <!-- Embedded 3D Cesium View Container -->
+            <div id="cesiumContainer" class="w-full h-[540px] bg-[#020202] transition-all duration-300 relative"></div>
+
+            <!-- Iframe Container for Paired Local Instance (Hidden by default) -->
+            <div id="pairedIframeContainer" class="hidden w-full h-[540px] bg-[#020202] relative">
+              <iframe id="gevIframe" src="about:blank" class="w-full h-full border-0"></iframe>
+            </div>
+
+            <!-- Bottom Floating Status Bar inside Canvas -->
+            <div class="absolute bottom-3 inset-x-3 z-20 flex items-center justify-between px-3 py-1.5 rounded bg-[#050505]/95 backdrop-blur-md border border-white/10 text-[10px] font-mono pointer-events-none">
+              <div class="flex items-center gap-3">
+                <span class="text-white font-bold flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                  <span>CESIUM 3D PHOTOREALISTIC ENGINE</span>
+                </span>
+                <span class="text-zinc-600">|</span>
+                <span class="text-zinc-400">SENSOR SUITE: ADXL345 / REL_35 / PIEZO / GPS</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-zinc-400">STREAM LATENCY: <strong class="text-white" id="gev-latency">18ms</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: LIVE SPATIAL TELEMETRY & DGMS RECON (4 COLS) -->
+          <div class="hud-bracket xl:col-span-4 flex flex-col bg-[#0a0a0a] rounded border border-white/10 p-4 shadow-[0_4px_24px_rgba(0,0,0,0.8)] justify-between gap-3">
+            <div>
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded bg-white/10 border border-white/20 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white text-[18px]">share_location</span>
+                  </div>
+                  <span class="font-['Space_Grotesk'] text-[15px] text-white uppercase font-bold">Node-03 Spatial Telemetry</span>
+                </div>
+                <span class="font-['JetBrains_Mono'] text-white text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/10 border border-white/20">
+                  LIVE SYNCED
+                </span>
+              </div>
+
+              <!-- Sensor Matrix Cards -->
+              <div class="mt-3 flex flex-col gap-2 font-mono text-[11px]">
+                <!-- ADXL345 Tilt & Strata Vector -->
+                <div class="bg-[#050505] border border-white/10 p-2.5 rounded flex flex-col gap-1">
+                  <div class="flex justify-between items-center text-zinc-400">
+                    <span class="uppercase">ADXL345 Strata Tilt:</span>
+                    <span class="text-white font-bold" id="side-tilt">Pitch: +2.15° | Roll: -1.04°</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-zinc-400 uppercase">Vector Displacement:</span>
+                    <span class="text-white font-bold" id="side-disp">2.39° Σ (Subsidence Active)</span>
+                  </div>
+                </div>
+
+                <!-- REL_35 Sump Water Depth -->
+                <div class="bg-[#050505] border border-white/10 p-2.5 rounded flex flex-col gap-1">
+                  <div class="flex justify-between items-center text-zinc-400">
+                    <span class="uppercase">REL_35 Water Level:</span>
+                    <span class="text-white font-bold" id="side-water">2.74 m / 4.00 m</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[10px]">
+                    <span class="text-zinc-500">Hydrostatic Head:</span>
+                    <span class="text-zinc-300 font-bold">PUMP #2 STANDBY</span>
+                  </div>
+                </div>
+
+                <!-- Gravity Piezo Micro-Seismic RMS -->
+                <div class="bg-[#050505] border border-white/10 p-2.5 rounded flex flex-col gap-1">
+                  <div class="flex justify-between items-center text-zinc-400">
+                    <span class="uppercase">Gravity Piezo RMS:</span>
+                    <span class="text-white font-bold" id="side-rms">0.18 g (48.0 Hz)</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[10px]">
+                    <span class="text-zinc-500">Strata Vibration Wave:</span>
+                    <span class="text-zinc-300">Continuous 2kHz ADC Sample</span>
+                  </div>
+                </div>
+
+                <!-- Borehole Temperature -->
+                <div class="bg-[#050505] border border-white/10 p-2.5 rounded flex flex-col gap-1">
+                  <div class="flex justify-between items-center text-zinc-400">
+                    <span class="uppercase">DS18B20 1-Wire Temp:</span>
+                    <span class="text-white font-bold" id="side-temp">38.6 °C</span>
+                  </div>
+                  <div class="flex justify-between items-center text-[10px]">
+                    <span class="text-zinc-500">DHT11 Ambient Humidity:</span>
+                    <span class="text-zinc-300 font-bold" id="side-hum">78.5% RH</span>
+                  </div>
+                </div>
+
+                <!-- GeoJSON Ingest Link for External GIS -->
+                <div class="bg-[#050505] border border-white/10 p-2.5 rounded flex flex-col gap-1.5">
+                  <div class="flex items-center justify-between text-[10px]">
+                    <span class="text-white font-bold uppercase">LIVE GEOJSON LAYER URL:</span>
+                    <button onclick="copyGeoJsonUrl()" class="text-xs text-zinc-400 hover:text-white transition cursor-pointer">
+                      <span class="material-symbols-outlined text-[13px]">content_copy</span>
+                    </button>
+                  </div>
+                  <input id="geojson-input" type="text" readonly value="http://localhost:3000/api/telemetry/geojson" class="w-full bg-[#111111] border border-white/20 text-white text-[10px] p-1.5 rounded focus:outline-none select-all font-mono" />
+                  <span class="text-[9px] text-zinc-500 leading-tight">Directly loadable in God's Eye View, Cesium ion, QGIS, or Google Earth.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Master AI Strategic Recon Directive -->
+            <div class="bg-[#121212] border border-white/20 p-2.5 rounded flex flex-col gap-1 text-[11px]">
+              <div class="flex items-center gap-1.5 text-white font-mono font-bold text-[10px]">
+                <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                <span>MASTER AI ORBITAL DIRECTIVE</span>
+              </div>
+              <p id="side-ai-directive" class="font-sans text-zinc-200 text-xs leading-relaxed">
+                [TERRA-SENTINEL MASTER AI] 3D Satellite pass locked over Sector 4B. InSAR interferometry and subterranean sensor bus synchronized.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- PAIRING CONFIGURATION MODAL -->
+  <div id="pairing-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+    <div class="w-full max-w-lg bg-[#0a0a0a] border border-white/20 rounded-xl p-5 shadow-[0_0_40px_rgba(0,0,0,0.95)] flex flex-col gap-4 font-mono text-xs">
+      <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-white text-lg">cable</span>
+          <span class="text-white font-bold text-sm font-sans">Pair Local God's Eye View Instance</span>
+        </div>
+        <button onclick="closePairingModal()" class="text-zinc-400 hover:text-white p-1 rounded transition">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      </div>
+
+      <p class="text-zinc-300 font-sans leading-relaxed text-xs">
+        Connect TERRA-PULSE OS with your locally running <strong>God's Eye View</strong> repository (<a href="https://github.com/bilawalsidhu/gods-eye-view" target="_blank" class="text-white underline">bilawalsidhu/gods-eye-view</a>) to enable real-time 3D flight paths, cockpit cameras, and photorealistic 3D city tiles.
+      </p>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[11px] uppercase text-zinc-300 font-bold">God's Eye View Local URL:</label>
+        <input id="gev-url-input" type="text" value="http://localhost:4173" class="w-full bg-[#141414] border border-white/20 text-white px-3 py-2 rounded focus:border-white focus:outline-none" />
+      </div>
+
+      <!-- Quick Run Instructions -->
+      <div class="bg-[#050505] border border-white/10 p-3 rounded flex flex-col gap-1.5">
+        <span class="text-zinc-400 text-[10px] font-bold uppercase">To start God's Eye View locally from Terminal:</span>
+        <pre class="bg-black p-2 rounded text-white text-[10px] overflow-x-auto select-all border border-white/10">git clone https://github.com/bilawalsidhu/gods-eye-view.git
+cd gods-eye-view
+npm ci
+npm run dev</pre>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-white/10">
+        <button onclick="testGevConnection()" class="px-3 py-1.5 rounded bg-neutral-900 hover:bg-neutral-800 text-zinc-200 border border-white/10 transition">Test Connection</button>
+        <div class="flex items-center gap-2">
+          <button onclick="closePairingModal()" class="px-3 py-1.5 text-zinc-400 hover:text-white transition">Cancel</button>
+          <button onclick="saveAndPairGev()" class="px-4 py-1.5 rounded bg-white hover:bg-zinc-200 text-black font-bold transition">Save &amp; Connect</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Command Widget -->
+  <!-- Floating Cyber HUD AI Chat Assistant Widget -->
+<div class="fixed bottom-5 right-5 z-50 font-mono">
+  <!-- Chat Toggle Button -->
+  <button id="chat-toggle-btn" onclick="openChatWindow()" class="relative flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#0a0a0a] border border-white/20 text-white hover:bg-white/10 hover:border-white transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] backdrop-blur-md cursor-pointer">
+    <span class="relative flex h-3 w-3">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+    </span>
+    <span class="material-symbols-outlined text-lg">smart_toy</span>
+    <span class="text-xs font-bold tracking-wider uppercase">Master AI Controller</span>
+    <span id="chat-badge" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full border-2 border-[#0a0a0a]"></span>
+  </button>
+
+  <!-- Chat Modal Window -->
+  <div id="chat-window" class="hidden absolute bottom-14 right-0 w-80 sm:w-[430px] h-[540px] rounded-xl bg-[#0a0a0a]/98 border border-white/20 shadow-[0_0_35px_rgba(0,0,0,0.95)] backdrop-blur-xl flex flex-col overflow-hidden transition-all duration-300">
+    <!-- Chat Header -->
+    <div class="flex items-center justify-between px-3.5 py-2.5 bg-[#141414] border-b border-white/10">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-white text-base">psychology</span>
+        <div>
+          <div class="flex items-center gap-2">
+            <h4 class="text-xs font-bold text-white tracking-wide">TERRA-SENTINEL OMNI-AI</h4>
+            <span class="px-1.5 py-0.5 rounded text-[8px] font-bold bg-white/10 text-white border border-white/20">FULL TELEMETRY GOVERNANCE ACTIVE</span>
+          </div>
+          <div class="flex items-center gap-1.5 text-[9px] text-zinc-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+            <span>[5 SENSOR NODES • 12 TELEMETRY CHANNELS • AUTONOMOUS INTERLOCK]</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-1">
+        <button onclick="toggleChatMaximize()" title="Maximize / Restore Terminal" class="text-zinc-400 hover:text-white p-1 rounded transition cursor-pointer">
+          <span id="chat-max-icon" class="material-symbols-outlined text-sm">open_in_full</span>
+        </button>
+        <button onclick="toggleApiKeyModal()" title="Cloud Intelligence Uplink Settings" class="text-zinc-400 hover:text-white p-1 rounded transition cursor-pointer">
+          <span class="material-symbols-outlined text-sm">settings</span>
+        </button>
+        <button id="chat-close-btn" onclick="closeChatWindow()" class="text-zinc-400 hover:text-white p-1 rounded transition cursor-pointer">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Telemetry Governance Ribbon -->
+    <div class="flex items-center justify-between px-3 py-1.5 bg-[#0f0f0f] border-b border-white/10 text-[10px] text-zinc-400">
+      <span class="flex items-center gap-1">
+        <span class="material-symbols-outlined text-xs text-white">tune</span> 5 Nodes • 12 Channels Synced
+      </span>
+      <span class="text-white font-mono text-[9px]">AUTONOMOUS INTERLOCK READY</span>
+    </div>
+
+    <!-- Operator Interference & Command Overrides Section -->
+    <div class="px-3 py-1.5 bg-[#121212] border-b border-white/10 flex flex-col gap-1">
+      <div class="flex items-center justify-between text-[9px] font-bold font-mono">
+        <span class="text-white flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+          <span>⚡ OPERATOR INTERFERENCE (1-CLICK OVERRIDES)</span>
+        </span>
+        <span class="text-zinc-400 text-[8px] uppercase tracking-wider">Direct Physical Interlocks</span>
+      </div>
+      <div class="flex gap-1.5 overflow-x-auto scrollbar-none py-0.5 whitespace-nowrap">
+        <button onclick="sendQuickChat('INTERVENE: Trigger Klaxon Evacuation')" class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 border border-white/30 text-white text-[10px] font-bold flex items-center gap-1 transition cursor-pointer">
+          <span class="material-symbols-outlined text-xs text-white">warning</span> 🚨 Evacuate Klaxon
+        </button>
+        <button onclick="sendQuickChat('INTERVENE: 100% Ventilation Boost')" class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 border border-white/30 text-white text-[10px] font-bold flex items-center gap-1 transition cursor-pointer">
+          <span class="material-symbols-outlined text-xs text-white">mode_fan</span> 💨 100% Vent Boost
+        </button>
+        <button onclick="sendQuickChat('INTERVENE: Force 500 GPM Dewatering Pump')" class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 border border-white/30 text-white text-[10px] font-bold flex items-center gap-1 transition cursor-pointer">
+          <span class="material-symbols-outlined text-xs text-white">water_drop</span> 💧 Force Dewatering
+        </button>
+        <button onclick="sendQuickChat('INTERVENE: Pre-tension Chocks to 350 Bar')" class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 border border-white/30 text-white text-[10px] font-bold flex items-center gap-1 transition cursor-pointer">
+          <span class="material-symbols-outlined text-xs text-white">compress</span> 🛡️ Pre-tension Chocks
+        </button>
+        <button onclick="sendQuickChat('INTERVENE: Reset Baseline to STABLE')" class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 border border-white/30 text-white text-[10px] font-bold flex items-center gap-1 transition cursor-pointer">
+          <span class="material-symbols-outlined text-xs text-white">restart_alt</span> 🔄 Reset STABLE
+        </button>
+      </div>
+    </div>
+
+    <!-- Tactical Telemetry Inquiries Strip -->
+    <div class="flex gap-1.5 px-3 py-1.5 overflow-x-auto bg-[#0d0d0d] border-b border-white/10 text-[10px] scrollbar-none whitespace-nowrap">
+      <span class="text-zinc-500 font-mono text-[9px] self-center mr-1">QUERY:</span>
+      <button onclick="sendQuickChat('What is current mine status?')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-white/15 hover:text-white text-zinc-300 border border-white/10 transition cursor-pointer">📊 Mine Status</button>
+      <button onclick="sendQuickChat('Check gas and CO levels')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-white/15 hover:text-white text-zinc-300 border border-white/10 transition cursor-pointer">💨 Gas &amp; CO</button>
+      <button onclick="sendQuickChat('Explain current subsidence risk')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-white/15 hover:text-white text-zinc-300 border border-white/10 transition cursor-pointer">🏔️ Subsidence</button>
+      <button onclick="sendQuickChat('What are DGMS statutory limits for CO and roof flexure?')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-white/15 hover:text-white text-zinc-300 border border-white/10 transition cursor-pointer">📋 DGMS Rules</button>
+    </div>
+
+    <!-- Chat Messages Scrollable Feed -->
+    <div id="chat-messages" class="flex-1 p-3.5 overflow-y-auto space-y-2 bg-[#080808]">
+      <div class="flex flex-col items-start mb-3">
+        <div class="flex items-center gap-1.5 text-[10px] uppercase font-mono text-white mb-1">
+          <span>TERRA-SENTINEL MASTER AI</span>
+          <span class="px-1 py-0.2 rounded text-[8px] bg-white/10 border border-white/20 text-white">Central Controller</span>
+          <span class="text-zinc-500">• LIVE</span>
+        </div>
+        <div class="max-w-[85%] rounded-lg px-3.5 py-2 text-xs font-sans leading-relaxed bg-[#141414] border border-white/20 text-zinc-100 shadow-lg">
+          Welcome Operator. I am the central <strong>TERRA-SENTINEL Master AI Controller</strong> with autonomous oversight of all 5 underground sensor nodes, hydraulic powered roof chocks, drainage sumps, and DGMS emergency safety interlocks.
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Input Area -->
+    <div class="p-2.5 bg-[#141414] border-t border-white/10 flex items-center gap-2">
+      <input id="chat-input" type="text" onkeydown="if(event.key==='Enter') sendUserChatMessage();" placeholder="Command Master AI or enter intervention directive (e.g. Evacuate, Drain Sump)..." class="flex-1 bg-[#050505] border border-white/20 focus:border-white focus:outline-none text-xs text-white px-3 py-2 rounded-lg font-sans placeholder-zinc-500" />
+      <button id="chat-send-btn" onclick="sendUserChatMessage()" class="bg-white hover:bg-zinc-200 text-black p-2 rounded-lg font-bold transition flex items-center justify-center cursor-pointer active:scale-95">
+        <span class="material-symbols-outlined text-sm">send</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Gemini API Key Configuration Modal -->
+  <div id="gemini-key-modal" class="hidden absolute bottom-16 right-0 w-80 sm:w-96 p-4 rounded-xl bg-[#0a0a0a] border border-white/20 shadow-[0_0_35px_rgba(0,0,0,0.95)] backdrop-blur-xl z-50">
+    <div class="flex items-center justify-between pb-2 mb-3 border-b border-white/10">
+      <div class="flex items-center gap-2 text-xs font-bold text-white">
+        <span class="material-symbols-outlined text-white text-base">key</span>
+        <span>CLOUD REASONING UPLINK</span>
+      </div>
+      <button onclick="toggleApiKeyModal()" class="text-zinc-400 hover:text-white cursor-pointer">
+        <span class="material-symbols-outlined text-sm">close</span>
+      </button>
+    </div>
+    <p class="text-[11px] text-zinc-400 leading-relaxed mb-3">
+      Optionally link a Google Gemini API Key to amplify the Master AI with frontier multi-billion parameter reasoning:
+    </p>
+    <input id="gemini-key-input" type="password" placeholder="AIzaSy..." class="w-full bg-[#141414] border border-white/20 text-xs text-white px-3 py-2 rounded mb-3 focus:outline-none focus:border-white font-mono" />
+    <div class="flex items-center justify-end gap-2 text-xs font-mono">
+      <button onclick="toggleApiKeyModal()" class="px-3 py-1.5 text-zinc-400 hover:text-white transition cursor-pointer">Cancel</button>
+      <button onclick="saveGeminiKey()" class="px-3 py-1.5 bg-white text-black font-bold rounded hover:bg-zinc-200 transition cursor-pointer">Save &amp; Activate</button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Modular Scripts -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="public/js/chat-assistant.js"></script>
+  <script>
+    if (typeof ChatAssistantController === 'undefined') {
+      const s = document.createElement('script');
+      s.src = '/js/chat-assistant.js';
+      document.body.appendChild(s);
+    }
+  </script>
+
+  <!-- Cesium 3D Globe & God's Eye View Logic -->
+  <script>
+    let viewer = null;
+    let mineEntity = null;
+    let isShowingIframe = false;
+    let localGevUrl = localStorage.getItem('gev_instance_url') || 'http://localhost:4173';
+
+    // Chasnala Deep Mine Target Coordinates
+    const MINE_LAT = 23.795741;
+    const MINE_LON = 86.430412;
+    const MINE_ALT = 184.2;
+
+    function initCesiumGlobe() {
+      try {
+        // Initialize Cesium Viewer with Photorealistic Natural Satellite Earth Imagery (ArcGIS World Imagery)
+        viewer = new Cesium.Viewer('cesiumContainer', {
+          imageryProvider: new Cesium.UrlTemplateImageryProvider({
+            url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            maximumLevel: 19,
+            credit: 'Esri, Maxar, Earthstar Geographics'
+          }),
+          baseLayerPicker: false,
+          geocoder: false,
+          homeButton: false,
+          infoBox: false,
+          sceneModePicker: false,
+          selectionIndicator: false,
+          timeline: false,
+          navigationHelpButton: false,
+          animation: false,
+          shouldAnimate: true
+        });
+
+        // Set natural space lighting & realistic atmospheric sky
+        viewer.scene.globe.enableLighting = true;
+        viewer.scene.globe.depthTestAgainstTerrain = false;
+        viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#020408');
+
+        // 1. Natural Geological Strata: Subterranean Coal Seam Volume (Anthracite Black)
+        viewer.entities.add({
+          name: 'Chasnala Main Coal Seam #14 (Subterranean Anthracite)',
+          position: Cesium.Cartesian3.fromDegrees(MINE_LON, MINE_LAT, MINE_ALT - 25),
+          cylinder: {
+            length: 18.0,
+            topRadius: 180.0,
+            bottomRadius: 210.0,
+            material: Cesium.Color.fromCssColorString('#18181b').withAlpha(0.85),
+            outline: true,
+            outlineColor: Cesium.Color.fromCssColorString('#3f3f46').withAlpha(0.6)
+          }
+        });
+
+        // 2. Natural Geological Strata: Overburden Sandstone Caprock (Warm Terracotta/Ochre)
+        viewer.entities.add({
+          name: 'Overburden Sandstone Stratum',
+          position: Cesium.Cartesian3.fromDegrees(MINE_LON, MINE_LAT, MINE_ALT + 8),
+          cylinder: {
+            length: 12.0,
+            topRadius: 240.0,
+            bottomRadius: 260.0,
+            material: Cesium.Color.fromCssColorString('#d97706').withAlpha(0.35),
+            outline: true,
+            outlineColor: Cesium.Color.fromCssColorString('#b45309').withAlpha(0.7)
+          }
+        });
+
+        // 3. Natural Hydrogeology: Subsurface Mine Sump & Water Horizon (Crystalline Blue)
+        viewer.entities.add({
+          name: 'REL_35 Underground Sump Basin (Water Table Reservoir)',
+          position: Cesium.Cartesian3.fromDegrees(MINE_LON - 0.0022, MINE_LAT - 0.0031, MINE_ALT - 42),
+          cylinder: {
+            length: 8.0,
+            topRadius: 90.0,
+            bottomRadius: 90.0,
+            material: Cesium.Color.fromCssColorString('#0284c7').withAlpha(0.65),
+            outline: true,
+            outlineColor: Cesium.Color.fromCssColorString('#38bdf8')
+          }
+        });
+
+        // 4. Natural 3D Sensor Node Markers
+        // Node 01: Shaft #2 North Drift (Natural Forest Emerald - Safe)
+        viewer.entities.add({
+          name: 'NODE-01: Shaft #2 North Drift',
+          position: Cesium.Cartesian3.fromDegrees(MINE_LON - 0.0035, MINE_LAT + 0.0028, MINE_ALT + 22.5),
+          point: {
+            pixelSize: 11,
+            color: Cesium.Color.fromCssColorString('#10b981'),
+            outlineColor: Cesium.Color.fromCssColorString('#064e3b'),
+            outlineWidth: 2
+          },
+          label: {
+            text: 'NODE-01 [SHAFT #2 OK]',
+            font: '10px JetBrains Mono, monospace',
+            style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+            fillColor: Cesium.Color.fromCssColorString('#6ee7b7'),
+            outlineColor: Cesium.Color.BLACK,
+            outlineWidth: 2,
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            pixelOffset: new Cesium.Cartesian2(0, -14)
+          }
+        });
+
+        // Node 02: Haul Road Overburden (Natural Topaz Amber - Watch)
+        viewer.entities.add({
+          name: 'NODE-02: Overburden Haul Road',
+          position: Cesium.Cartesian3.fromDegrees(MINE_LON + 0.0042, MINE_LAT + 0.0015, MINE_ALT + 45.0),
+          point: {
+            pixelSize: 11,
+            color: Cesium.Color.fromCssColorString('#f59e0b'),
+            outlineColor: Cesium.Color.fromCssColorString('#78350f'),
+            outlineWidth: 2
+          },
+          label: {
+            text: 'NODE-02 [OVERBURDEN WATCH]',
+            font: '10px JetBrains Mono, monospace',
+            style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+            fillColor: Cesium.Color.fromCssColorString('#fcd34d'),
+            outlineColor: Cesium.Color.BLACK,
+            outlineWidth: 2,
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            pixelOffset: new Cesium.Cartesian2(0, -14)
+          }
+        });
+
+        // Node 04: Sub-Gallery Sump (Natural Water Cyan - Safe/Aquifer)
+        viewer.entities.add({
+          name: 'NODE-04: Sub-Gallery Sump Basin',
+          position: Cesium.Cartesian3.fromDegrees(MINE_LON - 0.0022, MINE_LAT - 0.0031, MINE_ALT - 30.0),
+          point: {
+            pixelSize: 11,
+            color: Cesium.Color.fromCssColorString('#0ea5e9'),
+            outlineColor: Cesium.Color.fromCssColorString('#0c4a6e'),
+            outlineWidth: 2
+          },
+          label: {
+            text: 'NODE-04 [SUMP RESERVOIR]',
+            font: '10px JetBrains Mono, monospace',
+            style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+            fillColor: Cesium.Color.fromCssColorString('#7dd3fc'),
+            outlineColor: Cesium.Color.BLACK,
+            outlineWidth: 2,
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            pixelOffset: new Cesium.Cartesian2(0, -14)
+          }
+        });
+
+        // 5. Node 03 Focal Beacon (Natural Ruby Alert - Critical Subsidence Monitoring)
+        mineEntity = viewer.entities.add({
+          name: 'Chasnala Deep Mine - Sector 4B Stope',
+          position: Cesium.Cartesian3.fromDegrees(MINE_LON, MINE_LAT, MINE_ALT + 30),
+          point: {
+            pixelSize: 16,
+            color: Cesium.Color.fromCssColorString('#ef4444'),
+            outlineColor: Cesium.Color.WHITE,
+            outlineWidth: 3
+          },
+          label: {
+            text: 'TARGET: NODE-03 SEC-4B\n[ACTIVE STOPE PILLAR]',
+            font: '11px JetBrains Mono, monospace',
+            style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+            fillColor: Cesium.Color.fromCssColorString('#fca5a5'),
+            outlineColor: Cesium.Color.BLACK,
+            outlineWidth: 2,
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            pixelOffset: new Cesium.Cartesian2(0, -20)
+          }
+        });
+
+        // 6. Natural 3D Subsidence Displacement Vector Ray
+        viewer.entities.add({
+          name: 'Differential Strata Subsidence Vector',
+          polyline: {
+            positions: Cesium.Cartesian3.fromDegreesArrayHeights([
+              MINE_LON, MINE_LAT, MINE_ALT + 30,
+              MINE_LON + 0.0008, MINE_LAT - 0.0012, MINE_ALT - 35
+            ]),
+            width: 4,
+            material: new Cesium.PolylineGlowMaterialProperty({
+              glowPower: 0.35,
+              color: Cesium.Color.fromCssColorString('#f43f5e')
+            })
+          }
+        });
+
+        // Load live GeoJSON Spatial Mine Layer
+        loadGeoJsonLayer();
+
+        // Fly directly to Mine on startup
+        flyToMine();
+
+      } catch (err) {
+        console.warn('Cesium WebGL notice (falling back to tactical satellite canvas):', err.message);
+      }
+    }
+
+    function loadGeoJsonLayer() {
+      if (!viewer) return;
+      Cesium.GeoJsonDataSource.load('/api/telemetry/geojson', {
+        stroke: Cesium.Color.fromCssColorString('#ef4444'),
+        fill: Cesium.Color.fromCssColorString('#ef4444').withAlpha(0.3),
+        strokeWidth: 3,
+        markerSize: 24
+      }).then(function(dataSource) {
+        viewer.dataSources.add(dataSource);
+        const entities = dataSource.entities.values;
+        for (let i = 0; i < entities.length; i++) {
+          const entity = entities[i];
+          const hexColor = (entity.properties && entity.properties.color && entity.properties.color.getValue()) || '#10b981';
+          if (entity.billboard) {
+            entity.billboard.color = Cesium.Color.fromCssColorString(hexColor);
+          }
+          if (entity.point) {
+            entity.point.color = Cesium.Color.fromCssColorString(hexColor);
+          }
+        }
+        console.log('[GEV Engine] Live GeoJSON telemetry nodes loaded into 3D globe with natural geotechnical colors.');
+      }).catch(function(e) {
+        console.warn('[GEV Engine] GeoJSON layer notice:', e.message);
+      });
+    }
+
+    function flyToMine() {
+      if (!viewer) return;
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(MINE_LON, MINE_LAT, 2500),
+        orientation: {
+          heading: Cesium.Math.toRadians(15.0),
+          pitch: Cesium.Math.toRadians(-45.0),
+          roll: 0.0
+        },
+        duration: 2.5
+      });
+    }
+
+    function resetGlobe() {
+      if (!viewer) return;
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(MINE_LON, MINE_LAT, 15000000),
+        orientation: {
+          heading: 0,
+          pitch: Cesium.Math.toRadians(-90.0),
+          roll: 0.0
+        },
+        duration: 3.0
+      });
+    }
+
+    // Keyboard Hotkeys matching God's Eye View standards
+    document.addEventListener('keydown', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+      switch (e.key) {
+        case '1': setOptic('normal'); break;
+        case '2': setOptic('flir'); break;
+        case '3': setOptic('nvg'); break;
+        case '4': setOptic('crt'); break;
+        case 'c':
+        case 'C': flyToMine(); break;
+        case 'Escape': resetGlobe(); break;
+      }
+    });
+
+
+    function setOptic(type) {
+      const container = document.getElementById('cesiumContainer');
+      const buttons = ['normal', 'flir', 'nvg', 'crt'];
+      
+      buttons.forEach(b => {
+        const btn = document.getElementById(`btn-optic-${b}`);
+        if (btn) {
+          if (b === type) {
+            btn.className = 'px-2 py-1 rounded bg-white text-black border border-white text-[10px] font-bold uppercase transition active:scale-95';
+          } else {
+            btn.className = 'px-2 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-zinc-300 text-[10px] font-bold uppercase transition active:scale-95';
+          }
+        }
+      });
+
+      if (container) {
+        container.classList.remove('optic-flir', 'optic-nvg', 'optic-crt');
+        if (type !== 'normal') {
+          container.classList.add(`optic-${type}`);
+        }
+      }
+    }
+
+    function toggleGlobeOrIframe() {
+      isShowingIframe = !isShowingIframe;
+      const cesiumEl = document.getElementById('cesiumContainer');
+      const iframeEl = document.getElementById('pairedIframeContainer');
+      const iframe = document.getElementById('gevIframe');
+      const toggleText = document.getElementById('source-toggle-text');
+
+      if (isShowingIframe) {
+        if (cesiumEl) cesiumEl.classList.add('hidden');
+        if (iframeEl) iframeEl.classList.remove('hidden');
+        if (iframe && iframe.src === 'about:blank') {
+          iframe.src = `${localGevUrl}?lat=${MINE_LAT}&lon=${MINE_LON}&alt=${MINE_ALT}`;
+        }
+        if (toggleText) toggleText.innerText = 'Switch to Embedded 3D';
+      } else {
+        if (cesiumEl) cesiumEl.classList.remove('hidden');
+        if (iframeEl) iframeEl.classList.add('hidden');
+        if (toggleText) toggleText.innerText = 'Switch to Paired GEV App';
+      }
+    }
+
+    function openPairingModal() {
+      const modal = document.getElementById('pairing-modal');
+      const input = document.getElementById('gev-url-input');
+      if (input) input.value = localGevUrl;
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closePairingModal() {
+      const modal = document.getElementById('pairing-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function saveAndPairGev() {
+      const input = document.getElementById('gev-url-input');
+      if (input && input.value.trim()) {
+        localGevUrl = input.value.trim();
+        localStorage.setItem('gev_instance_url', localGevUrl);
+        closePairingModal();
+        checkGevStatus();
+        alert(`God's Eye View linked to: ${localGevUrl}`);
+      }
+    }
+
+    function testGevConnection() {
+      const input = document.getElementById('gev-url-input');
+      const url = (input ? input.value.trim() : localGevUrl) || 'http://localhost:4173';
+      
+      fetch(url, { mode: 'no-cors' })
+        .then(() => alert(`SUCCESS: Reachable at ${url}! Ready for 3D pairing.`))
+        .catch(err => alert(`Notice: ${url} not responding yet. Ensure 'npm run dev' is running in gods-eye-view folder.`));
+    }
+
+    function checkGevStatus() {
+      const badge = document.getElementById('gev-instance-badge');
+      if (!badge) return;
+
+      fetch(localGevUrl, { mode: 'no-cors' })
+        .then(() => {
+          badge.className = 'px-1.5 py-0.2 rounded text-[8px] bg-white text-black font-bold font-mono';
+          badge.innerText = `● PAIRED: ${localGevUrl}`;
+        })
+        .catch(() => {
+          badge.className = 'px-1.5 py-0.2 rounded text-[8px] bg-neutral-900 text-zinc-400 border border-white/10 font-mono';
+          badge.innerText = `STANDBY: ${localGevUrl}`;
+        });
+    }
+
+    function copyGeoJsonUrl() {
+      const input = document.getElementById('geojson-input');
+      if (input) {
+        navigator.clipboard.writeText(input.value);
+        alert('Live GeoJSON URL copied to clipboard! Paste into God\'s Eye View or Cesium ion.');
+      }
+    }
+
+    // Connect WebSocket for live telemetry synchronization
+    const socket = io();
+    socket.on('telemetry', (data) => {
+      if (!data) return;
+
+      const el = (id) => document.getElementById(id);
+      if (el('side-tilt')) el('side-tilt').innerText = `Pitch: ${Number(data.pitch).toFixed(2)}° | Roll: ${Number(data.roll).toFixed(2)}°`;
+      if (el('side-disp')) el('side-disp').innerText = `${Number(data.disp).toFixed(2)}° Σ (${data.phase})`;
+      if (el('side-water')) el('side-water').innerText = `${Number(data.sump).toFixed(2)} m / 4.00 m`;
+      if (el('side-rms')) el('side-rms').innerText = `${Number(data.rms).toFixed(2)} g (${Number(data.fft || 48.0).toFixed(1)} Hz)`;
+      if (el('side-temp')) el('side-temp').innerText = `${Number(data.temp).toFixed(1)} °C`;
+      if (el('side-hum')) el('side-hum').innerText = `${Number(data.humidity || 78.5).toFixed(1)}% RH`;
+      if (el('side-ai-directive') && data.aiText) el('side-ai-directive').innerText = data.aiText;
+
+      if (data.lat && el('hud-coords')) el('hud-coords').innerText = `${Number(data.lat).toFixed(6)}° N, ${Number(data.lon).toFixed(6)}° E`;
+      if (data.alt && el('hud-alt')) el('hud-alt').innerText = `${Number(data.alt).toFixed(2)} m MSL`;
+      if (el('gev-latency')) el('gev-latency').innerText = `${data.latency}ms`;
+
+      // Update 3D Pin Point Color with natural geotechnical status colors
+      if (mineEntity && mineEntity.point) {
+        if (data.phase === 'CRITICAL') {
+          mineEntity.point.color = Cesium.Color.fromCssColorString('#ef4444');
+        } else if (data.phase === 'WARNING') {
+          mineEntity.point.color = Cesium.Color.fromCssColorString('#f59e0b');
+        } else {
+          mineEntity.point.color = Cesium.Color.fromCssColorString('#10b981');
+        }
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initCesiumGlobe();
+      checkGevStatus();
+    });
+  </script>
+</body>
+</html>

@@ -1,174 +1,16 @@
 <!DOCTYPE html>
 <html class="dark" lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>TERRA-PULSE OS - Explainable ML &amp; Subsidence Risk | SIH 2026</title>
-  <link href="https://fonts.googleapis.com" rel="preconnect"/>
-  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "surface-container-lowest": "#0a0e17",
-            "surface-dim": "#0f131c",
-            "surface": "#0f131c",
-            "background": "#0a0e17",
-            "surface-container-low": "#151922",
-            "surface-container": "#1c202c",
-            "surface-container-high": "#242938",
-            "surface-container-highest": "#303648",
-            "primary": "#e2fdff",
-            "primary-container": "#00f2fe",
-            "secondary": "#ffc83b",
-            "secondary-container": "#f59e0b",
-            "error": "#ff4d6d",
-            "error-container": "#85001d",
-            "outline": "#6b7c85",
-            "outline-variant": "#2a3642",
-            "on-surface": "#e2e8f0",
-            "on-surface-variant": "#94a3b8",
-            "on-primary": "#00363a",
-          },
-          fontFamily: {
-            sans: ["Inter", "sans-serif"],
-            mono: ["JetBrains Mono", "monospace"],
-            display: ["Space Grotesk", "sans-serif"],
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    @layer base {
-      html, body {
-        margin: 0;
-        padding: 0;
-        background-color: #0a0e17;
-        color: #e2e8f0;
-      }
-      ::-webkit-scrollbar {
-        width: 4px;
-        height: 4px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #0f131c;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #242938;
-        border-radius: 2px;
-      }
-    }
-    .hud-bracket-tl { position: absolute; top: 6px; left: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1; color: #3a4b5b; pointer-events: none; user-select: none; }
-    .hud-bracket-tr { position: absolute; top: 6px; right: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1; color: #3a4b5b; pointer-events: none; user-select: none; }
-    .hud-bracket-bl { position: absolute; bottom: 6px; left: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1; color: #3a4b5b; pointer-events: none; user-select: none; }
-    .hud-bracket-br { position: absolute; bottom: 6px; right: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1; color: #3a4b5b; pointer-events: none; user-select: none; }
-  </style>
+  {% with title='TERRA-PULSE OS - Explainable ML & Subsidence Risk | SIH 2026' %}{% include 'partials/head.ejs' %}{% endwith %}
 </head>
-<body class="bg-background font-sans text-on-surface antialiased">
+<body class="bg-[#07090e] font-sans text-on-surface antialiased">
   <!-- Tactical Sidebar -->
-  <aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest border-r border-outline-variant/60 z-50 flex flex-col justify-between select-none">
-    <div class="flex flex-col">
-      <!-- System Brand -->
-      <div class="h-16 px-5 flex items-center gap-3 bg-surface-container-low border-b border-outline-variant/50">
-        <div class="relative flex items-center justify-center">
-          <div class="w-3 h-3 rounded-full bg-primary-container shadow-[0_0_10px_#00f2fe] animate-pulse"></div>
-          <div class="w-5 h-5 rounded-full border border-primary-container/40 absolute"></div>
-        </div>
-        <div class="leading-tight">
-          <span class="font-mono text-[10px] tracking-[0.2em] font-bold text-secondary block">TERRA-PULSE OS</span>
-          <span class="font-display text-sm font-bold text-primary tracking-wide">SIH 2026 TACTICAL</span>
-        </div>
-      </div>
-      
-      <!-- Sector Assignment Badge -->
-      <div class="px-5 py-3 bg-surface-dim border-b border-outline-variant/40">
-        <div class="flex items-center justify-between font-mono text-[10px] tracking-wider text-on-surface-variant uppercase">
-          <span>SECTOR ASSIGNMENT</span>
-          <span class="text-secondary font-bold px-1.5 py-0.5 rounded bg-secondary/10 border border-secondary/20">SEC-4B</span>
-        </div>
-        <div class="font-mono text-xs text-primary font-bold mt-1.5 flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-[14px] text-primary-container">terrain</span>
-          CHASNALA DEEP MINE
-        </div>
-      </div>
-      
-      <!-- Navigation Links -->
-      <nav class="flex flex-col gap-1 p-3">
-        <a class="flex items-center justify-between px-3.5 py-2.5 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all group" href="/">
-          <span class="text-xs uppercase tracking-wider font-medium">Live Telemetry &amp; GIS</span>
-          <span class="font-mono text-[11px] text-on-surface-variant/60 group-hover:text-secondary">01</span>
-        </a>
-        <a class="flex items-center justify-between px-3.5 py-2.5 rounded bg-surface-container-high text-primary font-bold border-l-2 border-primary-container shadow-[inset_1px_0_0_0_#00f2fe] transition-all" href="/explainable-ml">
-          <span class="text-xs uppercase tracking-wider">Explainable ML &amp; Risk</span>
-          <span class="font-mono text-[11px] text-primary-container">03</span>
-        </a>
-      </nav>
-    </div>
-    
-    <!-- Bottom Telemetry & Status -->
-    <div class="p-3 bg-surface-container-low border-t border-outline-variant/40 flex flex-col gap-2">
-      <div class="bg-surface-dim p-2.5 rounded border border-outline-variant/30 flex flex-col gap-1">
-        <span class="font-mono text-[9px] tracking-widest uppercase text-on-surface-variant">INGEST BUS LATENCY</span>
-        <div class="flex items-baseline justify-between">
-          <span class="font-mono text-lg font-bold text-primary">124<span class="text-[10px] text-on-surface-variant ml-1 font-normal">MS</span></span>
-          <span class="font-mono text-[10px] text-secondary tracking-wider font-semibold">SX1278 433MHz</span>
-        </div>
-      </div>
-      <div class="flex items-center justify-between px-1 font-mono text-[10px] text-on-surface-variant">
-        <span>SYS SECURE CORE</span>
-        <span class="text-primary-container font-bold flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span> ONLINE
-        </span>
-      </div>
-    </div>
-  </aside>
+  {% with activePage='ml' %}{% include 'partials/sidebar.ejs' %}{% endwith %}
 
   <!-- Main Content Shell -->
   <div class="pl-64 min-h-screen flex flex-col">
     <!-- Top Header -->
-    <header class="sticky top-0 z-40 bg-surface-dim/95 backdrop-blur border-b border-outline-variant/50 h-14 px-6 flex items-center justify-between">
-      <div class="flex items-center gap-2.5 px-3 py-1.5 rounded bg-error-container/30 border border-error/30">
-        <div class="relative flex items-center justify-center">
-          <span class="w-2 h-2 rounded-full bg-error"></span>
-          <span class="w-4 h-4 rounded-full bg-error/40 animate-ping absolute"></span>
-        </div>
-        <span class="font-mono text-xs font-bold text-error tracking-wider uppercase">ELEVATED SUBSIDENCE WATCH - SECTOR 4B</span>
-      </div>
-
-      <div class="flex items-center gap-6">
-        <div class="flex items-center gap-1.5 font-mono text-xs">
-          <span class="text-on-surface-variant text-[11px] uppercase tracking-wider">NODES:</span>
-          <span class="text-primary font-bold">4 ACT</span>
-          <span class="text-outline-variant">/</span>
-          <span class="text-error font-bold">1 OFF</span>
-          <span class="text-outline-variant">/</span>
-          <span class="text-on-surface-variant">0 COR</span>
-        </div>
-        <div class="h-3.5 w-px bg-outline-variant"></div>
-        <div class="flex items-center gap-1.5 font-mono text-xs">
-          <span class="text-on-surface-variant text-[11px] uppercase tracking-wider">UPLINK:</span>
-          <span class="text-secondary font-semibold">MQTT:1883</span>
-          <span class="text-on-surface-variant/80 text-[10px]">[COM4 STBY]</span>
-        </div>
-        <div class="h-3.5 w-px bg-outline-variant"></div>
-        <div class="flex items-center gap-1.5 font-mono text-xs text-primary">
-          <span class="material-symbols-outlined text-secondary text-[16px]">schedule</span>
-          <span id="header-clock">IST UTC+5:30 REAL-TIME</span>
-        </div>
-        <div class="h-3.5 w-px bg-outline-variant"></div>
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded bg-surface-container-high border border-outline-variant/60 flex items-center justify-center text-primary-container">
-            <span class="material-symbols-outlined text-[18px]">engineering</span>
-          </div>
-        </div>
-      </div>
-    </header>
+    {% with systemMode='SYSTEM MODE: XAI TREE-SHAP & DGMS PROTOCOL', targetGeometry='TARGET GEOMETRY: DRIFT & SHAFT 12' %}{% include 'partials/header.ejs' %}{% endwith %}
 
     <!-- Main Container -->
     <main class="flex-1 p-6 space-y-5 max-w-[1680px] w-full mx-auto">
@@ -177,13 +19,13 @@
       <div class="flex flex-wrap items-center justify-between gap-4 bg-surface-container-low border border-outline-variant/50 px-4 py-2.5 rounded">
         <div class="flex flex-wrap items-center gap-3">
           <span class="font-mono text-xs uppercase tracking-widest text-primary-container font-bold px-2 py-1 bg-surface-container-highest/60 rounded border border-primary-container/30 flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span> AI-CORE ACTIVE
+            <span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span> MASTER AI ACTIVE
           </span>
-          <span class="font-mono text-xs text-on-surface-variant">ENSEMBLE INFERENCE ENGINE v2.4</span>
+          <span class="font-mono text-xs text-on-surface-variant">TERRA-SENTINEL CENTRAL CONTROLLER</span>
           <span class="text-outline-variant">/</span>
-          <span class="font-mono text-xs text-on-surface-variant">ISOLATION FOREST + TIME-SERIES LSTM HYBRID</span>
+          <span class="font-mono text-xs text-on-surface-variant">XAI TREE-SHAP EXPLAINABILITY</span>
           <span class="text-outline-variant">/</span>
-          <span class="font-mono text-xs text-secondary font-semibold">PHYSICS-INFORMED PINN LOSS</span>
+          <span class="font-mono text-xs text-secondary font-semibold">DGMS 1957/2017 SAFETY CORE</span>
         </div>
         <div class="flex flex-wrap items-center gap-5 font-mono text-xs">
           <div><span class="text-on-surface-variant uppercase text-[10px] mr-1.5">LATENCY:</span><span id="ml-latency" class="text-primary font-bold">18ms</span></div>
@@ -191,6 +33,21 @@
           <div><span class="text-on-surface-variant uppercase text-[10px] mr-1.5">BAYES CONF:</span><span id="ml-bayes" class="text-primary-container font-bold">94.2%</span></div>
           <div><span class="text-on-surface-variant uppercase text-[10px] mr-1.5">DGMS PROTOCOL:</span><span class="text-error font-bold px-1.5 py-0.5 rounded bg-error-container/30 border border-error/40">STAGE-III ALERT</span></div>
         </div>
+      </div>
+
+      <!-- Real-Time Neural Geotechnical Intelligence Ribbon -->
+      <div class="bg-surface-container-lowest/90 border border-primary-container/30 rounded px-4 py-2.5 flex items-center justify-between gap-3 font-mono text-xs">
+        <div class="flex items-center gap-2.5 overflow-hidden flex-1">
+          <span class="px-2 py-0.5 rounded bg-surface-container-high border border-primary-container/40 text-primary-container text-[10px] font-bold uppercase shrink-0 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-ping"></span> MASTER AI DIRECTIVE
+          </span>
+          <span class="text-on-surface truncate font-sans text-xs tracking-wide" id="ai-insight-text">
+            [TERRA-SENTINEL MASTER AI] Telemetry baseline nominal. All 5 sensor nodes synchronized.
+          </span>
+        </div>
+        <a href="/" class="shrink-0 text-primary-container hover:text-white text-[11px] underline flex items-center gap-1 transition-colors">
+          <span>Live HUD</span> <span class="material-symbols-outlined text-xs">open_in_new</span>
+        </a>
       </div>
 
       <!-- Critical Hazard Window Alert Banner -->
@@ -228,13 +85,13 @@
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div>
                 <span class="font-mono text-[10px] tracking-widest text-primary-container uppercase font-bold block mb-0.5">GEOMETRIC DEFORMATION PROJECTION</span>
-                <h3 class="font-display text-base font-bold text-primary">Subsurface Strata Stress Vector &amp; Void Delamination</h3>
+                <h3 id="proj-header-title" class="font-display text-base font-bold text-primary">Subsurface Strata Stress Vector &amp; Void Delamination</h3>
               </div>
               <div class="flex items-center gap-1 bg-surface-container-lowest p-1 rounded border border-outline-variant/40 font-mono text-[11px]">
-                <button class="px-2.5 py-1 text-primary-container bg-surface-container-high rounded font-bold border border-primary-container/30">InSAR/GNSS</button>
-                <button class="px-2.5 py-1 text-on-surface-variant hover:text-primary transition-colors">STRAIN-4B</button>
-                <button class="px-2.5 py-1 text-on-surface-variant hover:text-primary transition-colors">HYDRO-SUMP</button>
-                <button class="px-2.5 py-1 text-on-surface-variant hover:text-primary transition-colors">SEISMIC FFT</button>
+                <button onclick="selectProjectionTab(this, 'insar')" class="proj-tab-btn px-2.5 py-1 text-primary-container bg-surface-container-high rounded font-bold border border-primary-container/30 cursor-pointer">InSAR/GNSS</button>
+                <button onclick="selectProjectionTab(this, 'strain')" class="proj-tab-btn px-2.5 py-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer">STRAIN-4B</button>
+                <button onclick="selectProjectionTab(this, 'hydro')" class="proj-tab-btn px-2.5 py-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer">HYDRO-SUMP</button>
+                <button onclick="selectProjectionTab(this, 'seismic')" class="proj-tab-btn px-2.5 py-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer">SEISMIC FFT</button>
               </div>
             </div>
             
@@ -477,8 +334,8 @@
               <div class="bg-surface-container-lowest/70 p-2.5 rounded border border-outline-variant/30">
                 <div class="flex items-center justify-between font-mono text-xs mb-1.5">
                   <span class="text-primary font-bold flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[15px] text-secondary">waves</span>
-                    Ultrasonic Sump Infiltration Rate [HC-SR04]
+                    <span class="material-symbols-outlined text-[15px] text-secondary">water_drop</span>
+                    Submersible Sump Water Level [REL_35]
                   </span>
                   <span class="text-secondary font-bold">+14.8% ATTRIBUTION</span>
                 </div>
@@ -754,7 +611,7 @@
           </div>
           <div class="flex items-center gap-1 text-on-surface-variant text-[11px]">
             <span>HARDWARE VERIFIED:</span>
-            <span class="text-primary font-bold">SX1278 // MPU6050 // HC-SR04 // NEO-6M</span>
+            <span class="text-primary font-bold">SX1278 // ADXL345 // REL_35 // NEO-6M</span>
           </div>
         </div>
       </div>
@@ -844,62 +701,100 @@
       const clockEl = document.getElementById('header-clock');
       if (clockEl) clockEl.innerText = timeStr + ' UTC+5:30 REAL-TIME';
     }, 1000);
+  </script>
+  </div>
+
+  <!-- Floating Cyber HUD AI Chat Assistant Widget -->
+  {% include 'partials/chat-widget.ejs' %}
+
+  <!-- Modular Scripts -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/chat-assistant.js"></script>
+  <script>
+    const el = (id) => document.getElementById(id);
+    let currentAiText = null;
+    let typewriterInterval = null;
+
+    let socket = null;
+    try {
+      if (typeof io !== 'undefined') {
+        socket = io();
+      }
+    } catch(e) {
+      console.log('Socket init notice:', e);
+    }
+
+    if (socket) {
+      socket.on('telemetry', (data) => {
+        // Animate Delamination Polygon based on strain/disp
+        const polygon = el('delam-polygon');
+        if (polygon) {
+          const strainScale = 1.0 + (data.disp * 0.5);
+          polygon.setAttribute('transform', `scale(${strainScale}) translate(${-(strainScale-1)*370}, ${-(strainScale-1)*210})`);
+        }
+
+        // Update Zone Max Flexure text
+        if (el('zone-max-flexure')) {
+          el('zone-max-flexure').innerText = (14.18 + (data.disp * 5)).toFixed(2);
+        }
+
+        // Update TreeSHAP attribution bars dynamically
+        if (el('shap-1')) el('shap-1').style.width = `${Math.min(100, 38.4 + (Math.abs(data.pitch) * 5))}%`;
+        if (el('shap-2')) el('shap-2').style.width = `${Math.min(100, 27.1 + (data.rms * 50))}%`;
+        if (el('shap-3')) el('shap-3').style.width = `${Math.min(100, 14.8 + (data.co / 2))}%`;
+
+        // Live AI Analyst Logic
+        const aiTextEl = el('ai-insight-text');
+        if (aiTextEl && data.aiText && data.aiText !== currentAiText) {
+          currentAiText = data.aiText;
+          clearInterval(typewriterInterval);
+          aiTextEl.innerText = "";
+          let charIndex = 0;
+          typewriterInterval = setInterval(() => {
+            if (charIndex < currentAiText.length) {
+              aiTextEl.innerText += currentAiText.charAt(charIndex);
+              charIndex++;
+            } else {
+              clearInterval(typewriterInterval);
+            }
+          }, 30);
+        }
+      });
+    }
+
+    // Projection tab switcher
+    window.selectProjectionTab = function(btn, mode) {
+      document.querySelectorAll('.proj-tab-btn').forEach(b => {
+        b.className = 'proj-tab-btn px-2.5 py-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer';
+      });
+      if (btn) {
+        btn.className = 'proj-tab-btn px-2.5 py-1 text-primary-container bg-surface-container-high rounded font-bold border border-primary-container/30 cursor-pointer';
+      }
+
+      const titles = {
+        'insar': 'Subsurface Strata Stress Vector & Void Delamination (InSAR/GNSS)',
+        'strain': 'Zone SEC-4B High-Resolution Strain Gauge Network',
+        'hydro': 'Hydrostatic Pore Pressure vs Sump Delamination Interface',
+        'seismic': 'Acoustic Emission & FFT Micro-Seismic Resonances'
+      };
+
+      const titleEl = el('proj-header-title');
+      if (titleEl && titles[mode]) {
+        titleEl.innerText = titles[mode];
+      }
+    };
 
     // Live ML Telemetry Simulation
     setInterval(() => {
-      const latencyEl = document.getElementById('ml-latency');
+      const latencyEl = el('ml-latency');
       if (latencyEl) {
         latencyEl.innerText = (18 + Math.floor(Math.random() * 8 - 4)) + 'ms';
       }
-      const bayesEl = document.getElementById('ml-bayes');
+      const bayesEl = el('ml-bayes');
       if (bayesEl) {
         bayesEl.innerText = (94 + Math.random() * 2).toFixed(1) + '%';
       }
-    }, 2500);
-  </script>
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-    socket.on('telemetry', (data) => {
-      const el = (id) => document.getElementById(id);
-      
-      // Animate Delamination Polygon based on strain/disp
-      const polygon = el('delam-polygon');
-      if (polygon) {
-        const strainScale = 1.0 + (data.disp * 0.5);
-        polygon.setAttribute('transform', `scale(${strainScale}) translate(${-(strainScale-1)*370}, ${-(strainScale-1)*210})`);
-      }
-
-      // Update Zone Max Flexure text
-      if (el('zone-max-flexure')) {
-        el('zone-max-flexure').innerText = (14.18 + (data.disp * 5)).toFixed(2);
-      }
-
-      // Update TreeSHAP attribution bars dynamically
-      if (el('shap-1')) el('shap-1').style.width = `${Math.min(100, 38.4 + (Math.abs(data.pitch) * 5))}%`;
-      if (el('shap-2')) el('shap-2').style.width = `${Math.min(100, 27.1 + (data.rms * 50))}%`;
-      if (el('shap-3')) el('shap-3').style.width = `${Math.min(100, 14.8 + (data.co / 2))}%`;
-
-      // Live AI Analyst Logic
-      const aiTextEl = el('ai-insight-text');
-      if (data.aiText && data.aiText !== currentAiText) {
-        currentAiText = data.aiText;
-        clearInterval(typewriterInterval);
-        aiTextEl.innerText = "";
-        let charIndex = 0;
-        typewriterInterval = setInterval(() => {
-          if (charIndex < currentAiText.length) {
-            aiTextEl.innerText += currentAiText.charAt(charIndex);
-            charIndex++;
-          } else {
-            clearInterval(typewriterInterval);
-          }
-        }, 30);
-      }
-    });
-
-    let currentAiText = null;
-    let typewriterInterval = null;
+    }, 2000);
   </script>
 </body>
 </html>

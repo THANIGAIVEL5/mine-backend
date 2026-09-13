@@ -4,3 +4,7 @@ npm-debug.log
 .gitignore
 sqlite3
 database.sqlite
+venv
+__pycache__
+*.pyc
+
