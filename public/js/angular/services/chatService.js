@@ -241,17 +241,44 @@
 
         function applyLocalFallback(text) {
           service.isSending = false;
-          var local = generateLocalGeotechnicalResponse(text);
-          service.messages.push({
-            sender: 'TERRA-SENTINEL MASTER AI',
-            text: local.reply,
-            isAi: true,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-            source: local.source,
-            isIntervention: local.isIntervention
-          });
-          $rootScope.$applyAsync();
-          return local;
+          var local = (window.SmolAi && typeof window.SmolAi.generate === 'function')
+            ? null 
+            : generateLocalGeotechnicalResponse(text);
+
+          if (window.SmolAi && typeof window.SmolAi.generate === 'function') {
+            window.SmolAi.generate(text).then(function (res) {
+              service.messages.push({
+                sender: 'TERRA-SENTINEL MASTER AI',
+                text: res.reply,
+                isAi: true,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                source: res.source,
+                isIntervention: res.isIntervention
+              });
+              $rootScope.$applyAsync();
+            }).catch(function () {
+              var fallback = generateLocalGeotechnicalResponse(text);
+              service.messages.push({
+                sender: 'TERRA-SENTINEL MASTER AI',
+                text: fallback.reply,
+                isAi: true,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                source: fallback.source,
+                isIntervention: fallback.isIntervention
+              });
+              $rootScope.$applyAsync();
+            });
+          } else {
+            service.messages.push({
+              sender: 'TERRA-SENTINEL MASTER AI',
+              text: local.reply,
+              isAi: true,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+              source: local.source,
+              isIntervention: local.isIntervention
+            });
+            $rootScope.$applyAsync();
+          }
         }
 
         service.setBackendUrl = function (url) {
