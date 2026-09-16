@@ -153,6 +153,76 @@ class TelemetryService {
   }
 
   /**
+   * Inject specific geotechnical disaster simulation scenario
+   */
+  injectScenario(scenarioKey) {
+    let summary = '';
+    this.activeScenario = scenarioKey;
+
+    switch (scenarioKey) {
+      case 'pillar_shear':
+        this.phase = 'CRITICAL';
+        this.pitch = 4.25;
+        this.roll = -2.10;
+        this.disp = 1.84;
+        this.rms = 0.46;
+        this.co = 16.5;
+        this.ticks = 55;
+        summary = '[DISASTER SIMULATION] Acute Pillar Shear & Roof Delamination (>4.2°/hr) triggered at Pillar 4B Stope. Stage-IV evacuation interlock armed.';
+        break;
+
+      case 'inundation':
+        this.phase = 'WARNING';
+        this.sump = 3.92;
+        this.pitch = 0.82;
+        this.disp = 0.45;
+        this.rms = 0.18;
+        this.ticks = 38;
+        summary = '[DISASTER SIMULATION] Sub-Gallery Sump Level reached 3.92m (Critical Limit 3.50m). Automatic 500 GPM dewatering pump interlock engaged.';
+        break;
+
+      case 'gas_spike':
+        this.phase = 'CRITICAL';
+        this.co = 74.0;
+        this.pitch = 0.75;
+        this.rms = 0.19;
+        this.temp = 42.4;
+        this.ticks = 58;
+        summary = '[DISASTER SIMULATION] Toxic Carbon Monoxide desorption flash spike (74.0 ppm). Auxiliary ventilation boosted to 100% capacity.';
+        break;
+
+      case 'lora_dropout':
+        this.phase = 'WARNING';
+        this.rssiVal = -118;
+        this.pktFlow = 6;
+        summary = '[DISASTER SIMULATION] Node-03 RF signal attenuation (-118dBm). LoRa Mesh auto-rerouting initiated via Node-02 repeater.';
+        break;
+
+      case 'nominal_reset':
+      default:
+        this.phase = 'STABLE';
+        this.pitch = 0.52;
+        this.roll = -0.21;
+        this.disp = 0.12;
+        this.rms = 0.15;
+        this.co = 12.0;
+        this.sump = 2.14;
+        this.temp = 38.6;
+        this.rssiVal = -84;
+        this.pktFlow = 42;
+        this.ticks = 5;
+        this.activeScenario = 'nominal';
+        summary = '[SIMULATION RESET] Mine environmental baseline restored to DGMS nominal equilibrium.';
+        break;
+    }
+
+    return {
+      snapshot: this.getSnapshot({ isHardware: false, activeScenario: this.activeScenario }),
+      summary: summary
+    };
+  }
+
+  /**
    * Apply direct physical intervention overrides from the Operator
    */
   applyOperatorOverride(commandText) {

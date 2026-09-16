@@ -1,168 +1,220 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html class="light" lang="en" ng-app="terraPulseApp">
 <head>
-  {% with title='TERRA-PULSE OS - Live Telemetry & GIS | SIH 2026' %}{% include 'partials/head.ejs' %}{% endwith %}
+  <%- include('partials/head', { title: 'TERRA-PULSE OS - Live Telemetry & GIS | SIH 2026' }) %>
 </head>
-<body class="bg-[#07090e] font-['Space_Grotesk'] text-[13px] text-on-surface antialiased selection:bg-primary-container selection:text-black min-h-screen relative overflow-x-hidden">
-  <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_25%_15%,rgba(255,255,255,0.03),transparent_45%),radial-gradient(circle_at_80%_25%,rgba(255,51,102,0.05),transparent_40%),radial-gradient(circle_at_50%_75%,rgba(255,255,255,0.02),transparent_50%)] z-0"></div>
+<body ng-controller="TelemetryDashboardController as vm" ng-cloak ng-class="{'hazard-critical-iv': vm.telemetry.pitch > 3.0}" class="bg-slate-50 dark:bg-[#07090e] font-['Space_Grotesk'] text-[13px] text-slate-800 dark:text-on-surface antialiased selection:bg-primary-container selection:text-black min-h-screen relative overflow-x-hidden">
+  <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_25%_15%,rgba(2,132,199,0.03),transparent_45%),radial-gradient(circle_at_80%_25%,rgba(225,29,72,0.03),transparent_40%),radial-gradient(circle_at_50%_75%,rgba(241,245,249,0.8),transparent_50%)] dark:bg-[radial-gradient(circle_at_25%_15%,rgba(255,255,255,0.03),transparent_45%),radial-gradient(circle_at_80%_25%,rgba(255,51,102,0.05),transparent_40%),radial-gradient(circle_at_50%_75%,rgba(255,255,255,0.02),transparent_50%)] z-0"></div>
 
   <!-- Left Tactical Sidebar -->
-  {% with activePage='live' %}{% include 'partials/sidebar.ejs' %}{% endwith %}
+  <%- include('partials/sidebar', { activePage: 'live' }) %>
 
   <!-- Main Content wrapper -->
   <div class="pl-64 relative z-10">
-    {% with systemMode='SYSTEM MODE: REALTIME CONTINUOUS INGESTION', targetGeometry='TARGET GEOMETRY: DRIFT & SHAFT 12' %}{% include 'partials/header.ejs' %}{% endwith %}
+    <%- include('partials/header', { systemMode: 'SYSTEM MODE: REALTIME CONTINUOUS INGESTION', targetGeometry: 'TARGET GEOMETRY: DRIFT & SHAFT 12' }) %>
 
-    <main class="relative pt-24 w-full px-6 bg-[#07090e]">
+    <main class="relative pt-24 w-full px-6 bg-slate-50 dark:bg-[#07090e]">
       <div class="flex flex-col w-full pb-12 gap-4">
         
         <!-- TOP OVERALL SITE RISK BANNER & LIVE METRICS -->
-        <div class="hud-bracket flex flex-col xl:flex-row items-stretch justify-between gap-3 bg-[#0b0f19]/90 backdrop-blur-md p-3 rounded border border-white/20 shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+        <div class="hud-bracket flex flex-col xl:flex-row items-stretch justify-between gap-3 bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md p-3.5 rounded-xl border border-slate-200 dark:border-white/20 shadow-xs">
           <!-- Hazard Banner Alert -->
-          <div class="hud-bracket-danger relative flex items-center gap-3 bg-gradient-to-r from-[#ff3366]/20 via-[#ff3366]/10 to-transparent p-3 rounded border border-[#ff3366]/40 flex-1 overflow-hidden">
-            <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-[#ff3366]/10 rounded-full blur-lg pointer-events-none"></div>
-            <div class="relative flex items-center justify-center w-9 h-9 rounded bg-[#ff3366]/20 border border-[#ff3366]/60 text-[#ff3366] flex-shrink-0 shadow-[0_0_12px_rgba(255,51,102,0.4)]">
+          <div class="hud-bracket-danger relative flex items-center gap-3 bg-rose-50 dark:bg-gradient-to-r dark:from-[#ff3366]/20 dark:via-[#ff3366]/10 dark:to-transparent p-3.5 rounded-lg border border-rose-200 dark:border-[#ff3366]/40 flex-1 overflow-hidden shadow-xs">
+            <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-500/5 rounded-full blur-lg pointer-events-none"></div>
+            <div class="relative flex items-center justify-center w-9 h-9 rounded-lg bg-rose-100 dark:bg-[#ff3366]/20 border border-rose-200 dark:border-[#ff3366]/60 text-rose-700 dark:text-[#ff3366] flex-shrink-0 shadow-xs">
               <span class="material-symbols-outlined text-[22px] animate-ping absolute opacity-50">warning</span>
               <span class="material-symbols-outlined text-[20px]">warning</span>
             </div>
             <div class="flex flex-col min-w-0">
               <div class="flex items-center gap-2">
-                <span class="font-['JetBrains_Mono'] text-[10px] uppercase text-[#ff3366] tracking-widest font-bold">HAZARD LEVEL IV CRITICAL TRIGGER</span>
-                <span class="font-['JetBrains_Mono'] text-[11px] text-on-surface-variant font-semibold">| ZONE SEC-4B</span>
+                <span class="font-['JetBrains_Mono'] text-[10px] uppercase text-rose-700 dark:text-[#ff3366] tracking-widest font-extrabold">HAZARD LEVEL IV CRITICAL TRIGGER</span>
+                <span class="font-['JetBrains_Mono'] text-[11px] text-slate-500 dark:text-on-surface-variant font-semibold">| ZONE SEC-4B</span>
               </div>
-              <div class="font-['Space_Grotesk'] text-[16px] text-white tracking-tight font-bold truncate mt-0.5">
-                ALERT: SHAFT 4B SOUTH PILLAR TILT EXCURSION (+3.84° Δ, Vibration Spike 48Hz)
+              <div class="font-['Space_Grotesk'] text-[15px] text-slate-900 dark:text-white tracking-tight font-extrabold truncate mt-0.5">
+                ALERT: SHAFT 4B SOUTH PILLAR TILT EXCURSION (+{{ vm.telemetry.pitch | number:2 }}° Δ, Vibration Spike {{ vm.telemetry.fft | number:0 }}Hz)
               </div>
             </div>
           </div>
           
           <!-- Live Telemetry Counters strip -->
-          <div class="flex flex-wrap items-center gap-3 bg-[#07090e]/80 border border-white/5 px-4 py-2 rounded">
+          <div class="flex flex-wrap items-center gap-3 bg-slate-50 dark:bg-[#07090e]/80 border border-slate-200 dark:border-white/5 px-4 py-2 rounded-lg">
             <!-- Node Count -->
             <div class="flex flex-col px-1">
-              <span class="font-['JetBrains_Mono'] text-[9px] uppercase tracking-wider text-on-surface-variant">NODES ONLINE</span>
+              <span class="font-['JetBrains_Mono'] text-[9px] uppercase tracking-wider text-slate-500 dark:text-on-surface-variant font-semibold">NODES ONLINE</span>
               <div class="flex items-baseline gap-1">
-                <span class="font-['JetBrains_Mono'] text-[20px] text-primary font-bold">4</span>
-                <span class="font-['JetBrains_Mono'] text-[11px] text-on-surface-variant">/ 5</span>
+                <span class="font-['JetBrains_Mono'] text-[20px] text-sky-700 dark:text-primary font-bold">{{ vm.nodes.length }}</span>
+                <span class="font-['JetBrains_Mono'] text-[11px] text-slate-500 dark:text-on-surface-variant">/ 5</span>
               </div>
             </div>
-            <div class="w-px h-7 bg-white/20"></div>
+            <div class="w-px h-7 bg-slate-200 dark:bg-white/20"></div>
             <!-- RSSI -->
             <div class="flex flex-col px-1">
-              <span class="font-['JetBrains_Mono'] text-[9px] uppercase tracking-wider text-on-surface-variant">SX1278 RSSI</span>
+              <span class="font-['JetBrains_Mono'] text-[9px] uppercase tracking-wider text-slate-500 dark:text-on-surface-variant font-semibold">SX1278 RSSI</span>
               <div class="flex items-baseline gap-1">
-                <span class="font-['JetBrains_Mono'] text-[20px] text-white font-bold" id="rssi-val">-84</span>
-                <span class="font-['JetBrains_Mono'] text-[10px] text-on-surface-variant">dBM AVG</span>
+                <span class="font-['JetBrains_Mono'] text-[20px] text-slate-900 dark:text-white font-bold" id="rssi-val">{{ vm.rssi }}</span>
+                <span class="font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-on-surface-variant font-semibold">dBM AVG</span>
               </div>
             </div>
-            <div class="w-px h-7 bg-white/20"></div>
+            <div class="w-px h-7 bg-slate-200 dark:bg-white/20"></div>
             <!-- Packet rate -->
             <div class="flex flex-col px-1">
-              <span class="font-['JetBrains_Mono'] text-[9px] uppercase tracking-wider text-on-surface-variant">PACKET FLOW</span>
+              <span class="font-['JetBrains_Mono'] text-[9px] uppercase tracking-wider text-slate-500 dark:text-on-surface-variant font-semibold">PACKET FLOW</span>
               <div class="flex items-baseline gap-1">
-                <span class="font-['JetBrains_Mono'] text-[20px] text-secondary font-bold" id="pkt-val">42</span>
-                <span class="font-['JetBrains_Mono'] text-[10px] text-on-surface-variant">PKT/MIN</span>
+                <span class="font-['JetBrains_Mono'] text-[20px] text-amber-700 dark:text-secondary font-bold" id="pkt-val">{{ (vm.packetRate * 42) | number:0 }}</span>
+                <span class="font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-on-surface-variant font-semibold">PKT/MIN</span>
               </div>
             </div>
-            <div class="w-px h-7 bg-white/20"></div>
+            <div class="w-px h-7 bg-slate-200 dark:bg-white/20"></div>
             <!-- Ingestion state -->
             <div class="flex flex-col px-1">
-              <span class="font-['JetBrains_Mono'] text-[9px] uppercase tracking-wider text-on-surface-variant">TELEMETRY UPLINK</span>
+              <span class="font-['JetBrains_Mono'] text-[9px] uppercase tracking-wider text-slate-500 dark:text-on-surface-variant font-semibold">TELEMETRY UPLINK</span>
               <div class="flex items-center gap-1.5 mt-0.5">
-                <span id="ingest-ping-dot" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981] animate-pulse"></span>
-                <span id="ingest-channel-text" class="font-['JetBrains_Mono'] text-[11px] text-emerald-400 uppercase font-bold">LIVE TELEMETRY STREAM ONLINE</span>
+                <span id="ingest-ping-dot" class="w-2 h-2 rounded-full" ng-class="vm.connected ? 'bg-emerald-600 shadow-[0_0_8px_#10b981] animate-pulse' : 'bg-rose-500 shadow-[0_0_8px_#ef4444]'"></span>
+                <span id="ingest-channel-text" class="font-['JetBrains_Mono'] text-[11px] uppercase font-bold" ng-class="vm.connected ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'">LIVE STREAM: {{ vm.connectionType }}</span>
               </div>
             </div>
-            <div class="w-px h-7 bg-white/20"></div>
+            <div class="w-px h-7 bg-slate-200 dark:bg-white/20"></div>
             <!-- Ingestion monitor badge -->
-            <div id="connection-health-badge" class="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded">
-              <span class="material-symbols-outlined text-emerald-400 text-[18px]">cloud_done</span>
+            <div id="connection-health-badge" class="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 px-3 py-1.5 rounded-lg">
+              <span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-[18px]">cloud_done</span>
               <div class="flex flex-col">
-                <span class="font-['JetBrains_Mono'] text-[9px] text-emerald-400 font-bold uppercase tracking-wider">NETWORK STATUS: OPTIMAL</span>
-                <span id="connection-node-summary" class="font-['JetBrains_Mono'] text-[10px] leading-tight text-zinc-300">ALL 5 NODES REPORTING REALTIME</span>
+                <span class="font-['JetBrains_Mono'] text-[9px] text-emerald-800 dark:text-emerald-400 font-bold uppercase tracking-wider">NETWORK STATUS: OPTIMAL</span>
+                <span id="connection-node-summary" class="font-['JetBrains_Mono'] text-[10px] leading-tight text-slate-600 dark:text-zinc-300 font-medium">ALL 5 NODES REPORTING REALTIME</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- MINER PERSONNEL HEADCOUNT STRIP -->
+        <div class="hud-bracket bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md border border-slate-200 dark:border-white/20 rounded-xl px-4 py-3 flex flex-col gap-2 shadow-xs">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="miner-dot"></span>
+              <span class="font-['JetBrains_Mono'] text-[11px] uppercase font-bold text-slate-800 dark:text-white tracking-wider">CHASNALA PERSONNEL TRACKER — {{ vm.totalMiners }} MINERS ACTIVE UNDERGROUND</span>
+              <span ng-if="vm.evacuationInProgress" class="font-['JetBrains_Mono'] text-[10px] font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-500/40 px-2 py-0.5 rounded">MUSTER: {{ vm.evacuatedCount }}/{{ vm.totalMiners }} ACCOUNTED</span>
+            </div>
+            <button ng-if="!vm.evacuationInProgress" ng-click="vm.startEvacuationHeadcount()" class="font-['JetBrains_Mono'] text-[10px] uppercase font-bold px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-500/15 border border-amber-300 dark:border-amber-500/40 text-amber-800 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-500/25 transition cursor-pointer active:scale-95">
+              MUSTER DRILL
+            </button>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <div ng-repeat="p in vm.personnel" class="sector-badge" ng-class="p.critical ? 'danger' : ''">
+              <div class="flex items-center gap-1.5">
+                <span class="miner-dot" ng-class="p.critical ? 'critical' : ''"></span>
+                <span class="font-['JetBrains_Mono'] text-[9px] uppercase font-semibold text-slate-500 dark:text-zinc-400">{{ p.zone }}</span>
+              </div>
+              <span class="font-['JetBrains_Mono'] text-[18px] font-black" ng-class="p.critical ? 'text-rose-600 dark:text-rose-400' : 'text-slate-900 dark:text-white'">{{ p.count }}</span>
+              <span class="font-['Space_Grotesk'] text-[9px] text-slate-500 dark:text-zinc-400 text-center leading-tight">{{ p.sector }}</span>
+            </div>
+            <!-- Total Muster Box -->
+            <div class="sector-badge ml-auto bg-slate-100 dark:bg-white/5 border-slate-300 dark:border-white/20">
+              <span class="font-['JetBrains_Mono'] text-[9px] uppercase font-semibold text-slate-500 dark:text-zinc-400">TOTAL</span>
+              <span class="font-['JetBrains_Mono'] text-[22px] font-black text-slate-900 dark:text-white">{{ vm.totalMiners }}</span>
+              <span class="font-['Space_Grotesk'] text-[9px] text-slate-500 dark:text-zinc-400">Underground</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORENSIC INCIDENT BLACK BOX REPLAY BAR -->
+        <div ng-if="vm.isReplayMode" class="bg-amber-50 dark:bg-amber-950/80 border border-amber-200 dark:border-amber-500/60 p-3.5 rounded-xl flex flex-col gap-2.5 shadow-xs">
+          <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[11px] text-amber-800 dark:text-amber-300">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+              <span class="font-extrabold tracking-wider uppercase">FORENSIC BLACK BOX REPLAY MODE: CHASNALA SEC-4B INCIDENT INVESTIGATION</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-slate-500 dark:text-zinc-400">TIMELINE OFFSET:</span>
+              <span class="font-extrabold text-amber-900 dark:text-amber-300">-{{ (20 - vm.replayIndex) * 45 }} SECONDS</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-[11px] text-slate-500 dark:text-zinc-400 font-['JetBrains_Mono'] font-medium">T-15m (Baseline)</span>
+            <input type="range" min="0" max="20" ng-model="vm.replayIndex" ng-change="vm.scrubReplay(vm.replayIndex)" class="flex-1 accent-amber-600 cursor-pointer h-2 bg-slate-200 dark:bg-neutral-900 rounded-full" />
+            <span class="text-[11px] text-rose-600 dark:text-rose-400 font-['JetBrains_Mono'] font-extrabold">T-0 (ROOF BURST)</span>
+            <button ng-click="vm.toggleReplay()" class="px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-[11px] font-['JetBrains_Mono'] transition active:scale-95 shadow-sm cursor-pointer">RESUME LIVE</button>
           </div>
         </div>
 
         <!-- MAIN HUD GRID: MAP + NODE FOCUS SELECTOR -->
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
           <!-- LEFT & CENTER: GIS TACTICAL MINE MAP (8 COLS) -->
-          <div class="hud-bracket xl:col-span-8 flex flex-col bg-[#0b0f19]/90 backdrop-blur-md rounded border border-white/20 overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
+          <div class="hud-bracket xl:col-span-8 flex flex-col bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md rounded-xl border border-slate-200 dark:border-white/20 overflow-hidden shadow-sm">
             <!-- Map Header Rail -->
-            <div class="flex items-center justify-between px-4 py-2.5 bg-[#07090e]/90 border-b border-white/20">
+            <div class="flex flex-wrap items-center justify-between px-4 py-2.5 bg-slate-50 dark:bg-[#07090e]/90 border-b border-slate-200 dark:border-white/20 gap-2">
               <div class="flex items-center gap-3">
-                <div class="w-7 h-7 rounded bg-neutral-900 border border-white/30 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-white text-[18px]">travel_explore</span>
+                <div class="w-7 h-7 rounded bg-white dark:bg-neutral-900 border border-slate-200 dark:border-white/30 flex items-center justify-center shadow-xs">
+                  <span class="material-symbols-outlined text-cyan-600 dark:text-cyan-400 text-[18px]">layers</span>
                 </div>
                 <div>
                   <div class="flex items-center gap-2">
-                    <span class="font-['Space_Grotesk'] text-[15px] text-white uppercase font-bold tracking-wide">GOD'S EYE VIEW // 3D PHOTOREALISTIC GLOBE</span>
-                    <span class="px-1.5 py-0.2 rounded text-[8px] bg-white/10 text-white border border-white/20 font-bold">CESIUMJS 3D ENGINE</span>
+                    <span class="font-['Space_Grotesk'] text-[15px] text-slate-900 dark:text-white uppercase font-bold tracking-wide">TACTICAL MINE GIS &amp; GEOTECHNICAL SURVEILLANCE</span>
+                    <span class="px-1.5 py-0.2 rounded text-[8px] bg-cyan-50 text-cyan-800 border border-cyan-300 dark:bg-cyan-500/20 dark:text-cyan-300 dark:border-cyan-500/40 font-bold">HIGH-RES GIS ENGINE</span>
                   </div>
-                  <div class="flex items-center gap-3 font-['JetBrains_Mono'] text-[10px] text-on-surface-variant">
-                    <span>LAT: 23.7957° N</span>
-                    <span>LNG: 86.4304° E</span>
-                    <span class="text-secondary font-semibold">GRID REF: IN-JH-CHAS-4B</span>
-                    <span class="bg-neutral-900 border border-white/30 px-1.5 py-0.5 rounded text-white font-bold">ARC-GIS HIGH-RES 3D STRATA</span>
+                  <div class="flex flex-wrap items-center gap-2.5 font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-on-surface-variant">
+                    <span id="map-cursor-coords" class="font-bold text-slate-700 dark:text-zinc-300">LAT: 23.79574° N | LNG: 86.43041° E | EL: 142m RL</span>
+                    <span class="text-amber-700 dark:text-secondary font-semibold">| GRID: IN-JH-CHAS-4B</span>
                   </div>
                 </div>
               </div>
-              <!-- God's Eye View 3D Globe & Optics Controls -->
+
+              <!-- Tactical GIS Controls Toolbar -->
               <div class="flex flex-wrap items-center gap-2">
-                <!-- Optical Shader Filters (God's Eye View) -->
-                <div class="flex items-center bg-[#07090e] border border-white/20 rounded p-0.5 gap-1">
-                  <button onclick="setOptic('normal')" id="btn-optic-normal" class="bg-white text-black font-bold font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition shadow-[0_0_10px_rgba(255,255,255,0.4)] cursor-pointer">
-                    👁️ OPTICAL
+                <!-- Base Layer Switcher -->
+                <div class="flex items-center bg-slate-100 dark:bg-[#07090e] border border-slate-200 dark:border-white/20 rounded-lg p-0.5 gap-0.5">
+                  <button onclick="window.terraMapController && window.terraMapController.setLayer('satellite')" title="Esri High-Resolution Satellite" class="font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition cursor-pointer hover:bg-white dark:hover:bg-neutral-800 text-slate-700 dark:text-zinc-300 font-semibold">
+                    🛰️ SATELLITE
                   </button>
-                  <button onclick="setOptic('flir')" id="btn-optic-flir" class="bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition active:scale-95 cursor-pointer">
-                    🔥 FLIR
+                  <button onclick="window.terraMapController && window.terraMapController.setLayer('topo')" title="OpenTopoMap Elevation Contours" class="font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition cursor-pointer hover:bg-white dark:hover:bg-neutral-800 text-slate-700 dark:text-zinc-300 font-semibold">
+                    🗺️ TOPO
                   </button>
-                  <button onclick="setOptic('nvg')" id="btn-optic-nvg" class="bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition active:scale-95 cursor-pointer">
-                    🟢 NVG
+                  <button onclick="window.terraMapController && window.terraMapController.setLayer('dark')" title="Tactical Dark Matter" class="font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition cursor-pointer hover:bg-white dark:hover:bg-neutral-800 text-slate-700 dark:text-zinc-300 font-semibold">
+                    🌑 DARK
                   </button>
-                  <button onclick="setOptic('crt')" id="btn-optic-crt" class="bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition active:scale-95 cursor-pointer">
-                    📺 CRT
+                  <button onclick="window.terraMapController && window.terraMapController.setLayer('light')" title="Engineering Blueprint Light" class="font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition cursor-pointer hover:bg-white dark:hover:bg-neutral-800 text-slate-700 dark:text-zinc-300 font-semibold">
+                    ☀️ LIGHT
                   </button>
                 </div>
 
-                <!-- DGMS Protocol Layer Toggle -->
-                <button onclick="toggleProtocolLayer()" id="btn-toggle-protocol" class="bg-neutral-900 hover:bg-neutral-800 border border-emerald-500/50 text-emerald-300 font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1.5 rounded flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                  <span class="material-symbols-outlined text-[13px] text-emerald-400">shield</span> PROTOCOL: ARMED
-                </button>
+                <!-- Focus Target Presets -->
+                <div class="flex items-center bg-slate-100 dark:bg-[#07090e] border border-slate-200 dark:border-white/20 rounded-lg p-0.5 gap-0.5">
+                  <button onclick="window.terraMapController && window.terraMapController.focusSector4B()" title="Focus Sector 4B Critical Pillar" class="font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition cursor-pointer hover:bg-white dark:hover:bg-neutral-800 text-rose-600 dark:text-rose-400 font-bold">
+                    🎯 SEC-4B
+                  </button>
+                  <button onclick="window.terraMapController && window.terraMapController.focusShaft2()" title="Focus Shaft #2 Collar" class="font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition cursor-pointer hover:bg-white dark:hover:bg-neutral-800 text-cyan-600 dark:text-cyan-300 font-bold">
+                    🏗️ SHAFT #2
+                  </button>
+                  <button onclick="window.terraMapController && window.terraMapController.focusSump()" title="Focus Sump Subsurface Basin" class="font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition cursor-pointer hover:bg-white dark:hover:bg-neutral-800 text-sky-600 dark:text-sky-300 font-bold">
+                    🌊 SUMP
+                  </button>
+                  <button onclick="window.terraMapController && window.terraMapController.overview()" title="Full Colliery Overview" class="font-['JetBrains_Mono'] text-[10px] uppercase px-2 py-1 rounded transition cursor-pointer hover:bg-white dark:hover:bg-neutral-800 text-slate-700 dark:text-zinc-300 font-bold">
+                    🌐 OVERVIEW
+                  </button>
+                </div>
 
                 <!-- Emergency Dispatch Trigger -->
-                <button onclick="triggerEvacuationProtocol()" class="bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 border border-rose-400 text-white font-['JetBrains_Mono'] text-[10px] uppercase font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition shadow-[0_0_15px_rgba(239,68,68,0.5)] active:scale-95 cursor-pointer animate-pulse">
+                <button ng-click="vm.openEvacModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-['JetBrains_Mono'] text-[10px] uppercase font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition shadow-sm active:scale-95 cursor-pointer animate-pulse">
                   <span class="material-symbols-outlined text-[15px]">campaign</span> EVACUATE PROTOCOL
-                </button>
-
-                <!-- Target Focus / Re-Center -->
-                <button onclick="recenterMap()" title="Focus Chasnala Sector 4B Mine (HotKey: C)" class="bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-white font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1.5 rounded flex items-center gap-1 transition-all shadow-[0_0_10px_rgba(255,255,255,0.1)] active:scale-95 cursor-pointer">
-                  <span class="material-symbols-outlined text-[13px]">my_location</span> 3D TARGET FOCUS
-                </button>
-                <button onclick="resetGlobe()" title="Orbital Space View (HotKey: Esc)" class="bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 font-['JetBrains_Mono'] text-[10px] uppercase px-2.5 py-1.5 rounded flex items-center gap-1 transition-all active:scale-95 cursor-pointer">
-                  <span class="material-symbols-outlined text-[13px]">public</span> ORBIT
                 </button>
               </div>
             </div>
 
-            <!-- God's Eye View Tactical 3D Map Container -->
-            <div id="map-canvas-container" class="relative w-full h-[520px] bg-[#020408] overflow-hidden select-none transition-all duration-500">
-              <!-- God's Eye View CesiumJS 3D Photorealistic Globe Layer -->
-              <div id="gods-eye-globe-container" class="absolute inset-0 w-full h-full z-10 transition-opacity duration-300"></div>
+            <!-- Tactical GIS Map Container -->
+            <div id="map-canvas-container" class="relative w-full h-[540px] bg-[#07090e] overflow-hidden select-none transition-all duration-500">
+              <!-- Leaflet Interactive Tactical Mine Map Container -->
+              <div id="tactical-mine-map" tactical-map class="absolute inset-0 w-full h-full z-10"></div>
 
               <!-- DGMS Protocol Infused Tactical HUD Overlay -->
               <div class="absolute inset-0 pointer-events-none z-20">
                 <!-- Top-Left Protocol Status Ribbon -->
                 <div class="absolute top-3 left-3 pointer-events-auto flex flex-col gap-1.5">
-                  <div class="flex items-center gap-2 bg-[#07090e]/92 backdrop-blur-md border border-rose-500/60 px-3 py-1.5 rounded shadow-[0_0_18px_rgba(239,68,68,0.35)]">
-                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+                  <div class="map-overlay-box flex items-center gap-2 bg-white/95 dark:bg-[#07090e]/92 backdrop-blur-md border border-slate-200 dark:border-rose-500/60 px-3 py-1.5 rounded-lg shadow-md">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-600 animate-ping"></span>
                     <div class="flex flex-col">
                       <div class="flex items-center gap-2 font-['JetBrains_Mono'] text-[10px]">
-                        <span class="text-rose-400 font-bold uppercase tracking-wider">DGMS REG-124 SAFETY PROTOCOL</span>
-                        <span class="px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 font-bold text-[8px] border border-rose-500/40">LEVEL IV ACTIVE</span>
+                        <span class="text-rose-700 dark:text-rose-400 font-bold uppercase tracking-wider">DGMS REG-124 SAFETY PROTOCOL</span>
+                        <span class="px-1.5 py-0.2 rounded bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300 font-bold text-[8px] border border-rose-200 dark:border-rose-500/40">LEVEL IV ACTIVE</span>
                       </div>
-                      <span class="font-['Space_Grotesk'] text-white text-[11px] font-medium">
+                      <span class="font-['Space_Grotesk'] text-slate-800 dark:text-white text-[11px] font-medium">
                         Evac Radius: 220m Critical • Incline Corridor Alpha &amp; Hoist Beta Armed
                       </span>
                     </div>
@@ -170,28 +222,36 @@
                 </div>
 
                 <!-- Bottom-Right Infused Protocol GIS Legend -->
-                <div class="absolute bottom-3 right-3 pointer-events-none bg-[#07090e]/95 backdrop-blur-md p-2.5 rounded border border-white/20 flex flex-col gap-1 shadow-2xl">
-                  <span class="font-['JetBrains_Mono'] text-[9px] uppercase text-zinc-300 font-bold tracking-wider">DGMS INFUSED PROTOCOL LEGEND</span>
+                <div class="map-overlay-box absolute bottom-3 right-3 pointer-events-none bg-white/95 dark:bg-[#07090e]/95 backdrop-blur-md p-2.5 rounded-lg border border-slate-200 dark:border-white/20 flex flex-col gap-1 shadow-md">
+                  <span class="font-['JetBrains_Mono'] text-[9px] uppercase text-slate-700 dark:text-zinc-300 font-bold tracking-wider">DGMS INFUSED PROTOCOL LEGEND</span>
                   <div class="grid grid-cols-2 gap-x-3 gap-y-1 font-['JetBrains_Mono'] text-[9px]">
                     <div class="flex items-center gap-1.5">
                       <span class="w-2.5 h-2.5 rounded-full border border-rose-500 bg-rose-500/40"></span>
-                      <span class="text-rose-300">220m Evacuation Ring</span>
+                      <span class="text-rose-700 dark:text-rose-300 font-semibold">220m Evacuation Ring</span>
                     </div>
                     <div class="flex items-center gap-1.5">
                       <span class="w-2.5 h-2.5 rounded-full border border-amber-500 bg-amber-500/30"></span>
-                      <span class="text-amber-300">450m Watch Buffer</span>
+                      <span class="text-amber-700 dark:text-amber-300 font-semibold">450m Watch Buffer</span>
                     </div>
                     <div class="flex items-center gap-1.5">
-                      <span class="w-3 h-0.5 bg-emerald-400"></span>
-                      <span class="text-emerald-300">Corridor Alpha (Surface)</span>
+                      <span class="w-3 h-0.5 bg-emerald-500"></span>
+                      <span class="text-emerald-700 dark:text-emerald-300 font-semibold">Corridor Alpha (Surface)</span>
                     </div>
                     <div class="flex items-center gap-1.5">
-                      <span class="w-3 h-0.5 bg-cyan-400"></span>
-                      <span class="text-cyan-300">Corridor Beta (Shaft #2)</span>
+                      <span class="w-3 h-0.5 bg-sky-500"></span>
+                      <span class="text-sky-700 dark:text-cyan-300 font-semibold">Corridor Beta (Shaft #2)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-3 h-0.5 bg-rose-600 border-b border-dashed"></span>
+                      <span class="text-rose-700 dark:text-rose-400 font-semibold">Geological Fault F-4B</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-cyan-600"></span>
+                      <span class="text-cyan-700 dark:text-cyan-300 font-semibold">REL-35 Sump Reservoir</span>
                     </div>
                     <div class="flex items-center gap-1.5 col-span-2">
-                      <span class="w-2.5 h-2.5 rounded bg-slate-700 border border-slate-500"></span>
-                      <span class="text-zinc-400">Sector 4B Subterranean Stope Panel</span>
+                      <span class="w-2.5 h-2.5 rounded bg-slate-300 dark:bg-slate-700 border border-slate-400 dark:border-slate-500"></span>
+                      <span class="text-slate-600 dark:text-zinc-400">Sector 4B Subterranean Stope Panel</span>
                     </div>
                   </div>
                 </div>
@@ -199,152 +259,145 @@
             </div>
 
             <!-- Quick Node Selector strip -->
-            <div id="node-selector-strip" class="grid grid-cols-5 gap-1 p-1 bg-[#07090e] font-['JetBrains_Mono'] text-[11px] border-t border-white/20">
-              <button id="node-btn-1" onclick="selectNode(1)" class="flex flex-col items-center py-1.5 rounded bg-[#0b0f19] border border-white/10 hover:border-white/30 hover:bg-white/5 transition-all cursor-pointer">
-                <span class="text-primary font-bold text-[11px]">NODE-01</span>
-                <span class="text-zinc-300 text-[9px]">ONLINE 99.8%</span>
-              </button>
-              <button id="node-btn-2" onclick="selectNode(2)" class="flex flex-col items-center py-1.5 rounded bg-[#0b0f19] border border-amber-500/20 hover:border-amber-500/40 hover:bg-amber-950/20 transition-all cursor-pointer">
-                <span class="text-amber-300 font-bold text-[11px]">NODE-02</span>
-                <span class="text-amber-400 text-[9px]">WATCH 98.4%</span>
-              </button>
-              <button id="node-btn-3" onclick="selectNode(3)" class="flex flex-col items-center py-1.5 rounded bg-gradient-to-b from-[#ff3366] to-[#c30044] text-white shadow-[0_0_12px_rgba(255,51,102,0.5)] border border-[#ff3366] transition-all cursor-pointer ring-2 ring-white/40">
-                <span class="font-bold text-[11px] flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>NODE-03</span>
-                <span class="text-[9px] text-white/90">TARGET ACTIVE</span>
-              </button>
-              <button id="node-btn-4" onclick="selectNode(4)" class="flex flex-col items-center py-1.5 rounded bg-[#0b0f19] border border-white/10 hover:border-white/30 hover:bg-white/5 transition-all cursor-pointer">
-                <span class="text-primary font-bold text-[11px]">NODE-04</span>
-                <span class="text-zinc-300 text-[9px]">ONLINE 100%</span>
-              </button>
-              <button id="node-btn-5" onclick="selectNode(5)" class="flex flex-col items-center py-1.5 rounded bg-[#0b0f19] border border-teal-500/30 hover:border-teal-500/60 hover:bg-teal-950/20 transition-all cursor-pointer">
-                <span class="text-teal-400 font-bold text-[11px]">NODE-05</span>
-                <span class="text-teal-300 text-[9px]">ONLINE 99.4%</span>
+            <div id="node-selector-strip" class="grid grid-cols-5 gap-1 p-1 bg-slate-100 dark:bg-[#07090e] font-['JetBrains_Mono'] text-[11px] border-t border-slate-200 dark:border-white/20">
+              <button ng-repeat="node in vm.nodes" ng-click="vm.selectNode(node.id)" class="flex flex-col items-center py-1.5 rounded-lg transition-all cursor-pointer" ng-class="vm.activeNode === node.id ? 'active-node-btn bg-slate-900 dark:bg-gradient-to-b dark:from-[#ff3366] dark:to-[#c30044] text-white shadow-sm border border-slate-900 dark:border-[#ff3366]' : 'bg-white dark:bg-[#0b0f19] border border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/30 text-slate-800 dark:text-zinc-200'">
+                <span class="font-bold text-[11px]" ng-class="vm.activeNode === node.id ? 'text-white' : node.statusClass">{{ node.name }}</span>
+                <span class="text-[9px]" ng-class="vm.activeNode === node.id ? 'text-white/90' : 'text-slate-500 dark:text-zinc-400'">{{ node.status }} ({{ node.ping }})</span>
+                <!-- Node Health Micro-badges -->
+                <div class="flex items-center justify-center gap-2 mt-0.5">
+                  <div class="node-health-bar" title="Battery {{ node.batPct }}%">
+                    <span ng-class="vm.getBatBarClass(node.batPct)"></span>
+                    <span ng-class="node.batPct >= 25 ? vm.getBatBarClass(node.batPct) : 'low'"></span>
+                    <span ng-class="node.batPct >= 50 ? vm.getBatBarClass(node.batPct) : 'low'"></span>
+                    <span ng-class="node.batPct >= 75 ? vm.getBatBarClass(node.batPct) : 'low'"></span>
+                  </div>
+                  <span class="font-['JetBrains_Mono'] text-[8px]" ng-class="vm.activeNode === node.id ? 'text-white/70' : 'text-slate-400 dark:text-zinc-500'" title="Packet Loss">{{ node.packetLoss }}%PL</span>
+                </div>
               </button>
             </div>
           </div>
 
           <!-- RIGHT: EXPLAINABLE ML ANOMALY & SUBSIDENCE RISK ENGINE (4 COLS) -->
-          <div class="hud-bracket xl:col-span-4 flex flex-col bg-[#0b0f19]/90 backdrop-blur-md rounded border border-white/20 p-4 shadow-[0_4px_24px_rgba(0,0,0,0.6)] justify-between">
+          <div class="hud-bracket xl:col-span-4 flex flex-col bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md rounded-xl border border-slate-200 dark:border-white/20 p-4 shadow-sm justify-between">
             <div>
               <!-- Section Header -->
-              <div class="flex items-center justify-between pb-2 border-b border-white/20">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-white/20">
                 <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded bg-neutral-900 border border-white/30 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-white text-[18px]">psychology</span>
+                  <div class="w-7 h-7 rounded bg-slate-100 dark:bg-neutral-900 border border-slate-200 dark:border-white/30 flex items-center justify-center shadow-xs">
+                    <span class="material-symbols-outlined text-slate-800 dark:text-white text-[18px]">psychology</span>
                   </div>
-                  <span class="font-['Space_Grotesk'] text-[15px] text-white uppercase font-bold tracking-tight">Explainable ML Subsidence Engine</span>
+                  <span class="font-['Space_Grotesk'] text-[15px] text-slate-900 dark:text-white uppercase font-bold tracking-tight">Explainable ML Subsidence Engine</span>
                 </div>
-                <a href="/explainable-ml" onclick="if(location.protocol==='file:'){location.href='explainable-ml.html'; return false;}" class="bg-[#ff3366]/20 hover:bg-[#ff3366]/30 border border-[#ff3366]/50 text-[#ff3366] font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold tracking-wider uppercase transition-all cursor-pointer">
+                <a href="/explainable-ml" onclick="if(location.protocol==='file:'){location.href='explainable-ml.html'; return false;}" class="bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 dark:bg-[#ff3366]/20 dark:hover:bg-[#ff3366]/30 dark:border-[#ff3366]/50 dark:text-[#ff3366] font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold tracking-wider uppercase transition-all cursor-pointer">
                   VIEW FULL ML &rarr;
                 </a>
               </div>
               
               <!-- Anomaly Score Hero Block -->
-              <div class="mt-3 bg-[#07090e] border border-white/20 p-3 rounded flex items-center justify-between relative overflow-hidden">
-                <div class="absolute -left-4 -top-4 w-16 h-16 bg-[#ff3366]/10 rounded-full blur-md pointer-events-none"></div>
+              <div class="mt-3 bg-slate-50 dark:bg-[#07090e] border border-slate-200 dark:border-white/20 p-3 rounded-lg flex items-center justify-between relative overflow-hidden">
                 <div class="flex flex-col relative z-10">
-                  <span class="font-['JetBrains_Mono'] text-[10px] uppercase text-on-surface-variant font-medium">ISOLATION FOREST SCORE</span>
+                  <span class="font-['JetBrains_Mono'] text-[10px] uppercase text-slate-500 dark:text-on-surface-variant font-semibold">ISOLATION FOREST SCORE</span>
                   <div class="flex items-baseline gap-2">
-                    <span id="iso-score" class="font-['JetBrains_Mono'] text-[44px] leading-none text-[#ff3366] font-bold tracking-tight drop-shadow-[0_0_12px_rgba(255,51,102,0.4)]">0.89</span>
-                    <span class="font-['JetBrains_Mono'] text-[10px] text-[#ff3366] uppercase font-bold bg-[#ff3366]/15 border border-[#ff3366]/40 px-1.5 py-0.5 rounded">[CRITICAL ANOMALY]</span>
+                    <span id="iso-score" class="font-['JetBrains_Mono'] text-[44px] leading-none text-rose-600 dark:text-[#ff3366] font-bold tracking-tight">0.89</span>
+                    <span class="font-['JetBrains_Mono'] text-[10px] text-rose-700 dark:text-[#ff3366] uppercase font-bold bg-rose-100 dark:bg-[#ff3366]/15 border border-rose-200 dark:border-[#ff3366]/40 px-1.5 py-0.5 rounded">[CRITICAL ANOMALY]</span>
                   </div>
-                  <span class="font-['JetBrains_Mono'] text-[10px] text-on-surface-variant mt-1">Boundary Decision Distance: -0.342 (α = 0.05)</span>
+                  <span class="font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-on-surface-variant mt-1 font-medium">Boundary Decision Distance: -0.342 (α = 0.05)</span>
                 </div>
                 <!-- Gauge Mini Dial -->
                 <div class="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
-                  <svg class="w-16 h-16 transform -rotate-90" viewbox="0 0 36 36">
-                    <path class="text-slate-800" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
-                    <path id="iso-gauge" class="text-[#ff3366] transition-all duration-500" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="89, 100" stroke-linecap="round" stroke-width="3" style="filter: drop-shadow(0 0 4px #ff3366);"></path>
+                  <svg class="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                    <path class="text-slate-200 dark:text-slate-800" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+                    <path id="iso-gauge" class="text-rose-600 dark:text-[#ff3366] transition-all duration-500" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="89, 100" stroke-linecap="round" stroke-width="3"></path>
                   </svg>
-                  <span id="iso-text" class="absolute font-['JetBrains_Mono'] text-[#ff3366] text-[12px] font-bold">89%</span>
+                  <span id="iso-text" class="absolute font-['JetBrains_Mono'] text-rose-600 dark:text-[#ff3366] text-[12px] font-bold">89%</span>
                 </div>
               </div>
 
               <!-- Non-black-box Transparent Attribution Breakdown -->
               <div class="mt-3 flex flex-col gap-2">
-                <span class="font-['JetBrains_Mono'] text-[10px] uppercase text-white tracking-wider font-bold">
+                <span class="font-['JetBrains_Mono'] text-[10px] uppercase text-slate-900 dark:text-white tracking-wider font-bold">
                   TRANSPARENT RULE ATTRIBUTION BREAKDOWN (AUDITABLE)
                 </span>
                 <!-- Rule 1 -->
-                <div class="bg-[#07090e] p-2.5 rounded border border-white/5 flex flex-col gap-1">
+                <div class="bg-slate-50 dark:bg-[#07090e] p-2.5 rounded-lg border border-slate-200 dark:border-white/5 flex flex-col gap-1">
                   <div class="flex items-center justify-between">
-                    <span class="font-['JetBrains_Mono'] text-[11px] text-primary font-bold">RULE 1: Tilt Rate of Change &gt; 1.2°/hr</span>
-                    <span class="bg-[#ff3366]/20 border border-[#ff3366]/40 text-[#ff3366] font-['JetBrains_Mono'] text-[9px] px-1.5 py-0.5 rounded font-bold">+40% WEIGHT</span>
+                    <span class="font-['JetBrains_Mono'] text-[11px] text-sky-700 dark:text-primary font-bold">RULE 1: Tilt Rate of Change &gt; 1.2°/hr</span>
+                    <span class="bg-rose-100 border border-rose-200 text-rose-700 dark:bg-[#ff3366]/20 dark:border-[#ff3366]/40 dark:text-[#ff3366] font-['JetBrains_Mono'] text-[9px] px-1.5 py-0.5 rounded font-bold">+40% WEIGHT</span>
                   </div>
                   <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[10px]">
-                    <span class="text-[#ff3366] font-semibold">TRIGGERED (Observed: +2.10°/hr)</span>
-                    <span class="text-on-surface-variant">Threshold: 1.20°/hr</span>
+                    <span class="text-rose-700 dark:text-[#ff3366] font-semibold">TRIGGERED (Observed: +2.10°/hr)</span>
+                    <span class="text-slate-500 dark:text-on-surface-variant">Threshold: 1.20°/hr</span>
                   </div>
-                  <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
-                    <div id="rule-1-bar" class="h-full bg-[#ff3366] shadow-[0_0_8px_#ff3366] transition-all duration-500" style="width: 100%;"></div>
+                  <div class="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden mt-1">
+                    <div id="rule-1-bar" class="h-full bg-rose-600 dark:bg-[#ff3366] transition-all duration-500" style="width: 100%;"></div>
                   </div>
                 </div>
                 <!-- Rule 2 -->
-                <div class="bg-[#07090e] p-2.5 rounded border border-white/5 flex flex-col gap-1">
+                <div class="bg-slate-50 dark:bg-[#07090e] p-2.5 rounded-lg border border-slate-200 dark:border-white/5 flex flex-col gap-1">
                   <div class="flex items-center justify-between">
-                    <span class="font-['JetBrains_Mono'] text-[11px] text-primary font-bold">RULE 2: HF Vibration RMS &gt; 0.25g</span>
-                    <span class="bg-[#ff3366]/20 border border-[#ff3366]/40 text-[#ff3366] font-['JetBrains_Mono'] text-[9px] px-1.5 py-0.5 rounded font-bold">+35% WEIGHT</span>
+                    <span class="font-['JetBrains_Mono'] text-[11px] text-sky-700 dark:text-primary font-bold">RULE 2: HF Vibration RMS &gt; 0.25g</span>
+                    <span class="bg-rose-100 border border-rose-200 text-rose-700 dark:bg-[#ff3366]/20 dark:border-[#ff3366]/40 dark:text-[#ff3366] font-['JetBrains_Mono'] text-[9px] px-1.5 py-0.5 rounded font-bold">+35% WEIGHT</span>
                   </div>
                   <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[10px]">
-                    <span class="text-[#ff3366] font-semibold">TRIGGERED (Concurrent tilt drift &amp; RMS 0.38g)</span>
-                    <span class="text-on-surface-variant">Threshold: 0.25g</span>
+                    <span class="text-rose-700 dark:text-[#ff3366] font-semibold">TRIGGERED (Concurrent tilt drift &amp; RMS 0.38g)</span>
+                    <span class="text-slate-500 dark:text-on-surface-variant">Threshold: 0.25g</span>
                   </div>
-                  <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
-                    <div id="rule-2-bar" class="h-full bg-[#ff3366] shadow-[0_0_8px_#ff3366] transition-all duration-500" style="width: 88%;"></div>
+                  <div class="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden mt-1">
+                    <div id="rule-2-bar" class="h-full bg-rose-600 dark:bg-[#ff3366] transition-all duration-500" style="width: 88%;"></div>
                   </div>
                 </div>
                 <!-- Rule 3 -->
-                <div class="bg-[#07090e] p-2.5 rounded border border-white/5 flex flex-col gap-1">
+                <div class="bg-slate-50 dark:bg-[#07090e] p-2.5 rounded-lg border border-slate-200 dark:border-white/5 flex flex-col gap-1">
                   <div class="flex items-center justify-between">
-                    <span class="font-['JetBrains_Mono'] text-[11px] text-primary font-bold">RULE 3: Gas Desorption Flexure Proxy</span>
-                    <span class="bg-amber-500/20 border border-amber-500/40 text-amber-300 font-['JetBrains_Mono'] text-[9px] px-1.5 py-0.5 rounded font-bold">+15% WEIGHT</span>
+                    <span class="font-['JetBrains_Mono'] text-[11px] text-sky-700 dark:text-primary font-bold">RULE 3: Gas Desorption Flexure Proxy</span>
+                    <span class="bg-amber-100 border border-amber-200 text-amber-800 dark:bg-amber-500/20 dark:border-amber-500/40 dark:text-amber-300 font-['JetBrains_Mono'] text-[9px] px-1.5 py-0.5 rounded font-bold">+15% WEIGHT</span>
                   </div>
                   <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[10px]">
-                    <span class="text-amber-400 font-semibold">TRIGGERED (CO 18ppm, Gas Delta +22%)</span>
-                    <span class="text-on-surface-variant">Threshold: &gt;15ppm</span>
+                    <span class="text-amber-700 dark:text-amber-400 font-semibold">TRIGGERED (CO 18ppm, Gas Delta +22%)</span>
+                    <span class="text-slate-500 dark:text-on-surface-variant">Threshold: &gt;15ppm</span>
                   </div>
-                  <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
-                    <div id="rule-3-bar" class="h-full bg-amber-400 shadow-[0_0_8px_#fbb400] transition-all duration-500" style="width: 65%;"></div>
+                  <div class="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden mt-1">
+                    <div id="rule-3-bar" class="h-full bg-amber-500 dark:bg-amber-400 transition-all duration-500" style="width: 65%;"></div>
                   </div>
                 </div>
               </div>
 
               <!-- Plain English Verdict Card -->
-              <div class="mt-3 bg-[#ff3366]/10 border border-[#ff3366]/30 p-2.5 rounded flex flex-col gap-1">
-                <div class="flex items-center gap-1.5 text-[#ff3366]">
+              <div class="mt-3 bg-rose-50 dark:bg-[#ff3366]/10 border border-rose-200 dark:border-[#ff3366]/30 p-2.5 rounded-lg flex flex-col gap-1">
+                <div class="flex items-center gap-1.5 text-rose-700 dark:text-[#ff3366]">
                   <span class="material-symbols-outlined text-[16px]">gavel</span>
                   <span class="font-['JetBrains_Mono'] text-[10px] uppercase font-bold tracking-wider">SYNTHESIS &amp; GEOMECHANICAL VERDICT</span>
                 </div>
-                <p class="font-['Space_Grotesk'] text-[12px] leading-relaxed text-on-surface">
-                  <strong class="text-[#ff3366]">Localized tensile roof sagging in Pillar 4B stope.</strong> Structural shear detected. Combined displacement kinetics indicate active delamination of the immediate shale roof beam. Immediate evacuation threshold recommended for Sub-Sector 4.
+                <p class="font-['Space_Grotesk'] text-[12px] leading-relaxed text-slate-800 dark:text-on-surface">
+                  <strong class="text-rose-700 dark:text-[#ff3366]">Localized tensile roof sagging in Pillar 4B stope.</strong> Structural shear detected. Combined displacement kinetics ({{ vm.telemetry.disp | number:2 }}mm) indicate active delamination of immediate shale roof. Immediate evacuation threshold recommended.
                 </p>
               </div>
             </div>
 
             <!-- Action overrides -->
             <div class="mt-3 flex items-center gap-2">
-              <button onclick="this.innerText='ANOMALY ACKNOWLEDGED'; this.classList.remove('bg-neutral-900','hover:bg-neutral-800','text-white'); this.classList.add('bg-emerald-500/20','border-emerald-500/60','text-emerald-300');" class="w-full bg-neutral-900 hover:bg-neutral-800 border border-white/30 text-white font-['JetBrains_Mono'] text-[11px] py-2 rounded uppercase font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-                <span class="material-symbols-outlined text-[15px]">check_circle</span> ACKNOWLEDGE ANOMALY AUDIT
+              <button ng-click="vm.acknowledgeAnomaly()" class="w-full font-['JetBrains_Mono'] text-[11px] py-2 rounded-lg uppercase font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer" ng-class="vm.anomalyAcknowledged ? 'bg-emerald-100 border border-emerald-300 text-emerald-800 dark:bg-emerald-500/20 dark:border-emerald-500/60 dark:text-emerald-300' : 'bg-slate-900 hover:bg-black text-white dark:bg-neutral-900 dark:hover:bg-neutral-800 border border-slate-700 dark:border-white/30'">
+                <span class="material-symbols-outlined text-[15px]">check_circle</span> {{ vm.anomalyAcknowledged ? 'ANOMALY ACKNOWLEDGED' : 'ACKNOWLEDGE ANOMALY AUDIT' }}
               </button>
             </div>
           </div>
         </div>
 
         <!-- SECTION TITLE: 6-PARAMETER WIDGET MATRIX -->
-        <div class="flex items-center justify-between mt-2 pt-2 border-t border-white/20">
+        <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-200 dark:border-white/20">
           <div class="flex items-center gap-3">
             <div class="relative flex items-center justify-center w-3 h-3">
-              <span class="w-3 h-3 rounded-full bg-[#ff3366] animate-ping absolute"></span>
-              <span class="w-2 h-2 rounded-full bg-[#ff3366]"></span>
+              <span class="w-3 h-3 rounded-full bg-rose-600 dark:bg-[#ff3366] animate-ping absolute"></span>
+              <span class="w-2 h-2 rounded-full bg-rose-600 dark:bg-[#ff3366]"></span>
             </div>
-            <h2 class="font-['Space_Grotesk'] text-[20px] text-white tracking-tight font-bold">
+            <h2 class="font-['Space_Grotesk'] text-[20px] text-slate-900 dark:text-white tracking-tight font-bold">
               Node-03 Telemetry Matrix (Pillar 4B Extraction Stope)
             </h2>
-            <span class="font-['JetBrains_Mono'] text-[10px] text-white uppercase bg-neutral-900 border border-white/30 px-2 py-0.5 rounded font-bold">
+            <span class="font-['JetBrains_Mono'] text-[10px] text-slate-800 dark:text-white uppercase bg-slate-100 dark:bg-neutral-900 border border-slate-200 dark:border-white/30 px-2 py-0.5 rounded-lg font-bold">
               FIRMWARE REV: v2.4.1-PROD
             </span>
           </div>
-          <div class="flex items-center gap-1.5 font-['JetBrains_Mono'] text-[11px] text-white">
+          <div class="flex items-center gap-1.5 font-['JetBrains_Mono'] text-[11px] text-slate-500 dark:text-white font-medium">
             <span class="material-symbols-outlined text-[16px]">update</span>
             <span>STREAM: REAL-TIME 100Hz SAMPLE / 1Hz LORA TRANSMIT</span>
           </div>
@@ -353,21 +406,21 @@
         <!-- 6-PARAMETER WIDGET MATRIX -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           <!-- WIDGET 1: TILT / ARTIFICIAL HORIZON & PROTRACTOR -->
-          <div class="hud-bracket flex flex-col bg-[#0b0f19]/90 backdrop-blur-md rounded border border-white/20 p-3.5 shadow-lg justify-between relative">
-            <div class="flex items-center justify-between pb-1.5 border-b border-white/5">
+          <div class="hud-bracket flex flex-col bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md rounded border border-slate-200 dark:border-white/20 p-3.5 shadow-sm dark:shadow-lg justify-between relative">
+            <div class="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-white/5">
               <div class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded bg-neutral-900 border border-white/30 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-white text-[16px]">screen_rotation</span>
+                <div class="w-6 h-6 rounded bg-slate-100 dark:bg-neutral-900 border border-slate-200 dark:border-white/30 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-slate-700 dark:text-white text-[16px]">screen_rotation</span>
                 </div>
-                <span class="font-['Space_Grotesk'] text-[14px] text-white uppercase font-bold">Tilt / Gyro Horizon</span>
+                <span class="font-['Space_Grotesk'] text-[14px] text-slate-900 dark:text-white uppercase font-bold">Tilt / Gyro Horizon</span>
               </div>
-              <span class="bg-[#ff3366]/20 border border-[#ff3366]/40 text-[#ff3366] font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold">
+              <span class="bg-rose-50 dark:bg-[#ff3366]/20 border border-rose-200 dark:border-[#ff3366]/40 text-rose-600 dark:text-[#ff3366] font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold">
                 ADXL345 • EXCURSION
               </span>
             </div>
             <!-- Gyro Reticle Graphic -->
-            <div class="relative w-full h-44 flex items-center justify-center my-2 bg-[#07090e] rounded border border-white/20 overflow-hidden">
-              <svg class="w-40 h-40" viewbox="0 0 160 160">
+            <div class="relative w-full h-44 flex items-center justify-center my-2 bg-slate-50 dark:bg-[#07090e] rounded border border-slate-200 dark:border-white/20 overflow-hidden">
+              <svg class="w-40 h-40" viewBox="0 0 160 160">
                 <defs>
                   <clippath id="horizon-clip-hud">
                     <circle cx="80" cy="80" r="66"></circle>
@@ -377,11 +430,11 @@
                     <stop offset="100%" stop-color="#ffffff" stop-opacity="0"></stop>
                   </radialgradient>
                 </defs>
-                <circle cx="80" cy="80" fill="none" r="74" stroke="#1e293b" stroke-width="1.5"></circle>
-                <circle cx="80" cy="80" fill="url(#reticle-glow)" r="66" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.5"></circle>
+                <circle cx="80" cy="80" fill="none" r="74" class="stroke-slate-300 dark:stroke-[#1e293b]" stroke-width="1.5"></circle>
+                <circle cx="80" cy="80" fill="url(#reticle-glow)" r="66" class="stroke-slate-400 dark:stroke-white" stroke-opacity="0.4" stroke-width="1.5"></circle>
                 <!-- Moving Horizon Group -->
                 <g clip-path="url(#horizon-clip-hud)">
-                  <g transform="rotate(7.15 80 80) translate(0, -10)" id="horizon-dynamic-group">
+                  <g ng-attr-transform="{{ vm.getHorizonTransform() }}" id="horizon-dynamic-group">
                     <rect fill="#0a121e" height="80" width="160" x="0" y="0"></rect>
                     <rect fill="#1e1215" height="80" width="160" x="0" y="80"></rect>
                     <line stroke="#ffffff" stroke-width="2" style="filter: drop-shadow(0 0 4px rgba(255,255,255,0.5));" x1="0" x2="160" y1="80" y2="80"></line>
@@ -392,52 +445,60 @@
                   </g>
                 </g>
                 <!-- Fixed Reticle Crosshairs -->
-                <circle cx="80" cy="80" fill="#ffffff" r="2.5" style="filter: drop-shadow(0 0 4px rgba(255,255,255,0.6));"></circle>
-                <path d="M 48 80 L 68 80 L 73 88 L 87 88 L 92 80 L 112 80" fill="none" stroke="#e9feff" stroke-width="2" style="filter: drop-shadow(0 0 3px rgba(255,255,255,0.5));"></path>
+                <circle cx="80" cy="80" fill="#0284c7" class="dark:fill-white" r="2.5"></circle>
+                <path d="M 48 80 L 68 80 L 73 88 L 87 88 L 92 80 L 112 80" fill="none" stroke="#0284c7" class="dark:stroke-[#e9feff]" stroke-width="2"></path>
                 <!-- Degree Ticks -->
-                <line stroke="#ffffff" stroke-width="2" x1="80" x2="80" y1="8" y2="18"></line>
+                <line class="stroke-slate-700 dark:stroke-white" stroke-width="2" x1="80" x2="80" y1="8" y2="18"></line>
                 <line stroke="#64748b" stroke-width="1.5" x1="152" x2="142" y1="80" y2="80"></line>
                 <line stroke="#64748b" stroke-width="1.5" x1="8" x2="18" y1="80" y2="80"></line>
-                <text fill="#ffffff" font-family="JetBrains Mono" font-size="8" font-weight="bold" text-anchor="middle" x="80" y="27">0°</text>
+                <text fill="#0f172a" class="dark:fill-white" font-family="JetBrains Mono" font-size="8" font-weight="bold" text-anchor="middle" x="80" y="27">0°</text>
                 <text fill="#64748b" font-family="JetBrains Mono" font-size="8" text-anchor="middle" x="134" y="83">90°</text>
                 <text fill="#64748b" font-family="JetBrains Mono" font-size="8" text-anchor="middle" x="26" y="83">-90°</text>
               </svg>
-              <div id="tilt-warning" class="absolute bottom-2 bg-[#ff3366]/20 border border-[#ff3366]/50 text-white font-['JetBrains_Mono'] text-[8px] px-2 py-0.5 rounded tracking-wider font-bold shadow-lg transition-opacity duration-300 opacity-0">
-                THRESHOLD EXCEEDED &gt; 5.0°
+              <div id="tilt-warning" class="absolute bottom-2 bg-rose-100 dark:bg-[#ff3366]/20 border border-rose-300 dark:border-[#ff3366]/50 text-rose-700 dark:text-white font-['JetBrains_Mono'] text-[8px] px-2 py-0.5 rounded tracking-wider font-bold shadow transition-opacity duration-300" ng-class="vm.telemetry.pitch > 3.0 ? 'opacity-100 animate-pulse' : 'opacity-0'">
+                THRESHOLD EXCEEDED &gt; 3.0°
               </div>
             </div>
             <!-- Telemetry Readouts -->
-            <div class="grid grid-cols-3 gap-1 bg-[#07090e] p-2 rounded border border-white/5 font-['JetBrains_Mono']">
+            <div class="grid grid-cols-3 gap-1 bg-slate-50 dark:bg-[#07090e] p-2 rounded border border-slate-200 dark:border-white/5 font-['JetBrains_Mono']">
               <div class="flex flex-col">
-                <span class="text-on-surface-variant text-[9px] uppercase font-semibold">Pitch</span>
-                <span id="val-pitch" class="text-[#ff3366] text-[14px] font-bold">-4.20°</span>
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px] uppercase font-semibold">Pitch</span>
+                <span id="val-pitch" class="text-rose-600 dark:text-[#ff3366] text-[14px] font-bold">{{ vm.telemetry.pitch | number:2 }}°</span>
               </div>
               <div class="flex flex-col">
-                <span class="text-on-surface-variant text-[9px] uppercase font-semibold">Roll</span>
-                <span id="val-roll" class="text-amber-400 text-[14px] font-bold">+7.15°</span>
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px] uppercase font-semibold">Roll</span>
+                <span id="val-roll" class="text-amber-600 dark:text-amber-400 text-[14px] font-bold">{{ vm.telemetry.roll | number:2 }}°</span>
               </div>
               <div class="flex flex-col">
-                <span class="text-on-surface-variant text-[9px] uppercase font-semibold">Displacement</span>
-                <span id="val-disp" class="text-[#ff3366] text-[14px] font-bold">8.28° Σ</span>
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px] uppercase font-semibold">Displacement</span>
+                <span id="val-disp" class="text-rose-600 dark:text-[#ff3366] text-[14px] font-bold">{{ vm.telemetry.disp | number:2 }}mm</span>
               </div>
+            </div>
+            <!-- Rolling 25-sec Strata Pitch Sparkline Trend -->
+            <div class="mt-2 bg-slate-50 dark:bg-[#05080c] p-2 rounded border border-slate-200 dark:border-white/10 flex flex-col gap-1">
+              <div class="flex items-center justify-between text-[9px] font-['JetBrains_Mono'] text-slate-500 dark:text-zinc-400">
+                <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-sky-500 dark:bg-cyan-400"></span>ROLLING TILT TREND (25s)</span>
+                <span class="text-sky-600 dark:text-cyan-400 font-bold">{{ vm.telemetry.pitch | number:2 }}°</span>
+              </div>
+              <sparkline-trend data="vm.pitchHistory" color="#0284c7" height="24" width="160"></sparkline-trend>
             </div>
           </div>
 
           <!-- WIDGET 2: VIBRATION OSCILLOSCOPE TRACE -->
-          <div class="hud-bracket flex flex-col bg-[#0b0f19]/90 backdrop-blur-md rounded border border-white/20 p-3.5 shadow-lg justify-between">
-            <div class="flex items-center justify-between pb-1.5 border-b border-white/5">
+          <div class="hud-bracket flex flex-col bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md rounded border border-slate-200 dark:border-white/20 p-3.5 shadow-sm dark:shadow-lg justify-between">
+            <div class="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-white/5">
               <div class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded bg-neutral-900 border border-white/30 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-white text-[16px]">graphic_eq</span>
+                <div class="w-6 h-6 rounded bg-slate-100 dark:bg-neutral-900 border border-slate-200 dark:border-white/30 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-slate-700 dark:text-white text-[16px]">graphic_eq</span>
                 </div>
-                <span class="font-['Space_Grotesk'] text-[14px] text-white uppercase font-bold">Piezo Vibration Stream</span>
+                <span class="font-['Space_Grotesk'] text-[14px] text-slate-900 dark:text-white uppercase font-bold">Piezo Vibration Stream</span>
               </div>
-              <span class="bg-[#ff3366]/20 border border-[#ff3366]/40 text-[#ff3366] font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold">
-                GRAVITY PIEZO • 48Hz
+              <span class="bg-rose-50 dark:bg-[#ff3366]/20 border border-rose-200 dark:border-[#ff3366]/40 text-rose-600 dark:text-[#ff3366] font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold">
+                GRAVITY PIEZO • {{ vm.telemetry.fft | number:0 }}Hz
               </span>
             </div>
             <!-- CRT Phosphor Oscilloscope Screen -->
-            <div class="relative w-full h-44 bg-[#07090e] rounded border border-white/20 overflow-hidden flex items-center justify-center my-2 scanline">
+            <div vibration-oscilloscope id="vibration-oscilloscope-box" class="relative w-full h-44 bg-slate-50 dark:bg-[#07090e] rounded border border-slate-200 dark:border-white/20 overflow-hidden flex items-center justify-center my-2 scanline">
               <svg class="absolute inset-0 w-full h-full opacity-35 pointer-events-none">
                 <defs>
                   <pattern height="20" id="scope-grid-hud" patternunits="userSpaceOnUse" width="20">
@@ -449,7 +510,7 @@
                 <line stroke="#ffffff" stroke-dasharray="2,2" stroke-width="1" x1="50%" x2="50%" y1="0" y2="100%"></line>
               </svg>
               <!-- Waveform Path -->
-              <svg class="w-full h-full relative z-10" preserveaspectratio="none" viewbox="0 0 320 160">
+              <svg class="w-full h-full relative z-10" preserveaspectratio="none" viewBox="0 0 320 160">
                 <defs>
                   <lineargradient id="wave-gradient-hud" x1="0" x2="1" y1="0" y2="0">
                     <stop offset="0%" stop-color="#ffffff"></stop>
@@ -460,151 +521,159 @@
                 </defs>
                 <path id="wave-glow" d="" fill="none" opacity="0.4" stroke="url(#wave-gradient-hud)" stroke-linejoin="round" stroke-width="6"></path>
                 <path id="wave-core" d="" fill="none" stroke="url(#wave-gradient-hud)" stroke-linejoin="round" stroke-width="2.4"></path>
-                <circle id="wave-peak-dot" cx="202" cy="28" fill="#ff3366" r="4.5" stroke="#fff" stroke-width="1.5" style="filter: drop-shadow(0 0 6px #ff3366);"></circle>
-                <line id="wave-peak-line" stroke="#ff3366" stroke-dasharray="2,2" stroke-width="1" x1="202" x2="202" y1="28" y2="10"></line>
-                <text id="wave-peak-text" fill="#ff3366" font-family="JetBrains Mono" font-size="9" font-weight="bold" x="208" y="18">MAX 1.14g (48.2Hz)</text>
+                <circle id="wave-peak-dot" cx="202" cy="28" fill="#e11d48" class="dark:fill-[#ff3366]" r="4.5" stroke="#fff" stroke-width="1.5" style="filter: drop-shadow(0 0 6px rgba(225,29,72,0.6));"></circle>
+                <line id="wave-peak-line" stroke="#e11d48" class="dark:stroke-[#ff3366]" stroke-dasharray="2,2" stroke-width="1" x1="202" x2="202" y1="28" y2="10"></line>
+                <text id="wave-peak-text" fill="#be123c" class="dark:fill-[#ff3366]" font-family="JetBrains Mono" font-size="9" font-weight="bold" x="208" y="18">MAX {{ (vm.telemetry.rms * 3) | number:2 }}g</text>
               </svg>
-              <div class="absolute top-2 left-2 bg-[#04060a]/90 border border-white/20 px-2 py-0.5 rounded backdrop-blur-sm">
-                <span class="font-['JetBrains_Mono'] text-[9px] text-white font-bold">CH1: 0.1g / DIV</span>
+              <div class="absolute top-2 left-2 bg-white/90 dark:bg-[#04060a]/90 border border-slate-200 dark:border-white/20 px-2 py-0.5 rounded backdrop-blur-sm">
+                <span class="font-['JetBrains_Mono'] text-[9px] text-slate-800 dark:text-white font-bold">CH1: 0.1g / DIV</span>
               </div>
             </div>
             <!-- RMS / Peak-to-Peak Readout -->
-            <div class="grid grid-cols-3 gap-1 bg-[#07090e] p-2 rounded border border-white/5 font-['JetBrains_Mono']">
+            <div class="grid grid-cols-3 gap-1 bg-slate-50 dark:bg-[#07090e] p-2 rounded border border-slate-200 dark:border-white/5 font-['JetBrains_Mono']">
               <div class="flex flex-col">
-                <span class="text-on-surface-variant text-[9px] uppercase font-semibold">RMS Accel</span>
-                <span id="val-rms" class="text-[#ff3366] text-[14px] font-bold">0.38 g</span>
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px] uppercase font-semibold">RMS Accel</span>
+                <span id="val-rms" class="text-rose-600 dark:text-[#ff3366] text-[14px] font-bold">{{ vm.telemetry.rms | number:3 }} g</span>
               </div>
               <div class="flex flex-col">
-                <span class="text-on-surface-variant text-[9px] uppercase font-semibold">Peak-to-Peak</span>
-                <span id="val-p2p" class="text-[#ff3366] text-[14px] font-bold">1.14 g</span>
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px] uppercase font-semibold">Peak-to-Peak</span>
+                <span id="val-p2p" class="text-rose-600 dark:text-[#ff3366] text-[14px] font-bold">{{ vm.telemetry.p2p | number:2 }} g</span>
               </div>
               <div class="flex flex-col">
-                <span class="text-on-surface-variant text-[9px] uppercase font-semibold">FFT Harmonic</span>
-                <span id="val-fft" class="text-amber-400 text-[14px] font-bold">48.2 Hz</span>
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px] uppercase font-semibold">FFT Harmonic</span>
+                <span id="val-fft" class="text-amber-600 dark:text-amber-400 text-[14px] font-bold">{{ vm.telemetry.fft | number:1 }} Hz</span>
               </div>
             </div>
           </div>
 
           <!-- WIDGET 3: TEMPERATURE VERTICAL THERMOMETER -->
-          <div class="hud-bracket flex flex-col bg-[#0b0f19]/90 backdrop-blur-md rounded border border-white/20 p-3.5 shadow-lg justify-between">
-            <div class="flex items-center justify-between pb-1.5 border-b border-white/5">
+          <div class="hud-bracket flex flex-col bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md rounded border border-slate-200 dark:border-white/20 p-3.5 shadow-sm dark:shadow-lg justify-between">
+            <div class="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-white/5">
               <div class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded bg-neutral-900 border border-white/30 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-white text-[16px]">thermostat</span>
+                <div class="w-6 h-6 rounded bg-slate-100 dark:bg-neutral-900 border border-slate-200 dark:border-white/30 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-slate-700 dark:text-white text-[16px]">thermostat</span>
                 </div>
-                <span class="font-['Space_Grotesk'] text-[14px] text-white uppercase font-bold">Borehole Capillary Temp</span>
+                <span class="font-['Space_Grotesk'] text-[14px] text-slate-900 dark:text-white uppercase font-bold">Borehole Capillary Temp</span>
               </div>
-              <span class="bg-amber-500/20 border border-amber-500/40 text-amber-300 font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold">
+              <span class="bg-amber-50 dark:bg-amber-500/20 border border-amber-200 dark:border-amber-500/40 text-amber-700 dark:text-amber-300 font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold">
                 DS18B20 • WATCH
               </span>
             </div>
-            <div class="flex items-center justify-center gap-4 my-2 bg-[#07090e] p-3 rounded border border-white/20 h-44">
+            <div class="flex items-center justify-center gap-4 my-2 bg-slate-50 dark:bg-[#07090e] p-3 rounded border border-slate-200 dark:border-white/20 h-44">
               <div class="relative flex items-center h-full">
-                <div class="flex flex-col justify-between h-36 font-['JetBrains_Mono'] text-[8px] text-on-surface-variant pr-2 text-right">
+                <div class="flex flex-col justify-between h-36 font-['JetBrains_Mono'] text-[8px] text-slate-500 dark:text-on-surface-variant pr-2 text-right">
                   <span>70°C</span>
                   <span>55°C</span>
                   <span>40°C</span>
-                  <span class="text-amber-400 font-bold">35°C</span>
+                  <span class="text-amber-600 dark:text-amber-400 font-bold">35°C</span>
                   <span>20°C</span>
                   <span>0°C</span>
                 </div>
-                <div class="relative w-6 h-36 bg-slate-900/80 border border-white/30 rounded-full p-0.5 flex flex-col justify-end items-center overflow-hidden shadow-[inset_0_0_8px_rgba(0,0,0,0.8)]">
-                  <div id="temp-bar" class="w-full rounded-full transition-all duration-500 bg-gradient-to-t from-neutral-400 via-amber-400 to-[#ff3366] shadow-[0_0_12px_#ffba27]" style="height: 55.1%;"></div>
-                  <div class="absolute inset-y-0 w-0.5 bg-white/30 left-1/2 -translate-x-1/2 pointer-events-none"></div>
+                <div class="relative w-6 h-36 bg-slate-200 dark:bg-slate-900/80 border border-slate-300 dark:border-white/30 rounded-full p-0.5 flex flex-col justify-end items-center overflow-hidden shadow-inner">
+                  <div id="temp-bar" class="w-full rounded-full transition-all duration-500 bg-gradient-to-t from-amber-400 via-orange-500 to-rose-600 shadow-[0_0_12px_#ffba27]" ng-style="{ height: ((vm.telemetry.temp / 70) * 100) + '%' }"></div>
+                  <div class="absolute inset-y-0 w-0.5 bg-slate-400/40 dark:bg-white/30 left-1/2 -translate-x-1/2 pointer-events-none"></div>
                 </div>
-                <div class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white shadow-[0_0_14px_rgba(255,255,255,0.4)] border-2 border-white flex items-center justify-center">
-                  <div class="w-3.5 h-3.5 rounded-full bg-neutral-900"></div>
+                <div class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-slate-100 dark:bg-white shadow border-2 border-slate-300 dark:border-white flex items-center justify-center">
+                  <div class="w-3.5 h-3.5 rounded-full bg-rose-600 dark:bg-neutral-900"></div>
                 </div>
               </div>
               <div class="flex flex-col justify-center gap-1 flex-1">
-                <span class="font-['JetBrains_Mono'] text-[10px] text-on-surface-variant uppercase">CURRENT TEMPERATURE</span>
+                <span class="font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-on-surface-variant uppercase">CURRENT TEMPERATURE</span>
                 <div class="flex items-baseline gap-1">
-                  <span id="val-temp" class="font-['JetBrains_Mono'] text-[28px] text-amber-300 font-bold drop-shadow-[0_0_8px_rgba(255,186,39,0.4)]">38.6</span>
-                  <span class="font-['JetBrains_Mono'] text-[12px] text-on-surface-variant">°C</span>
+                  <span id="val-temp" class="font-['JetBrains_Mono'] text-[28px] text-amber-600 dark:text-amber-300 font-bold drop-shadow-[0_0_8px_rgba(255,186,39,0.4)]">{{ vm.telemetry.temp | number:1 }}</span>
+                  <span class="font-['JetBrains_Mono'] text-[12px] text-slate-500 dark:text-on-surface-variant">°C</span>
                 </div>
-                <div class="bg-[#0b0f19] border border-amber-500/30 p-2 rounded">
-                  <span class="font-['JetBrains_Mono'] text-[10px] text-amber-300 leading-tight block font-semibold">
-                    STATUS: Thermal Watch (+3.6°C elevated from baseline).
+                <div class="bg-amber-50 dark:bg-[#0b0f19] border border-amber-200 dark:border-amber-500/30 p-2 rounded">
+                  <span class="font-['JetBrains_Mono'] text-[10px] text-amber-800 dark:text-amber-300 leading-tight block font-semibold">
+                    STATUS: Thermal Watch (+{{ ((vm.telemetry.temp - 35) > 0 ? (vm.telemetry.temp - 35) : 0) | number:1 }}°C elevated).
                   </span>
-                  <span class="font-['JetBrains_Mono'] text-[9px] text-on-surface-variant mt-1 block">
+                  <span class="font-['JetBrains_Mono'] text-[9px] text-slate-600 dark:text-on-surface-variant mt-1 block">
                     DS18B20 1-Wire &amp; DHT11 Ambient Synced.
                   </span>
                 </div>
               </div>
             </div>
-            <div class="flex items-center justify-between bg-[#07090e] px-3 py-1.5 rounded border border-white/5 font-['JetBrains_Mono'] text-[10px]">
-              <span class="text-on-surface-variant">Sensor Bus: 1-Wire DQ (GPIO 5)</span>
-              <span class="text-white font-bold">CALIBRATED ±0.1°C</span>
+            <div class="flex items-center justify-between bg-slate-50 dark:bg-[#07090e] px-3 py-1.5 rounded border border-slate-200 dark:border-white/5 font-['JetBrains_Mono'] text-[10px]">
+              <span class="text-slate-500 dark:text-on-surface-variant">Sensor Bus: 1-Wire DQ (GPIO 5)</span>
+              <span class="text-slate-700 dark:text-white font-bold">CALIBRATED ±0.1°C</span>
             </div>
           </div>
 
           <!-- WIDGET 4: AIR QUALITY RADIAL GAUGE (MQ135) -->
-          <div class="hud-bracket flex flex-col bg-[#0b0f19]/90 backdrop-blur-md rounded border border-white/20 p-3.5 shadow-lg justify-between">
-            <div class="flex items-center justify-between pb-1.5 border-b border-white/5">
+          <div class="hud-bracket flex flex-col bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md rounded border border-slate-200 dark:border-white/20 p-3.5 shadow-sm dark:shadow-lg justify-between">
+            <div class="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-white/5">
               <div class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded bg-neutral-900 border border-white/30 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-white text-[16px]">air</span>
+                <div class="w-6 h-6 rounded bg-slate-100 dark:bg-neutral-900 border border-slate-200 dark:border-white/30 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-slate-700 dark:text-white text-[16px]">air</span>
                 </div>
-                <span class="font-['Space_Grotesk'] text-[14px] text-white uppercase font-bold">Gas &amp; Mine Atmosphere</span>
+                <span class="font-['Space_Grotesk'] text-[14px] text-slate-900 dark:text-white uppercase font-bold">Gas &amp; Mine Atmosphere</span>
               </div>
-              <span class="bg-amber-500/20 border border-amber-500/40 text-amber-300 font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold">
-                MQ135 • UNHEALTHY
+              <span class="bg-amber-50 dark:bg-amber-500/20 border border-amber-200 dark:border-amber-500/40 text-amber-700 dark:text-amber-300 font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold">
+                MQ135 • {{ vm.getAqiBand(vm.telemetry.aqi) }}
               </span>
             </div>
-            <div class="relative w-full h-44 flex items-center justify-center my-2 bg-[#07090e] rounded border border-white/20">
-              <svg class="w-44 h-44" viewbox="0 0 160 160">
-                <circle cx="80" cy="80" fill="none" r="62" stroke="#1e293b" stroke-dasharray="290 360" stroke-dashoffset="-70" stroke-linecap="round" stroke-width="10"></circle>
-                <circle id="aqi-ring" cx="80" cy="80" fill="none" r="62" stroke="#ffba27" stroke-dasharray="175 360" stroke-dashoffset="-70" stroke-linecap="round" stroke-width="10" style="filter: drop-shadow(0 0 6px rgba(255,186,39,0.5)); transition: stroke-dasharray 0.5s ease-out;"></circle>
+            <div class="relative w-full h-44 flex items-center justify-center my-2 bg-slate-50 dark:bg-[#07090e] rounded border border-slate-200 dark:border-white/20">
+              <svg class="w-44 h-44" viewBox="0 0 160 160">
+                <circle cx="80" cy="80" fill="none" r="62" class="stroke-slate-200 dark:stroke-[#1e293b]" stroke-dasharray="290 360" stroke-dashoffset="-70" stroke-linecap="round" stroke-width="10"></circle>
+                <circle id="aqi-ring" cx="80" cy="80" fill="none" r="62" stroke="#d97706" class="dark:stroke-[#ffba27]" stroke-dasharray="175 360" ng-attr-stroke-dashoffset="{{ vm.getAqiOffset(vm.telemetry.aqi) }}" stroke-linecap="round" stroke-width="10" style="filter: drop-shadow(0 0 6px rgba(217,119,6,0.3)); transition: stroke-dashoffset 0.5s ease-out;"></circle>
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center pt-2">
-                <span class="font-['JetBrains_Mono'] text-[9px] text-on-surface-variant uppercase tracking-widest font-bold">STOPE AQI</span>
-                <span id="val-aqi" class="font-['JetBrains_Mono'] text-[38px] leading-tight text-amber-300 font-bold drop-shadow-[0_0_10px_rgba(255,186,39,0.4)]">182</span>
-                <span id="aqi-band" class="bg-amber-500/20 border border-amber-500/40 text-amber-300 font-['JetBrains_Mono'] text-[8px] px-2 py-0.5 rounded font-bold uppercase tracking-wider">
-                  UNHEALTHY BAND
+                <span class="font-['JetBrains_Mono'] text-[9px] text-slate-500 dark:text-on-surface-variant uppercase tracking-widest font-bold">STOPE AQI</span>
+                <span id="val-aqi" class="font-['JetBrains_Mono'] text-[38px] leading-tight font-bold text-amber-600 dark:text-amber-400" ng-class="vm.getAqiColorClass(vm.telemetry.aqi)">{{ vm.telemetry.aqi }}</span>
+                <span id="aqi-band" class="bg-amber-50 dark:bg-amber-500/20 border border-amber-200 dark:border-amber-500/40 text-amber-700 dark:text-amber-300 font-['JetBrains_Mono'] text-[8px] px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                  {{ vm.getAqiBand(vm.telemetry.aqi) }}
                 </span>
               </div>
             </div>
-            <div class="grid grid-cols-3 gap-1 bg-[#07090e] p-2 rounded border border-white/5 font-['JetBrains_Mono']">
+            <div class="grid grid-cols-3 gap-1 bg-slate-50 dark:bg-[#07090e] p-2 rounded border border-slate-200 dark:border-white/5 font-['JetBrains_Mono']">
               <div class="flex flex-col">
-                <span class="text-on-surface-variant text-[9px] uppercase font-semibold">CO Level</span>
-                <span id="val-co" class="text-amber-400 text-[13px] font-bold">18 ppm</span>
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px] uppercase font-semibold">CO Level</span>
+                <span id="val-co" class="text-amber-600 dark:text-amber-400 text-[13px] font-bold">{{ vm.telemetry.co | number:1 }} ppm</span>
               </div>
               <div class="flex flex-col">
-                <span class="text-on-surface-variant text-[9px] uppercase font-semibold">NH3 Trace</span>
-                <span id="val-nh3" class="text-white text-[13px] font-bold">4 ppm</span>
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px] uppercase font-semibold">NH3 Trace</span>
+                <span id="val-nh3" class="text-slate-700 dark:text-white text-[13px] font-bold">{{ vm.telemetry.nh3 | number:1 }} ppm</span>
               </div>
               <div class="flex flex-col">
-                <span class="text-on-surface-variant text-[9px] uppercase font-semibold">CO2 Conc.</span>
-                <span id="val-co2" class="text-white text-[13px] font-bold">1120 ppm</span>
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px] uppercase font-semibold">CO2 Conc.</span>
+                <span id="val-co2" class="text-slate-700 dark:text-white text-[13px] font-bold">{{ vm.telemetry.co2 | number:0 }} ppm</span>
               </div>
+            </div>
+            <!-- Rolling CO Concentration Sparkline -->
+            <div class="mt-2 bg-slate-50 dark:bg-[#05080c] p-2 rounded border border-slate-200 dark:border-white/10 flex flex-col gap-1">
+              <div class="flex items-center justify-between text-[9px] font-['JetBrains_Mono'] text-slate-500 dark:text-zinc-400">
+                <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>ROLLING CO TREND (25s)</span>
+                <span class="text-amber-600 dark:text-amber-400 font-bold">{{ vm.telemetry.co | number:1 }} PPM</span>
+              </div>
+              <sparkline-trend data="vm.coHistory" color="#d97706" height="24" width="160"></sparkline-trend>
             </div>
           </div>
 
           <!-- WIDGET 5: WATER LEVEL LIQUID TANK FILL (REL_35 SENSOR) -->
-          <div class="hud-bracket flex flex-col bg-[#0b0f19]/90 backdrop-blur-md rounded border border-white/20 p-3.5 shadow-lg justify-between">
-            <div class="flex items-center justify-between pb-1.5 border-b border-white/5">
+          <div class="hud-bracket flex flex-col bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md rounded border border-slate-200 dark:border-white/20 p-3.5 shadow-sm dark:shadow-lg justify-between">
+            <div class="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-white/5">
               <div class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded bg-neutral-900 border border-white/30 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-white text-[16px]">water_drop</span>
+                <div class="w-6 h-6 rounded bg-slate-100 dark:bg-neutral-900 border border-slate-200 dark:border-white/30 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-slate-700 dark:text-white text-[16px]">water_drop</span>
                 </div>
-                <span class="font-['Space_Grotesk'] text-[14px] text-white uppercase font-bold">Sub-Gallery Sump Level</span>
+                <span class="font-['Space_Grotesk'] text-[14px] text-slate-900 dark:text-white uppercase font-bold">Sub-Gallery Sump Level</span>
               </div>
-              <span class="bg-neutral-900 border border-white/30 text-white font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold">
-                REL_35 SENSOR • 68.4%
+              <span class="bg-sky-50 dark:bg-neutral-900 border border-sky-200 dark:border-white/30 text-sky-700 dark:text-white font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold">
+                REL_35 SENSOR • {{ vm.telemetry.sump | number:1 }}%
               </span>
             </div>
-            <div class="flex items-center justify-center gap-4 my-2 bg-[#07090e] p-3 rounded border border-white/20 h-44">
-              <div class="relative w-20 h-36 bg-slate-900/80 rounded border border-white/30 overflow-hidden flex flex-col justify-end shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]">
-                <div class="absolute top-[12.5%] inset-x-0 border-b border-dashed border-[#ff3366] z-20 flex items-center justify-end pr-1">
-                  <span class="text-[7px] font-['JetBrains_Mono'] text-[#ff3366] bg-[#07090e]/90 px-0.5">OVERFLOW 3.5m</span>
+            <div class="flex items-center justify-center gap-4 my-2 bg-slate-50 dark:bg-[#07090e] p-3 rounded border border-slate-200 dark:border-white/20 h-44">
+              <div class="relative w-20 h-36 bg-sky-100/50 dark:bg-slate-900/80 rounded border border-sky-300/60 dark:border-white/30 overflow-hidden flex flex-col justify-end shadow-inner">
+                <div class="absolute top-[12.5%] inset-x-0 border-b border-dashed border-rose-500 z-20 flex items-center justify-end pr-1">
+                  <span class="text-[7px] font-['JetBrains_Mono'] text-rose-600 dark:text-[#ff3366] bg-white/90 dark:bg-[#07090e]/90 px-0.5 rounded font-bold">OVERFLOW 3.5m</span>
                 </div>
-                <div id="sump-fill" class="w-full bg-gradient-to-t from-neutral-700 to-white relative transition-all duration-700 shadow-[0_0_14px_rgba(255,255,255,0.3)]" style="height: 68.4%;">
-                  <svg class="absolute -top-2 left-0 w-full h-3 opacity-80" preserveaspectratio="none" viewbox="0 0 100 20">
-                    <path d="M 0 10 C 25 18 35 2 50 10 C 65 18 85 2 100 10 L 100 20 L 0 20 Z" fill="#ffffff"></path>
+                <div id="sump-fill" class="w-full bg-gradient-to-t from-sky-600 via-sky-500 to-sky-400 dark:from-neutral-700 dark:to-white relative transition-all duration-700 shadow-sm" ng-style="{ height: vm.telemetry.sump + '%' }">
+                  <svg class="absolute -top-2 left-0 w-full h-3 opacity-80" preserveaspectratio="none" viewBox="0 0 100 20">
+                    <path d="M 0 10 C 25 18 35 2 50 10 C 65 18 85 2 100 10 L 100 20 L 0 20 Z" class="fill-sky-400 dark:fill-white"></path>
                   </svg>
                   <div class="absolute inset-0 bg-white/10"></div>
                 </div>
-                <div class="absolute inset-y-0 left-1 flex flex-col justify-between font-['JetBrains_Mono'] text-[7px] text-white/50 pointer-events-none py-1">
+                <div class="absolute inset-y-0 left-1 flex flex-col justify-between font-['JetBrains_Mono'] text-[7px] text-sky-900/70 dark:text-white/50 pointer-events-none py-1 font-semibold">
                   <span>4.0m</span>
                   <span>3.0m</span>
                   <span>2.0m</span>
@@ -613,72 +682,72 @@
                 </div>
               </div>
               <div class="flex flex-col justify-center gap-1.5 flex-1">
-                <span class="font-['JetBrains_Mono'] text-[10px] text-on-surface-variant uppercase">HYDROSTATIC FILL LEVEL</span>
+                <span class="font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-on-surface-variant uppercase">HYDROSTATIC FILL LEVEL</span>
                 <div class="flex items-baseline gap-1">
-                  <span id="val-sump" class="font-['JetBrains_Mono'] text-[28px] text-white font-bold drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">2.74</span>
-                  <span class="font-['JetBrains_Mono'] text-[11px] text-on-surface-variant">METERS / 4.00m</span>
+                  <span id="val-sump" class="font-['JetBrains_Mono'] text-[28px] text-sky-700 dark:text-white font-bold drop-shadow-sm">{{ ((vm.telemetry.sump / 100) * 4.0) | number:2 }}</span>
+                  <span class="font-['JetBrains_Mono'] text-[11px] text-slate-500 dark:text-on-surface-variant">METERS / 4.00m</span>
                 </div>
-                <div class="flex flex-col gap-1 font-['JetBrains_Mono'] text-[10px] bg-[#0b0f19] border border-white/20 p-2 rounded">
+                <div class="flex flex-col gap-1 font-['JetBrains_Mono'] text-[10px] bg-white dark:bg-[#0b0f19] border border-slate-200 dark:border-white/20 p-2 rounded">
                   <div class="flex justify-between">
-                    <span class="text-on-surface-variant">REL_35 Analog ADC:</span>
-                    <span id="val-adc-sump" class="text-white font-bold">2234 RAW</span>
+                    <span class="text-slate-500 dark:text-on-surface-variant">REL_35 Analog ADC:</span>
+                    <span id="val-adc-sump" class="text-slate-800 dark:text-white font-bold">{{ vm.telemetry.adc_sump || 2234 }} RAW</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-on-surface-variant">Discharge Pump #2:</span>
-                    <span class="text-emerald-400 font-bold">AUTO STANDBY</span>
+                    <span class="text-slate-500 dark:text-on-surface-variant">Discharge Pump #2:</span>
+                    <span class="text-emerald-600 dark:text-emerald-400 font-bold">AUTO STANDBY</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="flex items-center justify-between bg-[#07090e] px-3 py-1.5 rounded border border-white/5 font-['JetBrains_Mono'] text-[10px]">
-              <span class="text-on-surface-variant">REL_35 Resistive Sensor (GPIO 4):</span>
-              <span class="text-white font-bold">+1.2 L/min (Nominal)</span>
+            <div class="flex items-center justify-between bg-slate-50 dark:bg-[#07090e] px-3 py-1.5 rounded border border-slate-200 dark:border-white/5 font-['JetBrains_Mono'] text-[10px]">
+              <span class="text-slate-500 dark:text-on-surface-variant">REL_35 Resistive Sensor (GPIO 4):</span>
+              <span class="text-slate-700 dark:text-white font-bold">+1.2 L/min (Nominal)</span>
             </div>
           </div>
 
           <!-- WIDGET 6: LIVE GPS DISPLACEMENT & SATELLITE FIX -->
-          <div class="hud-bracket flex flex-col bg-[#0b0f19]/90 backdrop-blur-md rounded border border-white/20 p-3.5 shadow-lg justify-between">
-            <div class="flex items-center justify-between pb-1.5 border-b border-white/5">
+          <div class="hud-bracket flex flex-col bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md rounded border border-slate-200 dark:border-white/20 p-3.5 shadow-sm dark:shadow-lg justify-between">
+            <div class="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-white/5">
               <div class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded bg-neutral-900 border border-white/30 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-white text-[16px]">satellite_alt</span>
+                <div class="w-6 h-6 rounded bg-slate-100 dark:bg-neutral-900 border border-slate-200 dark:border-white/30 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-slate-700 dark:text-white text-[16px]">satellite_alt</span>
                 </div>
-                <span class="font-['Space_Grotesk'] text-[14px] text-white uppercase font-bold">NEO-6M Precision GNSS</span>
+                <span class="font-['Space_Grotesk'] text-[14px] text-slate-900 dark:text-white uppercase font-bold">NEO-6M Precision GNSS</span>
               </div>
-              <span class="bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold">
+              <span class="bg-emerald-50 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/40 text-emerald-700 dark:text-emerald-400 font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold">
                 3D DGPS LOCK
               </span>
             </div>
-            <div class="relative w-full h-44 flex flex-col justify-between p-2.5 bg-[#07090e] rounded border border-white/20 my-2">
+            <div class="relative w-full h-44 flex flex-col justify-between p-2.5 bg-slate-50 dark:bg-[#07090e] rounded border border-slate-200 dark:border-white/20 my-2">
               <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[11px]">
                 <div class="flex items-center gap-1.5">
-                  <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981] animate-pulse"></span>
-                  <span id="val-gps-sats" class="text-white font-bold">9 SATELLITES TRACKED</span>
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 shadow animate-pulse"></span>
+                  <span id="val-gps-sats" class="text-slate-800 dark:text-white font-bold">{{ vm.telemetry.sats || 14 }} SATELLITES TRACKED</span>
                 </div>
-                <span class="text-on-surface-variant">HDOP: <strong id="val-gps-hdop" class="text-white">0.82</strong></span>
+                <span class="text-slate-500 dark:text-on-surface-variant">HDOP: <strong id="val-gps-hdop" class="text-slate-900 dark:text-white font-bold">{{ vm.telemetry.hdop | number:2 }}</strong></span>
               </div>
-              <div class="bg-[#0b0f19] border border-white/5 p-2 rounded flex flex-col gap-1">
+              <div class="bg-white dark:bg-[#0b0f19] border border-slate-200 dark:border-white/5 p-2 rounded flex flex-col gap-1">
                 <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[11px]">
-                  <span class="text-on-surface-variant">LATITUDE:</span>
-                  <span id="val-gps-lat" class="text-white font-bold">23.795741° N</span>
+                  <span class="text-slate-500 dark:text-on-surface-variant">LATITUDE:</span>
+                  <span id="val-gps-lat" class="text-slate-800 dark:text-white font-bold">{{ vm.telemetry.lat | number:6 }}° N</span>
                 </div>
                 <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[11px]">
-                  <span class="text-on-surface-variant">LONGITUDE:</span>
-                  <span id="val-gps-lon" class="text-white font-bold">86.430412° E</span>
+                  <span class="text-slate-500 dark:text-on-surface-variant">LONGITUDE:</span>
+                  <span id="val-gps-lon" class="text-slate-800 dark:text-white font-bold">{{ vm.telemetry.lon | number:6 }}° E</span>
                 </div>
                 <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[11px]">
-                  <span class="text-on-surface-variant">ALTITUDE (MSL):</span>
-                  <span id="val-gps-alt" class="text-amber-400 font-bold">184.20 m</span>
+                  <span class="text-slate-500 dark:text-on-surface-variant">ALTITUDE (MSL):</span>
+                  <span id="val-gps-alt" class="text-amber-600 dark:text-amber-400 font-bold">{{ vm.telemetry.alt | number:2 }} m</span>
                 </div>
               </div>
-              <div class="bg-[#ff3366]/15 border border-[#ff3366]/40 px-2 py-1 rounded flex items-center justify-between font-['JetBrains_Mono'] text-[10px]">
-                <span class="text-[#ff3366] font-bold">SUBSIDENCE VECTOR (6hr):</span>
-                <span class="text-white font-bold">ΔX: +18mm | ΔY: -42mm</span>
+              <div class="bg-rose-50 dark:bg-[#ff3366]/15 border border-rose-200 dark:border-[#ff3366]/40 px-2 py-1 rounded flex items-center justify-between font-['JetBrains_Mono'] text-[10px]">
+                <span class="text-rose-700 dark:text-[#ff3366] font-bold">SUBSIDENCE VECTOR (6hr):</span>
+                <span class="text-slate-900 dark:text-white font-bold">ΔX: +18mm | ΔY: -42mm</span>
               </div>
             </div>
-            <div class="flex items-center justify-between bg-[#07090e] px-3 py-1.5 rounded border border-white/5 font-['JetBrains_Mono'] text-[10px]">
-              <span class="text-on-surface-variant">NMEA GPGGA Sentence:</span>
-              <span class="text-emerald-400 font-bold">VALID RTK-CORRECTED</span>
+            <div class="flex items-center justify-between bg-slate-50 dark:bg-[#07090e] px-3 py-1.5 rounded border border-slate-200 dark:border-white/5 font-['JetBrains_Mono'] text-[10px]">
+              <span class="text-slate-500 dark:text-on-surface-variant">NMEA GPGGA Sentence:</span>
+              <span class="text-emerald-600 dark:text-emerald-400 font-bold">VALID RTK-CORRECTED</span>
             </div>
           </div>
         </div>
@@ -686,26 +755,26 @@
         <!-- LIVE HARDWARE PACKET INSPECTOR & LORA SYSTEM TRAY -->
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
           <!-- PACKET TERMINAL & HEX STREAM (7 COLS) -->
-          <div class="hud-bracket xl:col-span-7 flex flex-col bg-[#0b0f19]/90 backdrop-blur-md rounded border border-white/20 p-4 shadow-[0_4px_24px_rgba(0,0,0,0.6)] justify-between">
+          <div class="hud-bracket xl:col-span-7 flex flex-col bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md rounded border border-slate-200 dark:border-white/20 p-4 shadow-sm dark:shadow-[0_4px_24px_rgba(0,0,0,0.6)] justify-between">
             <div>
-              <div class="flex items-center justify-between pb-2 border-b border-white/20">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-white/20">
                 <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded bg-neutral-900 border border-white/30 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-white text-[18px]">terminal</span>
+                  <div class="w-7 h-7 rounded bg-slate-100 dark:bg-neutral-900 border border-slate-200 dark:border-white/30 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-slate-700 dark:text-white text-[18px]">terminal</span>
                   </div>
-                  <span class="font-['Space_Grotesk'] text-[15px] text-white uppercase font-bold">Live SX1278 LoRa Hardware Ingest Bus</span>
+                  <span class="font-['Space_Grotesk'] text-[15px] text-slate-900 dark:text-white uppercase font-bold">Live SX1278 LoRa Hardware Ingest Bus</span>
                 </div>
-                <span class="bg-neutral-900 border border-white/30 text-white font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold uppercase">
+                <span class="bg-slate-100 dark:bg-neutral-900 border border-slate-200 dark:border-white/30 text-slate-700 dark:text-white font-['JetBrains_Mono'] text-[9px] px-2 py-0.5 rounded font-bold uppercase">
                   HEX PAYLOAD INSPECTOR
                 </span>
               </div>
               
               <!-- Raw Ingest Hex Terminal Stream -->
-              <div class="mt-2 bg-[#04060a] border border-white/20 p-3 rounded font-['JetBrains_Mono'] text-[11px] leading-relaxed flex flex-col gap-1.5 overflow-x-auto select-all scanline" id="hex-terminal">
+              <div class="mt-2 bg-slate-950 dark:bg-[#04060a] border border-slate-800 dark:border-white/20 p-3 rounded font-['JetBrains_Mono'] text-[11px] leading-relaxed flex flex-col gap-1.5 overflow-x-auto select-all scanline" id="hex-terminal">
                 <div class="flex items-baseline gap-2 text-white">
                   <span class="text-neutral-500">[2026-03-29 14:32:01.482 IST]</span>
                   <span class="text-white font-bold">RX &lt;&lt;</span>
-                  <span class="text-[#ff3366] font-bold">[NODE: 0x03]</span>
+                  <span class="text-rose-400 font-bold">[NODE: 0x03]</span>
                   <span class="text-neutral-300">[SEQ: #4812]</span>
                   <span class="text-neutral-200">[TILT: 0x033C]</span>
                   <span class="text-neutral-200">[VIB: 0x017C]</span>
@@ -758,87 +827,87 @@
 
             <!-- Hardware Tray Parameters -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 font-['JetBrains_Mono'] text-[11px]">
-              <div class="bg-[#07090e] border border-white/5 p-2 rounded flex flex-col">
-                <span class="text-on-surface-variant text-[9px] uppercase">Ingestion Bus</span>
-                <span class="text-white font-bold">MQTT / TCP:1883</span>
-                <span class="text-neutral-400 text-[9px]">[COM4 Standby]</span>
+              <div class="bg-slate-50 dark:bg-[#07090e] border border-slate-200 dark:border-white/5 p-2 rounded flex flex-col">
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px] uppercase">Ingestion Bus</span>
+                <span class="text-slate-800 dark:text-white font-bold">MQTT / TCP:1883</span>
+                <span class="text-slate-500 dark:text-neutral-400 text-[9px]">[COM4 Standby]</span>
               </div>
-              <div class="bg-[#07090e] border border-white/5 p-2 rounded flex flex-col">
-                <span class="text-on-surface-variant text-[9px] uppercase">LoRa RF Band</span>
-                <span class="text-white font-bold">433.175 MHz</span>
-                <span class="text-on-surface-variant text-[9px]">SF7 / BW 125kHz</span>
+              <div class="bg-slate-50 dark:bg-[#07090e] border border-slate-200 dark:border-white/5 p-2 rounded flex flex-col">
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px] uppercase">LoRa RF Band</span>
+                <span class="text-slate-800 dark:text-white font-bold">433.175 MHz</span>
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px]">SF7 / BW 125kHz</span>
               </div>
-              <div class="bg-[#07090e] border border-white/5 p-2 rounded flex flex-col">
-                <span class="text-on-surface-variant text-[9px] uppercase">Coding Rate</span>
-                <span class="text-white font-bold">CR 4/5 (FEC ON)</span>
-                <span class="text-neutral-400 text-[9px]">Payload: 32 Bytes</span>
+              <div class="bg-slate-50 dark:bg-[#07090e] border border-slate-200 dark:border-white/5 p-2 rounded flex flex-col">
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px] uppercase">Coding Rate</span>
+                <span class="text-slate-800 dark:text-white font-bold">CR 4/5 (FEC ON)</span>
+                <span class="text-slate-500 dark:text-neutral-400 text-[9px]">Payload: 32 Bytes</span>
               </div>
-              <div class="bg-[#07090e] border border-white/5 p-2 rounded flex flex-col">
-                <span class="text-on-surface-variant text-[9px] uppercase">Selected Node Bat</span>
-                <span class="text-emerald-400 font-bold">84% (3.94V)</span>
-                <span class="text-on-surface-variant text-[9px]">Li-ion 18650 3.7V</span>
+              <div class="bg-slate-50 dark:bg-[#07090e] border border-slate-200 dark:border-white/5 p-2 rounded flex flex-col">
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px] uppercase">Selected Node Bat</span>
+                <span class="text-emerald-600 dark:text-emerald-400 font-bold">84% (3.94V)</span>
+                <span class="text-slate-500 dark:text-on-surface-variant text-[9px]">Li-ion 18650 3.7V</span>
               </div>
             </div>
           </div>
 
           <!-- GLOBAL INCIDENT COMMAND DISPATCH LOGS (5 COLS) -->
-          <div class="hud-bracket xl:col-span-5 flex flex-col bg-[#0b0f19]/90 backdrop-blur-md rounded border border-white/20 p-4 shadow-[0_4px_24px_rgba(0,0,0,0.6)] justify-between">
+          <div class="hud-bracket xl:col-span-5 flex flex-col bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md rounded border border-slate-200 dark:border-white/20 p-4 shadow-sm dark:shadow-[0_4px_24px_rgba(0,0,0,0.6)] justify-between">
             <div>
-              <div class="flex items-center justify-between pb-2 border-b border-white/20">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-white/20">
                 <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded bg-neutral-900 border border-white/30 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-white text-[18px]">security_update_warning</span>
+                  <div class="w-7 h-7 rounded bg-slate-100 dark:bg-neutral-900 border border-slate-200 dark:border-white/30 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-slate-700 dark:text-white text-[18px]">security_update_warning</span>
                   </div>
-                  <span class="font-['Space_Grotesk'] text-[15px] text-white uppercase font-bold">Dispatch &amp; Alert Audit Feed</span>
+                  <span class="font-['Space_Grotesk'] text-[15px] text-slate-900 dark:text-white uppercase font-bold">Dispatch &amp; Alert Audit Feed</span>
                 </div>
-                <span class="font-['JetBrains_Mono'] text-emerald-400 text-[11px] font-bold flex items-center gap-1.5">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>AUTO-BROADCAST ON
+                <span class="font-['JetBrains_Mono'] text-emerald-600 dark:text-emerald-400 text-[11px] font-bold flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>AUTO-BROADCAST ON
                 </span>
               </div>
 
               <!-- Audit Timeline Entries -->
               <div id="incident-log-list" class="mt-2 flex flex-col gap-2">
                 <!-- Log Entry 1: Critical Dispatch -->
-                <div class="bg-[#07090e] border border-[#ff3366]/30 p-2.5 rounded flex items-start gap-2.5">
-                  <div class="w-6 h-6 rounded bg-[#ff3366]/20 border border-[#ff3366]/40 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span class="material-symbols-outlined text-[#ff3366] text-[15px]">sms</span>
+                <div class="bg-rose-50/70 dark:bg-[#07090e] border border-rose-200 dark:border-[#ff3366]/30 p-2.5 rounded flex items-start gap-2.5">
+                  <div class="w-6 h-6 rounded bg-rose-100 dark:bg-[#ff3366]/20 border border-rose-300 dark:border-[#ff3366]/40 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span class="material-symbols-outlined text-rose-600 dark:text-[#ff3366] text-[15px]">sms</span>
                   </div>
                   <div class="flex flex-col flex-1 min-w-0">
                     <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[10px]">
-                      <span class="text-[#ff3366] font-bold">EMERGENCY SMS/EMAIL BROADCAST</span>
-                      <span class="text-on-surface-variant">14:31:52 IST</span>
+                      <span class="text-rose-700 dark:text-[#ff3366] font-bold">EMERGENCY SMS/EMAIL BROADCAST</span>
+                      <span class="text-slate-500 dark:text-on-surface-variant">14:31:52 IST</span>
                     </div>
-                    <p class="font-['Space_Grotesk'] text-[11px] text-on-surface truncate mt-0.5">
+                    <p class="font-['Space_Grotesk'] text-[11px] text-slate-700 dark:text-on-surface truncate mt-0.5">
                       Dispatched to Mine Safety Officer (Er. R. Sharma): Evacuate Sub-Sector 4 Stope.
                     </p>
                   </div>
                 </div>
                 <!-- Log Entry 2: Rule Trigger -->
-                <div class="bg-[#07090e] border border-amber-500/30 p-2.5 rounded flex items-start gap-2.5">
-                  <div class="w-6 h-6 rounded bg-amber-500/20 border border-amber-500/40 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span class="material-symbols-outlined text-amber-400 text-[15px]">rule</span>
+                <div class="bg-amber-50/70 dark:bg-[#07090e] border border-amber-200 dark:border-amber-500/30 p-2.5 rounded flex items-start gap-2.5">
+                  <div class="w-6 h-6 rounded bg-amber-100 dark:bg-amber-500/20 border border-amber-300 dark:border-amber-500/40 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span class="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[15px]">rule</span>
                   </div>
                   <div class="flex flex-col flex-1 min-w-0">
                     <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[10px]">
-                      <span class="text-amber-400 font-bold">AUTO-INCIDENT LOGGED #4092</span>
-                      <span class="text-on-surface-variant">14:30:11 IST</span>
+                      <span class="text-amber-700 dark:text-amber-400 font-bold">AUTO-INCIDENT LOGGED #4092</span>
+                      <span class="text-slate-500 dark:text-on-surface-variant">14:30:11 IST</span>
                     </div>
-                    <p class="font-['Space_Grotesk'] text-[11px] text-on-surface truncate mt-0.5">
+                    <p class="font-['Space_Grotesk'] text-[11px] text-slate-700 dark:text-on-surface truncate mt-0.5">
                       Threshold Excursion: Tilt angular velocity 2.10°/hr exceeded standard 1.20°/hr.
                     </p>
                   </div>
                 </div>
                 <!-- Log Entry 3: Siren Activation -->
-                <div class="bg-[#07090e] border border-white/20 p-2.5 rounded flex items-start gap-2.5">
-                  <div class="w-6 h-6 rounded bg-neutral-900 border border-white/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span class="material-symbols-outlined text-white text-[15px]">volume_up</span>
+                <div class="bg-slate-50 dark:bg-[#07090e] border border-slate-200 dark:border-white/20 p-2.5 rounded flex items-start gap-2.5">
+                  <div class="w-6 h-6 rounded bg-slate-200 dark:bg-neutral-900 border border-slate-300 dark:border-white/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span class="material-symbols-outlined text-slate-700 dark:text-white text-[15px]">volume_up</span>
                   </div>
                   <div class="flex flex-col flex-1 min-w-0">
                     <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[10px]">
-                      <span class="text-white font-bold">SURFACE KLAXON TRIGGER</span>
-                      <span class="text-on-surface-variant">14:28:40 IST</span>
+                      <span class="text-slate-800 dark:text-white font-bold">SURFACE KLAXON TRIGGER</span>
+                      <span class="text-slate-500 dark:text-on-surface-variant">14:28:40 IST</span>
                     </div>
-                    <p class="font-['Space_Grotesk'] text-[11px] text-on-surface truncate mt-0.5">
+                    <p class="font-['Space_Grotesk'] text-[11px] text-slate-700 dark:text-on-surface truncate mt-0.5">
                       Pillar 4B acoustic beacon triggered at 110dB (Zone SEC-4 Gate).
                     </p>
                   </div>
@@ -848,10 +917,10 @@
 
             <!-- Quick Dispatch Controls -->
             <div class="flex items-center gap-2 mt-3">
-              <button onclick="alert('AUDIT LOG RE-DISPATCHED to DGMS central monitoring server.');" class="flex-1 bg-neutral-900 hover:bg-neutral-800 border border-white/30 text-white font-['JetBrains_Mono'] text-[11px] py-2 rounded uppercase font-bold flex items-center justify-center gap-1.5 transition-all">
+              <button onclick="alert('AUDIT LOG RE-DISPATCHED to DGMS central monitoring server.');" class="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-neutral-900 dark:hover:bg-neutral-800 border border-slate-300 dark:border-white/30 text-slate-800 dark:text-white font-['JetBrains_Mono'] text-[11px] py-2 rounded uppercase font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm">
                 <span class="material-symbols-outlined text-[14px]">send</span> RE-DISPATCH AUDIT LOG
               </button>
-              <button onclick="window.print();" class="bg-white hover:bg-neutral-200 text-black font-['JetBrains_Mono'] text-[11px] px-4 py-2 rounded uppercase font-bold transition-all shadow-[0_0_12px_rgba(255,255,255,0.4)]">
+              <button ng-click="vm.openAuditModal()" class="bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:text-black font-['JetBrains_Mono'] text-[11px] px-4 py-2 rounded uppercase font-bold transition-all shadow-sm">
                 EXPORT DGMS REPORT (PDF)
               </button>
             </div>
@@ -862,89 +931,164 @@
     </main>
   </div>
 
-  <!-- DGMS Emergency Evacuation Dispatch Modal -->
-  <div id="evac-dispatch-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-md p-4">
-    <div class="hud-bracket-danger relative w-full max-w-xl bg-[#0b0608] border-2 border-rose-500 rounded-lg p-6 shadow-[0_0_50px_rgba(239,68,68,0.7)] klaxon-active">
-      <div class="flex items-start justify-between border-b border-rose-500/40 pb-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-lg bg-rose-500/20 border-2 border-rose-500 flex items-center justify-center text-rose-500 shadow-[0_0_20px_rgba(239,68,68,0.5)]">
-            <span class="material-symbols-outlined text-[28px] animate-ping absolute opacity-50">warning</span>
-            <span class="material-symbols-outlined text-[28px]">warning</span>
+  <!-- DGMS Emergency Evacuation Dispatch Angular Component -->
+  <evacuation-modal is-open="vm.isEvacModalOpen" telemetry="vm.telemetry" on-close="vm.closeEvacModal()" on-confirm="vm.confirmEvacDispatch()"></evacuation-modal>
+
+  <!-- Command Palette (Ctrl+K) -->
+  <div ng-controller="CommandPaletteController as cp">
+    <div ng-if="cp.isOpen" class="cmd-palette-backdrop" ng-click="$event.target === $event.currentTarget && cp.close()">
+      <div class="cmd-palette-modal">
+        <div class="flex items-center gap-3 px-4 border-b border-white/10 dark:border-white/10">
+          <span class="material-symbols-outlined text-slate-400 dark:text-zinc-400 text-[18px]">search</span>
+          <input id="cmd-palette-input" type="text" class="cmd-palette-input" ng-model="cp.query" ng-change="cp.filterCommands()" placeholder="Search commands... (↑↓ to navigate, Enter to run, Esc to close)" autocomplete="off" />
+          <kbd class="text-slate-500 dark:text-zinc-500 font-['JetBrains_Mono'] text-[10px] border border-white/10 px-1.5 py-0.5 rounded">ESC</kbd>
+        </div>
+        <div class="py-2 max-h-[55vh] overflow-y-auto">
+          <div ng-if="cp.filtered.length === 0" class="px-6 py-8 text-center font-['JetBrains_Mono'] text-[12px] text-slate-500 dark:text-zinc-500">
+            No commands match "{{ cp.query }}"
           </div>
-          <div>
-            <div class="font-['JetBrains_Mono'] text-[11px] text-rose-400 font-bold uppercase tracking-widest">
-              DGMS STATUTORY CMR-2017 REGULATION 124
+          <div ng-repeat="cmd in cp.filtered track by $index" class="cmd-palette-item" ng-class="$index === cp.activeIndex ? 'active' : ''" ng-click="cp.execute(cmd)">
+            <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-white/5 dark:bg-white/5 flex-shrink-0">
+              <span class="material-symbols-outlined text-[16px]" ng-class="cp.getCategoryColor(cmd.category)">{{ cmd.icon }}</span>
             </div>
-            <h2 class="font-['Space_Grotesk'] text-[20px] text-white font-bold tracking-tight">
-              MANDATORY MINE EVACUATION ORDER ISSUED
-            </h2>
+            <div class="flex-1 min-w-0">
+              <span class="font-['Space_Grotesk'] text-[13px] font-semibold text-slate-900 dark:text-white block">{{ cmd.label }}</span>
+            </div>
+            <span class="font-['JetBrains_Mono'] text-[9px] font-bold uppercase px-2 py-0.5 rounded-full border" ng-class="cp.getCategoryColor(cmd.category)" style="border-color: currentColor; opacity: 0.7;">{{ cmd.category }}</span>
           </div>
         </div>
-        <button onclick="closeEvacModal()" class="text-zinc-400 hover:text-white p-1 rounded transition cursor-pointer">
-          <span class="material-symbols-outlined text-[24px]">close</span>
-        </button>
-      </div>
-
-      <div class="mt-5 space-y-4 font-['Space_Grotesk'] text-zinc-200">
-        <div class="bg-rose-950/40 border border-rose-500/40 p-3 rounded">
-          <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[11px]">
-            <span class="text-rose-300 font-bold">TARGET GEOMETRY: CHASNALA SECTOR 4B STOPE</span>
-            <span class="text-white font-mono bg-rose-600/60 px-2 py-0.5 rounded">HAZARD LEVEL IV</span>
-          </div>
-          <p class="text-[13px] text-white mt-1.5 font-medium leading-relaxed">
-            Geotechnical sensor Node-03 has detected acute pillar tilt excursion (+3.84° Δ) and continuous high-frequency vibration harmonics (48Hz) in Sector 4B. Under Regulation 124 of Coal Mines Regulations 2017, all subsurface operatives within the 220m critical perimeter are directed to evacuate immediately.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 font-['JetBrains_Mono'] text-[11px]">
-          <div class="bg-[#0e171f] border border-emerald-500/40 p-3 rounded flex flex-col gap-1">
-            <span class="text-emerald-400 font-bold">PRIMARY ESCAPE ROUTE:</span>
-            <span class="text-white font-semibold text-[12px]">Corridor Alpha (Incline Drift)</span>
-            <span class="text-zinc-400 text-[10px]">Destination: Surface Incline Portal Muster Ground (CLEAR - 100%)</span>
-          </div>
-          <div class="bg-[#0e171f] border border-cyan-500/40 p-3 rounded flex flex-col gap-1">
-            <span class="text-cyan-400 font-bold">SECONDARY ESCAPE ROUTE:</span>
-            <span class="text-white font-semibold text-[12px]">Corridor Beta (Shaft #2 Hoist)</span>
-            <span class="text-zinc-400 text-[10px]">Destination: Pithead Cage #2 (STANDBY / 24 Miner Cap)</span>
-          </div>
-        </div>
-
-        <div class="bg-neutral-950 border border-white/10 p-3 rounded font-['JetBrains_Mono'] text-[11px] space-y-1 text-zinc-300">
-          <div class="flex items-center justify-between">
-            <span>Subterranean Operatives Logged:</span>
-            <span class="text-white font-bold">14 Personnel</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span>Acoustic Surface Klaxon:</span>
-            <span class="text-rose-400 font-bold">ACTIVATED (110 dB BEACON)</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span>DGMS Dhanbad Central Safety Office:</span>
-            <span class="text-emerald-400 font-bold">AUTOMATIC DISPATCH CONFIRMED</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span>Mines Rescue Station (CMR-MRS Sindri):</span>
-            <span class="text-emerald-400 font-bold">RESCUE TEAM ALERTED</span>
-          </div>
+        <div class="px-4 py-2 border-t border-white/8 dark:border-white/8 flex items-center gap-3 font-['JetBrains_Mono'] text-[9px] text-slate-500 dark:text-zinc-500">
+          <span><kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white/60">↑↓</kbd> navigate</span>
+          <span><kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white/60">↵</kbd> execute</span>
+          <span><kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white/60">Ctrl+K</kbd> toggle</span>
+          <span class="ml-auto">{{ cp.filtered.length }} commands</span>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-rose-500/30 font-['JetBrains_Mono'] text-[11px]">
-        <button onclick="closeEvacModal()" class="px-4 py-2 rounded bg-neutral-900 hover:bg-neutral-800 text-zinc-300 border border-white/20 uppercase font-bold transition cursor-pointer">
-          DISMISS HUD
-        </button>
-        <button onclick="alert('EVACUATION DIRECTIVE CONFIRMED & RE-TRANSMITTED TO RADIO COMM CHANNEL 4'); closeEvacModal();" class="px-5 py-2 rounded bg-rose-600 hover:bg-rose-500 text-white font-bold uppercase transition shadow-[0_0_20px_rgba(239,68,68,0.7)] cursor-pointer">
-          CONFIRM DISPATCH EXECUTION
+  <!-- DGMS Statutory Audit Report Modal -->
+  <div ng-if="vm.isAuditModalOpen" class="audit-modal-backdrop" ng-click="$event.target === $event.currentTarget && vm.closeAuditModal()">
+    <div class="audit-modal">
+      <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-amber-400 text-[22px]">description</span>
+          <div>
+            <div class="font-['Space_Grotesk'] text-[16px] font-bold text-slate-900 dark:text-white">DGMS STATUTORY AUDIT REPORT</div>
+            <div class="font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-zinc-400 uppercase">Form IV • Chasnala Deep Mine • Sector 4B • {{ vm.auditTimestamp }}</div>
+          </div>
+        </div>
+        <button ng-click="vm.closeAuditModal()" class="text-slate-400 hover:text-white transition cursor-pointer"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="px-6 py-4 space-y-4">
+        <!-- Node Status Table -->
+        <div>
+          <div class="font-['JetBrains_Mono'] text-[10px] uppercase font-bold text-slate-500 dark:text-zinc-400 mb-2">SENSOR NODE STATUS MATRIX</div>
+          <table class="w-full text-[11px] font-['JetBrains_Mono'] border border-slate-200 dark:border-white/10 rounded-lg overflow-hidden">
+            <thead>
+              <tr class="bg-slate-100 dark:bg-white/5">
+                <th class="text-left px-3 py-2 text-slate-600 dark:text-zinc-300">NODE</th>
+                <th class="text-left px-3 py-2 text-slate-600 dark:text-zinc-300">LOCATION</th>
+                <th class="text-left px-3 py-2 text-slate-600 dark:text-zinc-300">STATUS</th>
+                <th class="text-left px-3 py-2 text-slate-600 dark:text-zinc-300">BATTERY</th>
+                <th class="text-left px-3 py-2 text-slate-600 dark:text-zinc-300">PKT LOSS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="node in vm.nodes" class="border-t border-slate-100 dark:border-white/5">
+                <td class="px-3 py-1.5 font-bold" ng-class="node.statusClass">{{ node.name }}</td>
+                <td class="px-3 py-1.5 text-slate-700 dark:text-zinc-300">{{ node.location }}</td>
+                <td class="px-3 py-1.5">
+                  <span class="px-1.5 py-0.5 rounded text-[9px] font-bold" ng-class="node.status === 'CRITICAL' ? 'bg-rose-100 text-rose-800 dark:bg-rose-500/20 dark:text-rose-400' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400'">{{ node.status }}</span>
+                </td>
+                <td class="px-3 py-1.5 text-slate-700 dark:text-zinc-300">{{ node.battery }}V ({{ node.batPct }}%)</td>
+                <td class="px-3 py-1.5" ng-class="node.packetLoss > 1 ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-slate-600 dark:text-zinc-400'">{{ node.packetLoss }}%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Active Sensor Readings -->
+        <div>
+          <div class="font-['JetBrains_Mono'] text-[10px] uppercase font-bold text-slate-500 dark:text-zinc-400 mb-2">ACTIVE CRITICAL SENSOR READINGS</div>
+          <div class="grid grid-cols-3 gap-2">
+            <div class="bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 p-2.5 rounded-lg">
+              <div class="font-['JetBrains_Mono'] text-[9px] text-rose-700 dark:text-rose-400 uppercase">Tilt (Pitch)</div>
+              <div class="font-['JetBrains_Mono'] text-[22px] font-black text-rose-700 dark:text-rose-400">{{ vm.telemetry.pitch | number:2 }}°</div>
+            </div>
+            <div class="bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 p-2.5 rounded-lg">
+              <div class="font-['JetBrains_Mono'] text-[9px] text-rose-700 dark:text-rose-400 uppercase">Vibration RMS</div>
+              <div class="font-['JetBrains_Mono'] text-[22px] font-black text-rose-700 dark:text-rose-400">{{ vm.telemetry.rms | number:3 }}g</div>
+            </div>
+            <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 p-2.5 rounded-lg">
+              <div class="font-['JetBrains_Mono'] text-[9px] text-amber-700 dark:text-amber-400 uppercase">CO Level</div>
+              <div class="font-['JetBrains_Mono'] text-[22px] font-black text-amber-700 dark:text-amber-400">{{ vm.telemetry.co | number:1 }} ppm</div>
+            </div>
+          </div>
+        </div>
+        <!-- Personnel -->
+        <div>
+          <div class="font-['JetBrains_Mono'] text-[10px] uppercase font-bold text-slate-500 dark:text-zinc-400 mb-2">PERSONNEL UNDERGROUND AT TIME OF REPORT</div>
+          <div class="font-['JetBrains_Mono'] text-[24px] font-black text-slate-900 dark:text-white">{{ vm.totalMiners }} MINERS</div>
+          <div class="font-['Space_Grotesk'] text-[12px] text-rose-600 dark:text-rose-400 font-semibold">8 in Critical Zone SEC-4B — Mandatory evacuation recommended</div>
+        </div>
+        <!-- Officer Sign-off -->
+        <div class="border-t border-slate-200 dark:border-white/10 pt-4">
+          <div class="font-['JetBrains_Mono'] text-[10px] uppercase font-bold text-slate-500 dark:text-zinc-400 mb-3">OFFICER CHAIN-OF-CUSTODY SIGN-OFF</div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-zinc-400 uppercase block mb-1">Mine Manager / Safety Officer Name</label>
+              <input type="text" ng-model="vm.officerName" placeholder="Er. R. Sharma" class="w-full bg-slate-50 dark:bg-white/5 border border-slate-300 dark:border-white/20 rounded-lg px-3 py-2 font-['JetBrains_Mono'] text-[12px] text-slate-900 dark:text-white focus:outline-none focus:border-sky-500" />
+            </div>
+            <div>
+              <label class="font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-zinc-400 uppercase block mb-1">DGMS Badge / Employee ID</label>
+              <input type="text" ng-model="vm.officerBadge" placeholder="DGMS-JH-2024-0042" class="w-full bg-slate-50 dark:bg-white/5 border border-slate-300 dark:border-white/20 rounded-lg px-3 py-2 font-['JetBrains_Mono'] text-[12px] text-slate-900 dark:text-white focus:outline-none focus:border-sky-500" />
+            </div>
+          </div>
+          <div class="mt-3">
+            <label class="font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-zinc-400 uppercase block mb-1">Mitigation Action Taken</label>
+            <textarea ng-model="vm.officerAction" placeholder="e.g. Dispatched roof bolting crew to Pillar 4B. Initiated Stage III evacuation. Notified DGMS Dhanbad HQ." rows="2" class="w-full bg-slate-50 dark:bg-white/5 border border-slate-300 dark:border-white/20 rounded-lg px-3 py-2 font-['Space_Grotesk'] text-[12px] text-slate-900 dark:text-white focus:outline-none focus:border-sky-500 resize-none"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-white/10 flex items-center gap-3">
+        <button ng-click="vm.closeAuditModal()" class="px-4 py-2 rounded-lg border border-slate-300 dark:border-white/20 text-slate-600 dark:text-zinc-400 font-['JetBrains_Mono'] text-[11px] uppercase font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition cursor-pointer">Cancel</button>
+        <button ng-click="vm.printAuditReport()" ng-disabled="!vm.officerName" class="flex-1 py-2 rounded-lg font-['JetBrains_Mono'] text-[11px] uppercase font-bold flex items-center justify-center gap-2 transition cursor-pointer" ng-class="vm.officerName ? 'bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black shadow-md' : 'bg-slate-200 dark:bg-white/10 text-slate-400 cursor-not-allowed'">
+          <span class="material-symbols-outlined text-[15px]">print</span> GENERATE & PRINT DGMS REPORT
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Floating Cyber HUD AI Chat Assistant Widget -->
-  {% include 'partials/chat-widget.ejs' %}
+  <!-- Hidden DGMS Print Template -->
+  <div id="dgms-print-report" style="display:none;">
+    <h1>DIRECTORATE GENERAL OF MINES SAFETY — FORM IV STATUTORY AUDIT REPORT</h1>
+    <p><strong>Mine:</strong> Chasnala Deep Mine, Jharkhand | <strong>Sector:</strong> 4B | <strong>Time:</strong> {{ vm.auditTimestamp }}</p>
+    <h2>1. Sensor Node Status</h2>
+    <table>
+      <tr><th>Node</th><th>Location</th><th>Status</th><th>Battery</th><th>Pkt Loss</th></tr>
+      <tr ng-repeat="node in vm.nodes"><td>{{ node.name }}</td><td>{{ node.location }}</td><td>{{ node.status }}</td><td>{{ node.battery }}V</td><td>{{ node.packetLoss }}%</td></tr>
+    </table>
+    <h2>2. Critical Sensor Readings</h2>
+    <table>
+      <tr><th>Parameter</th><th>Value</th><th>Threshold</th><th>Status</th></tr>
+      <tr><td>Tilt (Pitch)</td><td>{{ vm.telemetry.pitch | number:2 }}°</td><td>3.0°</td><td>EXCEEDED</td></tr>
+      <tr><td>Vibration RMS</td><td>{{ vm.telemetry.rms | number:3 }} g</td><td>0.25g</td><td>EXCEEDED</td></tr>
+      <tr><td>CO Gas</td><td>{{ vm.telemetry.co | number:1 }} ppm</td><td>15 ppm</td><td>EXCEEDED</td></tr>
+      <tr><td>Sump Level</td><td>{{ vm.telemetry.sump | number:1 }}%</td><td>85%</td><td>WATCH</td></tr>
+    </table>
+    <h2>3. Personnel Underground</h2>
+    <p><strong>Total:</strong> {{ vm.totalMiners }} miners | <strong>Critical Zone SEC-4B:</strong> 8 miners</p>
+    <h2>4. Officer Sign-Off</h2>
+    <p><strong>Name:</strong> {{ vm.officerName || '___________________' }} | <strong>Badge:</strong> {{ vm.officerBadge || '___________________' }}</p>
+    <p><strong>Action Taken:</strong> {{ vm.officerAction || '___________________________________________________________________________________________' }}</p>
+    <div class="sign-box">
+      <div><div class="sign-line"></div><p>Mine Manager Signature</p></div>
+      <div><div class="sign-line"></div><p>Safety Officer Signature</p></div>
+      <div><div class="sign-line"></div><p>DGMS Inspector Signature</p></div>
+    </div>
+  </div>
 
-  <!-- Modular Scripts -->
-  <script src="/js/chat-assistant.js"></script>
-  <script src="/js/telemetry-client.js"></script>
+  <!-- Floating Cyber HUD AI Chat Assistant Widget -->
+  <%- include('partials/chat-widget') %>
 </body>
 </html>

@@ -1,10 +1,17 @@
 services:
   - type: web
-    name: terra-pulse-os
-    env: docker
-    dockerfilePath: Dockerfile
+    name: terra-pulse-backend
+    runtime: node
     plan: free
     region: oregon
+    buildCommand: npm install
+    startCommand: node server.js
     envVars:
-      - key: PORT
-        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: ENABLE_LOCAL_AI
+        value: "false"
+      - key: CLOUDFLARE_API_TOKEN
+        sync: false
+      - key: CLOUDFLARE_ACCOUNT_ID
+        sync: false

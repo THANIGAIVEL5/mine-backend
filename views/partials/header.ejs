@@ -1,51 +1,118 @@
 <!-- Top Tactical HUD Header Component -->
-<header class="fixed top-0 left-64 right-0 h-20 bg-[#080808]/95 backdrop-blur-xl border-b border-white/10 z-40 flex flex-col justify-center px-6 py-2 gap-1.5 shadow-md">
+<header class="fixed top-0 left-64 right-0 h-20 bg-white/95 dark:bg-[#070b10]/95 backdrop-blur-xl border-b border-slate-200/90 dark:border-white/10 z-40 flex flex-col justify-center px-6 py-2 gap-1.5 shadow-[0_1px_4px_rgba(0,0,0,0.04)] dark:shadow-md transition-colors duration-300">
   <div class="flex items-center justify-between w-full">
-    <div class="flex items-center gap-2 px-3 py-1 rounded bg-white/10 border border-white/20">
+    <!-- Left Status Badge -->
+    <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-300 shadow-sm">
       <div class="relative flex items-center justify-center w-2.5 h-2.5">
-        <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping absolute"></span>
-        <span class="w-2 rounded-full bg-white h-2"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping absolute opacity-75"></span>
+        <span class="w-2 rounded-full bg-rose-600 h-2"></span>
       </div>
-      <span class="font-['JetBrains_Mono'] text-[11px] text-white uppercase tracking-wider font-bold">ELEVATED SUBSIDENCE WATCH - SECTOR 4B</span>
+      <span class="font-['JetBrains_Mono'] text-[11px] uppercase tracking-wider font-extrabold">ELEVATED SUBSIDENCE WATCH • SEC-4B</span>
     </div>
-    <div class="flex items-center gap-4">
-      <div class="flex items-center gap-2 font-['JetBrains_Mono'] text-[11px] bg-neutral-900/90 px-2.5 py-1 rounded border border-emerald-500/30">
-        <span class="text-zinc-400 uppercase">NODES:</span>
-        <span id="header-nodes-online" class="text-emerald-400 font-bold">5 ONLINE</span>
-        <span class="text-zinc-600">/</span>
-        <span class="text-emerald-300 text-[10px] font-bold">0 OFF</span>
-        <span class="text-zinc-600">/</span>
-        <span class="text-emerald-400 text-[10px]">100% HEALTH</span>
+
+    <!-- Right Controls Strip -->
+    <div class="flex items-center gap-3">
+      <!-- Personnel Tracker Badge -->
+      <div class="hidden xl:flex items-center gap-2 font-['JetBrains_Mono'] text-[11px] bg-slate-100/80 dark:bg-neutral-900/90 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-emerald-500/20 shadow-xs">
+        <span class="miner-dot"></span>
+        <span class="text-slate-500 dark:text-zinc-400 uppercase font-semibold text-[10px]">MINERS:</span>
+        <span class="text-emerald-600 dark:text-emerald-400 font-extrabold">{{ vm.totalMiners }} ACTIVE</span>
+        <span class="text-slate-300 dark:text-zinc-600">|</span>
+        <span class="miner-dot critical"></span>
+        <span class="text-rose-600 dark:text-rose-400 font-bold text-[10px]">8 IN SEC-4B</span>
       </div>
-      <div id="uplink-container" class="flex items-center gap-2 font-['JetBrains_Mono'] text-[11px] bg-neutral-900/90 px-2.5 py-1 rounded border border-emerald-500/30">
-        <span class="text-zinc-400 uppercase">UPLINK:</span>
-        <span id="uplink-status-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.25)]">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>● CONNECTED (WEBSOCKET / STREAM ACTIVE)
+
+      <!-- Active Nodes -->
+      <div class="flex items-center gap-2 font-['JetBrains_Mono'] text-[11px] bg-slate-100/80 dark:bg-neutral-900/90 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-emerald-500/30 shadow-xs">
+        <span class="text-slate-500 dark:text-zinc-400 uppercase font-semibold text-[10px]">NODES:</span>
+        <span id="header-nodes-online" class="text-emerald-600 dark:text-emerald-400 font-extrabold">{{ (vm.nodes.length || 5) }} ONLINE</span>
+        <span class="text-slate-300 dark:text-zinc-600">/</span>
+        <span class="text-emerald-600 dark:text-emerald-300 text-[10px] font-bold">100% HEALTH</span>
+      </div>
+
+      <!-- Live Uplink -->
+      <div id="uplink-container" class="flex items-center gap-1.5 font-['JetBrains_Mono'] text-[11px] bg-slate-100/80 dark:bg-neutral-900/90 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-emerald-500/30 shadow-xs">
+        <span class="text-slate-500 dark:text-zinc-400 uppercase font-semibold text-[10px]">UPLINK:</span>
+        <span id="uplink-status-badge" class="px-2 py-0.5 rounded text-[10px] font-extrabold flex items-center gap-1.5 transition-all" ng-class="vm.connected ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/40' : 'bg-rose-100 text-rose-800 dark:bg-rose-500/20 dark:text-rose-400 border border-rose-300 dark:border-rose-500/40'">
+          <span class="w-1.5 h-1.5 rounded-full" ng-class="vm.connected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'"></span>{{ vm.connected ? ('LIVE: ' + vm.connectionType) : 'RECONNECTING' }}
         </span>
       </div>
-      <button onclick="toggleHardwareStream()" id="btn-hardware-toggle" title="Toggle Live Physical Hardware Stream Simulation" class="px-2.5 py-1 rounded bg-neutral-900 hover:bg-neutral-800 border border-white/20 text-zinc-300 hover:text-white font-['JetBrains_Mono'] text-[10px] uppercase font-bold flex items-center gap-1 transition cursor-pointer active:scale-95">
-        <span class="material-symbols-outlined text-[13px] text-emerald-400">sensors</span> <span id="hardware-toggle-text">HARDWARE LINK: ACTIVE</span>
+
+      <!-- Tactical Theme Switcher Button -->
+      <button ng-click="vm.toggleTheme()" title="Toggle Light / Dark Tactical Mode" class="px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-900 hover:bg-slate-50 dark:hover:bg-neutral-800 border border-slate-200 dark:border-white/20 font-['JetBrains_Mono'] text-[11px] uppercase font-bold flex items-center gap-1.5 transition cursor-pointer active:scale-95 text-slate-800 dark:text-amber-300 shadow-xs hover:border-slate-300">
+        <span class="material-symbols-outlined text-[15px] text-amber-500 dark:text-amber-400">{{ vm.isDark ? 'light_mode' : 'dark_mode' }}</span>
+        <span class="hidden sm:inline font-bold">{{ vm.isDark ? 'LIGHT MODE' : 'DARK MODE' }}</span>
       </button>
-      <div class="flex items-center gap-1.5 font-['JetBrains_Mono'] text-[11px] text-white">
-        <span class="material-symbols-outlined text-zinc-300 text-[16px]">schedule</span>
-        <span id="live-clock">IST UTC+5:30 REAL-TIME</span>
+
+      <!-- Tactical Audio Siren Toggle —— with EQ Bars when ON -->
+      <button ng-click="vm.toggleSound()" title="Toggle Tactical Audio & Synthetic Sirens" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-neutral-900 hover:bg-slate-50 dark:hover:bg-neutral-800 border border-slate-200 dark:border-white/20 font-['JetBrains_Mono'] text-[10px] uppercase font-bold flex items-center gap-1 transition cursor-pointer active:scale-95 shadow-xs" ng-class="vm.soundEnabled ? 'text-cyan-600 border-cyan-300 dark:text-cyan-400 dark:border-cyan-500/40' : 'text-slate-400 dark:text-zinc-500'">
+        <span ng-if="!vm.soundEnabled" class="material-symbols-outlined text-[15px]">volume_off</span>
+        <span ng-if="vm.soundEnabled" class="eq-bars text-cyan-500 dark:text-cyan-400">
+          <span></span><span></span><span></span><span></span><span></span>
+        </span>
+        <span class="hidden sm:inline">{{ vm.soundEnabled ? 'AUDIO: ON' : 'MUTED' }}</span>
+      </button>
+
+      <!-- Autonomous Drone Tour -->
+      <button ng-click="vm.startShaftFlyThrough()" title="Engage Autonomous Drone Subterranean Surveillance Flight Path" class="px-3 py-1.5 rounded-lg bg-cyan-50 dark:bg-neutral-900 hover:bg-cyan-100 dark:hover:bg-cyan-950 border border-cyan-300 dark:border-cyan-500/30 text-cyan-700 dark:text-cyan-300 font-['JetBrains_Mono'] text-[10px] uppercase font-bold flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-xs" ng-class="{'bg-cyan-600 text-white animate-pulse': vm.isFlyingThrough}">
+        <span class="material-symbols-outlined text-[14px]">flight_takeoff</span>
+        <span>{{ vm.isFlyingThrough ? 'DRONE FLYING...' : 'DRONE TOUR' }}</span>
+      </button>
+
+      <!-- Forensic Incident Replay -->
+      <button ng-click="vm.toggleReplay()" title="Toggle 15-Minute Black Box Forensic Incident Playback Mode" class="px-3 py-1.5 rounded-lg bg-amber-50 dark:bg-neutral-900 hover:bg-amber-100 dark:hover:bg-amber-950 border border-amber-300 dark:border-amber-500/40 text-amber-800 dark:text-amber-300 font-['JetBrains_Mono'] text-[10px] uppercase font-bold flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-xs" ng-class="{'bg-amber-500 text-black font-extrabold animate-pulse': vm.isReplayMode}">
+        <span class="material-symbols-outlined text-[14px]">history</span>
+        <span>{{ vm.isReplayMode ? 'BLACK BOX ACTIVE' : 'INCIDENT REPLAY' }}</span>
+      </button>
+
+      <!-- Layout Switcher -->
+      <div class="hidden lg:flex items-center gap-1 bg-slate-100/80 dark:bg-neutral-900/90 border border-slate-200 dark:border-white/10 rounded-lg p-0.5">
+        <button ng-click="vm.setLayout('standard')" title="Standard HUD" class="layout-btn" ng-class="vm.layout === 'standard' ? 'active' : ''">
+          <span class="material-symbols-outlined text-[13px]">grid_view</span>
+          <span class="hidden xl:inline">HUD</span>
+        </button>
+        <button ng-click="vm.setLayout('cinema')" title="God's Eye Cinema Mode" class="layout-btn" ng-class="vm.layout === 'cinema' ? 'active' : ''">
+          <span class="material-symbols-outlined text-[13px]">fullscreen</span>
+          <span class="hidden xl:inline">CINEMA</span>
+        </button>
+        <button ng-click="vm.setLayout('wall')" title="Telemetry Wall" class="layout-btn" ng-class="vm.layout === 'wall' ? 'active' : ''">
+          <span class="material-symbols-outlined text-[13px]">dashboard</span>
+          <span class="hidden xl:inline">WALL</span>
+        </button>
       </div>
-      <div class="w-7 h-7 rounded bg-white/10 border border-white/20 flex items-center justify-center">
-        <span class="material-symbols-outlined text-white text-[16px]">person</span>
+
+      <!-- Ctrl+K Command Palette Trigger -->
+      <button onclick="if(window.openCommandPalette) openCommandPalette()" title="Open Command Palette (Ctrl+K)" class="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100/80 dark:bg-neutral-900/90 border border-slate-200 dark:border-white/15 text-slate-500 dark:text-zinc-400 font-['JetBrains_Mono'] text-[10px] uppercase font-bold transition hover:border-slate-300 dark:hover:border-white/30 hover:text-slate-700 dark:hover:text-white cursor-pointer active:scale-95 shadow-xs">
+        <span class="material-symbols-outlined text-[13px]">search</span>
+        <span>CMD</span>
+        <kbd class="px-1 py-0.5 rounded bg-slate-200 dark:bg-white/10 text-[9px] font-bold">⌘K</kbd>
+      </button>
+
+      <!-- Live Clock -->
+      <div class="flex items-center gap-1.5 font-['JetBrains_Mono'] text-[11px] text-slate-800 dark:text-white font-bold bg-slate-100/80 dark:bg-white/5 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-white/10">
+        <span class="material-symbols-outlined text-slate-500 dark:text-zinc-300 text-[16px]">schedule</span>
+        <span id="live-clock">{{ vm.liveClock || 'IST UTC+5:30 REAL-TIME' }}</span>
+      </div>
+
+      <!-- User Profile Avatar -->
+      <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/20 flex items-center justify-center text-slate-700 dark:text-white shadow-xs">
+        <span class="material-symbols-outlined text-[18px]">person</span>
       </div>
     </div>
   </div>
-  <div class="flex items-center justify-between w-full pt-1 border-t border-white/5">
-    <div class="flex items-center gap-3 font-['JetBrains_Mono'] text-[10px]">
-      <span class="text-white uppercase tracking-widest font-semibold flex items-center gap-1.5">
-        <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>{{ systemMode | default('SYSTEM MODE: REALTIME CONTINUOUS INGESTION') }}
+
+  <!-- Bottom Metadata Rail -->
+  <div class="flex items-center justify-between w-full pt-1.5 border-t border-slate-200/70 dark:border-white/5 text-[10px] font-['JetBrains_Mono']">
+    <div class="flex items-center gap-3">
+      <span class="text-slate-800 dark:text-white uppercase tracking-wider font-bold flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse"></span><%= locals.systemMode || 'SYSTEM MODE: REALTIME CONTINUOUS INGESTION' %>
       </span>
-      <span class="w-1 h-1 rounded-full bg-zinc-600"></span>
-      <span class="text-zinc-400 uppercase">{{ targetGeometry | default('TARGET GEOMETRY: DRIFT & SHAFT 12') }}</span>
+      <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-zinc-600"></span>
+      <span class="text-slate-500 dark:text-zinc-400 uppercase font-medium"><%= locals.targetGeometry || 'TARGET GEOMETRY: DRIFT & SHAFT 12' %></span>
     </div>
-    <div class="font-['JetBrains_Mono'] text-[10px] text-zinc-400 flex items-center gap-2">
-      <span class="text-white font-bold flex items-center gap-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>CHASNALA SHAFT 4B ACTIVE STREAM
+    <div class="text-slate-500 dark:text-zinc-400 flex items-center gap-2 font-medium">
+      <span class="text-slate-900 dark:text-white font-extrabold flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>CHASNALA SHAFT 4B ACTIVE STREAM
       </span>
     </div>
   </div>

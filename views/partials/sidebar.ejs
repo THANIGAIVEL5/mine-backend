@@ -1,62 +1,78 @@
 <!-- Left Tactical Sidebar Component -->
-<aside class="fixed left-0 top-0 h-full w-64 bg-[#050505]/95 backdrop-blur-xl border-r border-white/10 z-50 flex flex-col justify-between shadow-[4px_0_24px_rgba(0,0,0,0.8)]">
+<aside class="fixed left-0 top-0 h-full w-64 bg-white/95 dark:bg-[#070b10]/95 backdrop-blur-xl border-r border-slate-200 dark:border-white/10 z-50 flex flex-col justify-between shadow-[4px_0_24px_rgba(0,0,0,0.03)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.8)] transition-colors duration-300">
   <div class="flex flex-col">
     <!-- Brand / System Title -->
-    <div class="h-20 px-4 flex items-center gap-3 bg-[#0d0d0d] border-b border-white/10 relative">
-      <div class="absolute top-0 left-0 w-1 h-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>
-      <div class="relative flex items-center justify-center w-8 h-8 rounded bg-white/10 border border-white/20">
-        <span class="material-symbols-outlined text-white text-[18px]">radar</span>
+    <div class="h-20 px-5 flex items-center gap-3.5 bg-slate-50/80 dark:bg-[#0d1219] border-b border-slate-200 dark:border-white/10 relative overflow-hidden">
+      <div class="absolute top-0 left-0 w-1 h-full bg-cyan-500 dark:bg-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.6)]"></div>
+      <div class="relative flex items-center justify-center w-9 h-9 rounded-lg bg-cyan-500/10 dark:bg-cyan-400/15 border border-cyan-500/30 text-cyan-600 dark:text-cyan-300 shadow-sm">
+        <span class="material-symbols-outlined text-[20px] animate-spin-slow">radar</span>
       </div>
       <div>
-        <span class="font-['JetBrains_Mono'] text-[10px] uppercase tracking-[0.25em] text-white font-bold block">TERRA-PULSE OS</span>
-        <span class="font-['Space_Grotesk'] text-[15px] text-white tracking-tight font-bold">SIH 2026 TACTICAL</span>
+        <span class="font-['JetBrains_Mono'] text-[10px] uppercase tracking-[0.25em] text-slate-500 dark:text-zinc-400 font-bold block">TERRA-PULSE OS</span>
+        <span class="font-['Space_Grotesk'] text-[16px] text-slate-900 dark:text-white tracking-tight font-extrabold flex items-center gap-1.5">
+          SIH 2026 <span class="text-[9px] font-['JetBrains_Mono'] font-bold px-1.5 py-0.5 rounded bg-cyan-500/10 dark:bg-cyan-400/20 text-cyan-600 dark:text-cyan-300 border border-cyan-500/20">CORE</span>
+        </span>
       </div>
     </div>
 
     <!-- Sector Assignment Info -->
-    <div class="px-4 py-2.5 bg-[#080808] border-b border-white/5">
-      <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[10px] uppercase text-zinc-400">
-        <span>SECTOR ASSIGNMENT</span>
-        <span class="text-white font-bold px-1.5 py-0.5 rounded bg-white/10 border border-white/20">SEC-4B</span>
+    <div class="px-5 py-3 bg-white dark:bg-[#090e15] border-b border-slate-200/80 dark:border-white/5">
+      <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[10px] uppercase text-slate-500 dark:text-zinc-400">
+        <span class="font-semibold tracking-wider">SECTOR ASSIGNMENT</span>
+        <span class="text-slate-900 dark:text-white font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/20 text-[9px]">SEC-4B</span>
       </div>
-      <div class="font-['JetBrains_Mono'] text-[12px] text-white font-bold mt-1 flex items-center gap-1.5">
-        <span class="w-1.5 h-1.5 rounded-full bg-white"></span>CHASNALA DEEP MINE
+      <div class="font-['JetBrains_Mono'] text-[12px] text-slate-900 dark:text-white font-bold mt-1.5 flex items-center gap-2">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <span>CHASNALA DEEP MINE</span>
       </div>
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="flex flex-col gap-1 px-3 py-4">
-      <a class="flex items-center justify-between px-3 py-2 rounded {{ 'bg-white/15 text-white border-l-2 border-white font-bold shadow-[inset_2px_0_8px_rgba(255,255,255,0.1)]' if activePage|default('') == 'live' else 'border border-transparent hover:border-white/20 text-zinc-400 hover:text-white hover:bg-white/5' }} transition-all" href="/" onclick="if(location.protocol==='file:'){location.href='index.html'; return false;}">
-        <span class="text-[12px] uppercase tracking-wider font-medium">Live Telemetry &amp; GIS</span>
-        <span class="font-['JetBrains_Mono'] text-[10px] {{ 'text-white font-bold' if activePage|default('') == 'live' else 'text-zinc-500' }}">01</span>
+    <nav class="flex flex-col gap-1.5 px-3.5 py-4">
+      <a class="flex items-center justify-between px-3.5 py-2.5 rounded-lg <%= (locals.activePage === 'live') ? 'bg-cyan-50 text-cyan-800 font-bold shadow-sm border-l-2 border-cyan-500 dark:bg-white/15 dark:text-white dark:border-cyan-400' : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-white/5' %> transition-all duration-200 group cursor-pointer" href="/" onclick="if(location.protocol==='file:' || location.pathname.indexOf('.html')!==-1){location.href='index.html'; return false;}">
+        <div class="flex items-center gap-2.5">
+          <span class="material-symbols-outlined text-[18px] <%= (locals.activePage === 'live') ? 'text-cyan-600 dark:text-cyan-400' : 'text-slate-400 group-hover:text-slate-700 dark:text-zinc-500 dark:group-hover:text-zinc-300' %>">sensors</span>
+          <span class="text-[12px] uppercase tracking-wider font-semibold">Live Telemetry</span>
+        </div>
+        <span class="font-['JetBrains_Mono'] text-[10px] <%= (locals.activePage === 'live') ? 'text-cyan-600 dark:text-cyan-300 font-bold' : 'text-slate-400 dark:text-zinc-500' %>">01</span>
       </a>
-      <a class="flex items-center justify-between px-3 py-2 rounded {{ 'bg-white/15 text-white border-l-2 border-white font-bold shadow-[inset_2px_0_8px_rgba(255,255,255,0.1)]' if activePage|default('') == 'ml' else 'border border-transparent hover:border-white/20 text-zinc-400 hover:text-white hover:bg-white/5' }} transition-all" href="/explainable-ml" onclick="if(location.protocol==='file:'){location.href='explainable-ml.html'; return false;}">
-        <span class="text-[12px] uppercase tracking-wider font-medium">Explainable ML &amp; Risk</span>
-        <span class="font-['JetBrains_Mono'] text-[10px] {{ 'text-white font-bold' if activePage|default('') == 'ml' else 'text-zinc-400 font-bold' }}">02</span>
+
+      <a class="flex items-center justify-between px-3.5 py-2.5 rounded-lg <%= (locals.activePage === 'ml') ? 'bg-cyan-50 text-cyan-800 font-bold shadow-sm border-l-2 border-cyan-500 dark:bg-white/15 dark:text-white dark:border-cyan-400' : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-white/5' %> transition-all duration-200 group cursor-pointer" href="/explainable-ml" onclick="if(location.protocol==='file:' || location.pathname.indexOf('.html')!==-1){location.href='explainable-ml.html'; return false;}">
+        <div class="flex items-center gap-2.5">
+          <span class="material-symbols-outlined text-[18px] <%= (locals.activePage === 'ml') ? 'text-cyan-600 dark:text-cyan-400' : 'text-slate-400 group-hover:text-slate-700 dark:text-zinc-500 dark:group-hover:text-zinc-300' %>">neurology</span>
+          <span class="text-[12px] uppercase tracking-wider font-semibold">AI Risk &amp; ML</span>
+        </div>
+        <span class="font-['JetBrains_Mono'] text-[10px] <%= (locals.activePage === 'ml') ? 'text-cyan-600 dark:text-cyan-300 font-bold' : 'text-slate-400 dark:text-zinc-500' %>">02</span>
       </a>
-      <button onclick="openChatWindow()" class="mt-2 flex items-center justify-between px-3 py-2 rounded border border-white/20 hover:border-white bg-white/5 hover:bg-white/15 text-white transition-all text-left shadow-[0_0_12px_rgba(255,255,255,0.08)] group cursor-pointer">
+
+
+
+      <button onclick="openChatWindow()" class="mt-2.5 flex items-center justify-between px-3.5 py-2.5 rounded-lg border border-cyan-500/30 hover:border-cyan-500 bg-cyan-500/5 hover:bg-cyan-500/10 dark:bg-cyan-500/10 dark:hover:bg-cyan-500/20 text-slate-900 dark:text-white transition-all text-left shadow-sm group cursor-pointer active:scale-[0.98]">
         <span class="text-[11px] uppercase tracking-wider font-bold flex items-center gap-2">
-          <span class="material-symbols-outlined text-[15px]">terminal</span>
-          <span>AI Command Terminal</span>
+          <span class="material-symbols-outlined text-[17px] text-cyan-600 dark:text-cyan-400 group-hover:animate-pulse">terminal</span>
+          <span class="font-bold">AI Command Terminal</span>
         </span>
-        <span class="font-['JetBrains_Mono'] text-[8px] font-bold px-1.5 py-0.5 rounded bg-white text-black font-mono">INTERVENE</span>
+        <span class="font-['JetBrains_Mono'] text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-cyan-600 text-white dark:bg-cyan-400 dark:text-black">INTERVENE</span>
       </button>
     </nav>
   </div>
 
   <!-- Ingestion Latency & Core Status -->
-  <div class="p-3 bg-[#0d0d0d] border-t border-white/10 flex flex-col gap-2.5">
-    <div class="bg-[#050505] p-2.5 rounded border border-white/10 flex flex-col gap-1 relative overflow-hidden">
-      <span class="font-['JetBrains_Mono'] text-[10px] uppercase text-zinc-400">INGEST BUS LATENCY</span>
+  <div class="p-3.5 bg-slate-50/90 dark:bg-[#0b1017] border-t border-slate-200 dark:border-white/10 flex flex-col gap-2.5">
+    <div class="bg-white dark:bg-[#070b10] p-3 rounded-lg border border-slate-200/80 dark:border-white/10 flex flex-col gap-1 relative overflow-hidden shadow-sm">
+      <span class="font-['JetBrains_Mono'] text-[9px] uppercase tracking-wider text-slate-500 dark:text-zinc-400 font-semibold">INGEST BUS LATENCY</span>
       <div class="flex items-baseline justify-between">
-        <span class="font-['JetBrains_Mono'] text-[18px] text-white font-bold" id="latency-val">124<span class="text-[11px] text-zinc-400 font-normal ml-1">MS</span></span>
-        <span class="font-['JetBrains_Mono'] text-[10px] text-zinc-400 uppercase font-semibold">SX1278 433MHz</span>
+        <span class="font-['JetBrains_Mono'] text-[20px] text-slate-900 dark:text-white font-black" id="latency-val">124<span class="text-[11px] text-slate-400 dark:text-zinc-500 font-normal ml-1">MS</span></span>
+        <span class="font-['JetBrains_Mono'] text-[10px] text-cyan-600 dark:text-cyan-400 uppercase font-bold bg-cyan-50 dark:bg-cyan-950/50 px-1.5 py-0.5 rounded border border-cyan-500/20">SX1278 433MHz</span>
       </div>
     </div>
-    <div class="flex items-center justify-between px-1 font-['JetBrains_Mono'] text-[10px] text-zinc-400">
-      <span>SYS SECURE CORE</span>
-      <span class="text-white flex items-center gap-1 font-bold">
-        <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>ONLINE
+    <div class="flex items-center justify-between px-1.5 font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-zinc-400">
+      <span class="font-semibold tracking-wider">SYS SECURE CORE</span>
+      <span class="text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 font-bold">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>ONLINE
       </span>
     </div>
   </div>

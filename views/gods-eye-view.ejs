@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html class="light" lang="en">
 <head>
-  {% with title="TERRA-PULSE OS // GOD'S EYE VIEW - 3D Satellite & Spatial Intel" %}{% include 'partials/head.ejs' %}{% endwith %}
+  <%- include('partials/head', { title: "TERRA-PULSE OS // GOD'S EYE VIEW - 3D Satellite & Spatial Intel" }) %>
   <!-- CesiumJS Photorealistic 3D Globe Engine -->
   <link href="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Cesium.js"></script>
@@ -26,15 +26,15 @@
     }
   </style>
 </head>
-<body class="bg-[#07090e] font-['Space_Grotesk'] text-[13px] text-on-surface antialiased selection:bg-primary-container selection:text-black min-h-screen relative overflow-x-hidden">
-  <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_25%_15%,rgba(0,245,255,0.06),transparent_45%),radial-gradient(circle_at_80%_25%,rgba(255,51,102,0.05),transparent_40%),radial-gradient(circle_at_50%_75%,rgba(0,245,255,0.04),transparent_50%)] z-0"></div>
+<body class="bg-slate-50 dark:bg-[#07090e] font-['Space_Grotesk'] text-[13px] text-slate-800 dark:text-on-surface antialiased selection:bg-primary-container selection:text-black min-h-screen relative overflow-x-hidden">
+  <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_25%_15%,rgba(2,132,199,0.04),transparent_45%),radial-gradient(circle_at_80%_25%,rgba(225,29,72,0.03),transparent_40%),radial-gradient(circle_at_50%_75%,rgba(241,245,249,0.8),transparent_50%)] dark:bg-[radial-gradient(circle_at_25%_15%,rgba(0,245,255,0.06),transparent_45%),radial-gradient(circle_at_80%_25%,rgba(255,51,102,0.05),transparent_40%),radial-gradient(circle_at_50%_75%,rgba(0,245,255,0.04),transparent_50%)] z-0"></div>
 
   <!-- Left Tactical Sidebar Component -->
-  {% with activePage='gods-eye' %}{% include 'partials/sidebar.ejs' %}{% endwith %}
+  <%- include('partials/sidebar', { activePage: 'gods-eye' }) %>
 
   <!-- Main Content Wrapper -->
   <div class="pl-64 relative z-10">
-    {% with systemMode="GOD'S EYE VIEW: SPY SATELLITE 3D SPATIAL INTELLIGENCE", targetGeometry='ORBITAL SURVEILLANCE: CHASNALA DEEP MINE' %}{% include 'partials/header.ejs' %}{% endwith %}
+    <%- include('partials/header', { systemMode: "GOD'S EYE VIEW: SPY SATELLITE 3D SPATIAL INTELLIGENCE", targetGeometry: 'ORBITAL SURVEILLANCE: CHASNALA DEEP MINE' }) %>
 
     <main class="relative pt-24 w-full px-6 bg-[#07090e]">
       <div class="flex flex-col w-full pb-12 gap-4">
@@ -284,7 +284,7 @@ npm run dev</pre>
   </div>
 
   <!-- AI Command Widget -->
-  {% include 'partials/chat-widget.ejs' %}
+  <%- include('partials/chat-widget') %>
 
   <!-- Modular Scripts -->
   <script src="/socket.io/socket.io.js"></script>
@@ -491,6 +491,7 @@ npm run dev</pre>
       }
     }
 
+    let currentGeoJsonSource = null;
     function loadGeoJsonLayer() {
       if (!viewer) return;
       Cesium.GeoJsonDataSource.load('/api/telemetry/geojson', {
@@ -499,6 +500,10 @@ npm run dev</pre>
         strokeWidth: 3,
         markerSize: 24
       }).then(function(dataSource) {
+        if (currentGeoJsonSource) {
+          viewer.dataSources.remove(currentGeoJsonSource, true);
+        }
+        currentGeoJsonSource = dataSource;
         viewer.dataSources.add(dataSource);
         const entities = dataSource.entities.values;
         for (let i = 0; i < entities.length; i++) {
@@ -511,11 +516,11 @@ npm run dev</pre>
             entity.point.color = Cesium.Color.fromCssColorString(hexColor);
           }
         }
-        console.log('[GEV Engine] Live GeoJSON telemetry nodes loaded into 3D globe with natural geotechnical colors.');
       }).catch(function(e) {
         console.warn('[GEV Engine] GeoJSON layer notice:', e.message);
       });
     }
+    setInterval(loadGeoJsonLayer, 4000);
 
     function flyToMine() {
       if (!viewer) return;

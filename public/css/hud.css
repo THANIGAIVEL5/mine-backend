@@ -126,3 +126,838 @@
   animation: klaxonStrobe 0.8s ease-in-out infinite;
 }
 
+/* =========================================================
+   MODERN TACTICAL UI DESIGN SYSTEM (LIGHT & DARK THEMES)
+   ========================================================= */
+
+/* Custom Smooth Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+/* =========================================================
+   LIGHT THEME DESIGN TOKENS & ELEVATION
+   ========================================================= */
+html.light,
+html.light body {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+/* Subtle Daylight Ambient Glow */
+html.light .fixed.inset-0.pointer-events-none {
+  background: radial-gradient(circle at 15% 15%, rgba(2, 132, 199, 0.04), transparent 45%),
+              radial-gradient(circle at 85% 20%, rgba(225, 29, 72, 0.03), transparent 40%),
+              radial-gradient(circle at 50% 80%, rgba(241, 245, 249, 0.8), transparent 50%) !important;
+  opacity: 1 !important;
+  display: block !important;
+}
+
+/* =========================================================
+   SIDEBAR - MODERN LIGHT GLASS DESIGN
+   ========================================================= */
+html.light aside {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-right: 1px solid #e2e8f0 !important;
+  box-shadow: 2px 0 16px rgba(15, 23, 42, 0.04) !important;
+}
+
+html.light aside nav a:not([class*="bg-cyan-50"]):not([class*="bg-cyan-100"]) {
+  color: #334155 !important;
+}
+
+html.light aside nav a:not([class*="bg-cyan-50"]):not([class*="bg-cyan-100"]):hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html.light aside nav a[class*="bg-cyan-50"],
+html.light aside nav a[class*="bg-cyan-100"] {
+  background-color: #ecfeff !important;
+  color: #0e7490 !important;
+  border-left: 2px solid #06b6d4 !important;
+}
+
+html.light aside .text-slate-900 {
+  color: #0f172a !important;
+}
+
+html.light aside .text-slate-700 {
+  color: #334155 !important;
+}
+
+html.light aside .text-slate-500,
+html.light aside .text-zinc-400 {
+  color: #64748b !important;
+}
+
+html.light aside .bg-slate-50\/90,
+html.light aside .bg-slate-50\/80 {
+  background-color: rgba(248, 250, 252, 0.9) !important;
+}
+
+html.light aside .bg-white {
+  background-color: #ffffff !important;
+}
+
+/* =========================================================
+   HEADER - SLEEK COMMAND BAR
+   ========================================================= */
+html.light header {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04) !important;
+}
+
+html.light header div,
+html.light header p,
+html.light header span:not(.badge-text) {
+  color: #0f172a;
+}
+
+html.light header .text-slate-500,
+html.light header .text-zinc-400 {
+  color: #64748b !important;
+}
+
+/* =========================================================
+   BENTO SURFACES & ELEVATED CARDS
+   ========================================================= */
+html.light main {
+  background-color: #f8fafc !important;
+}
+
+html.light .hud-bracket {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 6px 20px -4px rgba(15, 23, 42, 0.04) !important;
+  border-radius: 12px !important;
+}
+
+html.light .hud-bracket:hover {
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.04), 0 10px 24px -4px rgba(15, 23, 42, 0.06) !important;
+}
+
+/* =========================================================
+   HIGH-CONTRAST TYPOGRAPHY HIERARCHY
+   ========================================================= */
+html.light main h1,
+html.light main h2,
+html.light main h3,
+html.light main h4,
+html.light main h5,
+html.light main h6 {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+html.light main p {
+  color: #334155 !important;
+  line-height: 1.6 !important;
+}
+
+/* Base text contrast */
+html.light .text-white:not(button *):not([class*="bg-"]):not(.badge-text):not(#hex-terminal *) {
+  color: #0f172a !important;
+}
+
+html.light .text-zinc-100:not(#hex-terminal *),
+html.light .text-zinc-200:not(#hex-terminal *) {
+  color: #1e293b !important;
+}
+
+html.light .text-zinc-300:not(#hex-terminal *),
+html.light .text-zinc-400:not(#hex-terminal *) {
+  color: #475569 !important;
+}
+
+html.light .text-zinc-500:not(#hex-terminal *),
+html.light .text-zinc-600:not(#hex-terminal *) {
+  color: #64748b !important;
+}
+
+html.light .text-on-surface-variant {
+  color: #64748b !important;
+}
+
+/* =========================================================
+   SEMANTIC ACCENTS & BADGES IN LIGHT THEME
+   ========================================================= */
+/* Hazard / Critical Red */
+html.light .text-rose-600,
+html.light .text-rose-700 {
+  color: #be123c !important;
+}
+
+/* Warning / Amber */
+html.light .text-amber-600,
+html.light .text-amber-700,
+html.light .text-amber-800 {
+  color: #b45309 !important;
+}
+
+/* Online / Emerald */
+html.light .text-emerald-600,
+html.light .text-emerald-700 {
+  color: #047857 !important;
+}
+
+/* Telemetry / Sky Blue */
+html.light .text-sky-600,
+html.light .text-sky-700 {
+  color: #0284c7 !important;
+}
+
+/* Action Buttons (High contrast) */
+html.light button.bg-rose-600,
+html.light .bg-rose-600 {
+  background-color: #e11d48 !important;
+  color: #ffffff !important;
+}
+html.light button.bg-rose-600:hover,
+html.light .bg-rose-600:hover {
+  background-color: #be123c !important;
+}
+html.light button.bg-rose-600 *,
+html.light .bg-rose-600 * {
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   TABLES & HEATMAPS
+   ========================================================= */
+html.light table {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+}
+
+html.light table th {
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  font-weight: 700 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+html.light table td {
+  color: #0f172a !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+html.light table tr:hover td {
+  background-color: #f8fafc !important;
+}
+
+/* =========================================================
+   RANGE SLIDERS (LIGHT THEME)
+   ========================================================= */
+html.light input[type="range"] {
+  background-color: #e2e8f0 !important;
+  height: 6px !important;
+  border-radius: 9999px !important;
+}
+html.light input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #0f172a;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+/* =========================================================
+   SVG STRATA CROSS-SECTIONS & CHARTS IN LIGHT THEME
+   ========================================================= */
+html.light svg polygon[fill="#101724"] {
+  fill: #e2e8f0 !important;
+  stroke: #cbd5e1 !important;
+}
+html.light svg polygon[fill="#151e2e"] {
+  fill: #f1f5f9 !important;
+  stroke: #94a3b8 !important;
+}
+html.light svg polygon[fill="#0d1420"] {
+  fill: #cbd5e1 !important;
+  stroke: #64748b !important;
+}
+html.light svg line[stroke="#1e293b"],
+html.light svg line[stroke="#334155"] {
+  stroke: #e2e8f0 !important;
+}
+html.light svg pattern path {
+  stroke: rgba(15, 23, 42, 0.06) !important;
+}
+
+/* Gyro Horizon SVG in Light Theme */
+html.light #horizon-dynamic-group rect[fill="#0a121e"] {
+  fill: #e0f2fe !important; /* daylight sky */
+}
+html.light #horizon-dynamic-group rect[fill="#1e1215"] {
+  fill: #fef2f2 !important; /* warning ground */
+}
+html.light #horizon-dynamic-group line[stroke="#ffffff"] {
+  stroke: #0284c7 !important;
+}
+html.light circle[stroke="#ffffff"] {
+  stroke: #94a3b8 !important;
+}
+html.light circle[fill="#ffffff"] {
+  fill: #0f172a !important;
+}
+
+/* Vibration Oscilloscope Waveform & Grid */
+html.light #scope-grid-hud path {
+  stroke: #e2e8f0 !important;
+}
+html.light #vibration-oscilloscope-box {
+  background-color: #f8fafc !important;
+}
+html.light #wave-gradient-hud stop[offset="0%"] {
+  stop-color: #0284c7 !important;
+}
+html.light #wave-gradient-hud stop[offset="60%"] {
+  stop-color: #0284c7 !important;
+}
+html.light #wave-gradient-hud stop[offset="75%"] {
+  stop-color: #d97706 !important;
+}
+html.light #wave-gradient-hud stop[offset="90%"] {
+  stop-color: #e11d48 !important;
+}
+
+/* Node Selector Strip in Light Theme */
+html.light #node-selector-strip {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html.light #node-selector-strip button:not(.active-node-btn) {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+html.light #node-selector-strip button:not(.active-node-btn):hover {
+  background-color: #f1f5f9 !important;
+}
+html.light #node-selector-strip button.active-node-btn {
+  background: #0f172a !important;
+  border-color: #0f172a !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25) !important;
+}
+html.light #node-selector-strip button.active-node-btn * {
+  color: #ffffff !important;
+}
+
+/* Map Canvas Overlays in Light Theme */
+html.light #map-canvas-container {
+  border: 1px solid #e2e8f0 !important;
+}
+html.light #map-canvas-container .map-overlay-box {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08) !important;
+}
+html.light #map-canvas-container .map-overlay-box * {
+  color: #0f172a !important;
+}
+
+/* =========================================================
+   CRITICAL PERIMETER ALERT VIGNETTE — Level IV Hazard
+   ========================================================= */
+@keyframes perimeterBreath {
+  0%, 100% {
+    box-shadow: inset 0 0 0px rgba(239, 51, 102, 0);
+  }
+  50% {
+    box-shadow: inset 0 0 70px rgba(239, 51, 102, 0.28), inset 0 0 140px rgba(239, 51, 102, 0.12);
+  }
+}
+body.hazard-critical-iv {
+  animation: perimeterBreath 2.4s ease-in-out infinite;
+}
+body.hazard-critical-iv::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: inset 0 0 80px rgba(239, 51, 102, 0.18), inset 0 0 160px rgba(239, 51, 102, 0.08);
+  animation: perimeterBreath 2.4s ease-in-out infinite;
+  border-radius: 0;
+}
+
+/* =========================================================
+   AUDIO SPECTRUM EQ BARS
+   ========================================================= */
+@keyframes eqBar1 { 0%,100%{height:3px} 40%{height:14px} 70%{height:6px} }
+@keyframes eqBar2 { 0%,100%{height:7px} 25%{height:3px}  60%{height:16px} }
+@keyframes eqBar3 { 0%,100%{height:12px} 35%{height:4px}  65%{height:18px} }
+@keyframes eqBar4 { 0%,100%{height:5px} 50%{height:16px} 80%{height:7px} }
+@keyframes eqBar5 { 0%,100%{height:9px} 30%{height:3px}  70%{height:14px} }
+
+.eq-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 18px;
+}
+.eq-bars span {
+  width: 3px;
+  background: currentColor;
+  border-radius: 2px;
+  display: inline-block;
+}
+.eq-bars span:nth-child(1) { animation: eqBar1 0.7s ease-in-out infinite; }
+.eq-bars span:nth-child(2) { animation: eqBar2 0.9s ease-in-out infinite 0.1s; }
+.eq-bars span:nth-child(3) { animation: eqBar3 0.6s ease-in-out infinite 0.05s; }
+.eq-bars span:nth-child(4) { animation: eqBar4 0.8s ease-in-out infinite 0.2s; }
+.eq-bars span:nth-child(5) { animation: eqBar5 0.75s ease-in-out infinite 0.15s; }
+
+/* =========================================================
+   COMMAND PALETTE OVERLAY
+   ========================================================= */
+.cmd-palette-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 9, 14, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 14vh;
+}
+html.light .cmd-palette-backdrop {
+  background: rgba(15, 23, 42, 0.45);
+}
+.cmd-palette-modal {
+  width: 100%;
+  max-width: 580px;
+  background: rgba(11, 15, 25, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255,255,255,0.05);
+  overflow: hidden;
+  animation: cmdFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+html.light .cmd-palette-modal {
+  background: rgba(255, 255, 255, 0.99);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+}
+@keyframes cmdFadeIn {
+  from { opacity: 0; transform: translateY(-12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+.cmd-palette-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f8fafc;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  padding: 18px 20px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+html.light .cmd-palette-input {
+  color: #0f172a;
+}
+.cmd-palette-input::placeholder { color: #475569; }
+.cmd-palette-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.1s;
+  border-radius: 8px;
+  margin: 2px 6px;
+}
+.cmd-palette-item:hover,
+.cmd-palette-item.active {
+  background: rgba(255, 255, 255, 0.07);
+}
+html.light .cmd-palette-item:hover,
+html.light .cmd-palette-item.active {
+  background: #f1f5f9;
+}
+
+/* =========================================================
+   LAYOUT SWITCHER BADGES
+   ========================================================= */
+.layout-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.layout-btn.active {
+  background: rgba(0, 245, 255, 0.12);
+  border-color: rgba(0, 245, 255, 0.35);
+  color: #00f5ff;
+}
+html.light .layout-btn.active {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+}
+.layout-btn:not(.active) {
+  color: #64748b;
+}
+.layout-btn:not(.active):hover {
+  background: rgba(255,255,255,0.06);
+  color: #e2e8f0;
+}
+html.light .layout-btn:not(.active):hover {
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+/* =========================================================
+   PERSONNEL TRACKER BADGE
+   ========================================================= */
+@keyframes minerPulse {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.18); opacity: 0.8; }
+}
+.miner-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: minerPulse 2s ease-in-out infinite;
+}
+.miner-dot.critical { background: #ef4444; }
+
+/* =========================================================
+   PERSONNEL HEADCOUNT STRIP
+   ========================================================= */
+.sector-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  min-width: 90px;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.25s;
+}
+.sector-badge.danger {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.08);
+}
+html.light .sector-badge {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+html.light .sector-badge.danger {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+/* =========================================================
+   AI MACRO CHIP BUTTONS
+   ========================================================= */
+.macro-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+.macro-chip:hover {
+  background: rgba(0, 245, 255, 0.12);
+  border-color: rgba(0, 245, 255, 0.35);
+  color: #00f5ff;
+  transform: translateY(-1px);
+}
+html.light .macro-chip {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+html.light .macro-chip:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+}
+.macro-chip.danger:hover {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
+
+/* =========================================================
+   VOICE PTT BUTTON
+   ========================================================= */
+@keyframes pttPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
+  60% { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+}
+.ptt-active {
+  animation: pttPulse 1s ease-out infinite;
+  background: #e11d48 !important;
+  color: #ffffff !important;
+  border-color: #be123c !important;
+}
+
+/* =========================================================
+   NODE HEALTH MICRO-BADGES
+   ========================================================= */
+.node-health-bar {
+  display: flex;
+  gap: 1.5px;
+  align-items: flex-end;
+  height: 8px;
+}
+.node-health-bar span {
+  width: 4px;
+  border-radius: 1px;
+  background: #10b981;
+}
+.node-health-bar span.low { background: #ef4444; }
+.node-health-bar span.med { background: #f59e0b; }
+
+/* =========================================================
+   DGMS AUDIT REPORT MODAL
+   ========================================================= */
+.audit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 9, 14, 0.82);
+  backdrop-filter: blur(8px);
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+html.light .audit-modal-backdrop {
+  background: rgba(15, 23, 42, 0.5);
+}
+.audit-modal {
+  width: 100%;
+  max-width: 720px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #0b0f19;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+  animation: cmdFadeIn 0.2s cubic-bezier(0.16,1,0.3,1);
+}
+html.light .audit-modal {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 20px 60px rgba(15,23,42,0.18);
+}
+
+/* =========================================================
+   HINDI / ENGLISH LANGUAGE TOGGLE
+   ========================================================= */
+.lang-toggle {
+  display: inline-flex;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.15);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+}
+.lang-toggle button {
+  padding: 3px 10px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+  outline: none;
+}
+.lang-toggle button.active {
+  background: rgba(0, 245, 255, 0.15);
+  color: #00f5ff;
+}
+html.light .lang-toggle { border-color: #e2e8f0; }
+html.light .lang-toggle button { color: #94a3b8; }
+html.light .lang-toggle button.active { background: #eff6ff; color: #1d4ed8; }
+
+/* =========================================================
+   @MEDIA PRINT — DGMS STATUTORY AUDIT REPORT
+   ========================================================= */
+@media print {
+  body > *:not(#dgms-print-report) { display: none !important; }
+  #dgms-print-report {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    color: #000000;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 32px;
+    z-index: 99999;
+  }
+  #dgms-print-report h1 { font-size: 20px; font-weight: 900; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 16px; }
+  #dgms-print-report h2 { font-size: 13px; font-weight: 700; margin-top: 14px; margin-bottom: 6px; text-transform: uppercase; }
+  #dgms-print-report table { width: 100%; border-collapse: collapse; }
+  #dgms-print-report th, #dgms-print-report td { border: 1px solid #ccc; padding: 5px 8px; text-align: left; }
+  #dgms-print-report th { background: #f1f5f9; font-weight: 700; }
+  #dgms-print-report .sign-box { margin-top: 32px; border-top: 2px solid #000; padding-top: 16px; display: flex; justify-content: space-between; }
+  #dgms-print-report .sign-line { border-bottom: 1px solid #000; width: 220px; height: 40px; }
+}
+
+/* =========================================================
+   TACTICAL GIS MINE MAP STYLES & RADAR BEACONS
+   ========================================================= */
+.leaflet-container {
+  background: #07090e !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+}
+html.light .leaflet-container {
+  background: #f8fafc !important;
+}
+
+/* Tactical Node Beacons */
+.tactical-node-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.node-radar-wrapper {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.node-radar-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 9999px;
+  border: 2px solid #06b6d4;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.node-radar-ring.pulse-green {
+  border-color: #10b981;
+  animation: radarPing 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.node-radar-wrapper.critical .node-radar-ring {
+  border-color: #ef4444;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.7);
+  animation: radarPingCritical 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.node-radar-wrapper.critical .node-radar-ring.ring-2 {
+  animation-delay: 0.7s;
+}
+
+@keyframes radarPing {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes radarPingCritical {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+
+.node-beacon-core {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.node-beacon-core:hover {
+  transform: scale(1.15);
+}
+
+/* Tooltips */
+.tactical-tooltip {
+  background: rgba(7, 11, 16, 0.92) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: #f8fafc !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 10px !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5) !important;
+  padding: 4px 8px !important;
+}
+html.light .tactical-tooltip {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12) !important;
+}
+
+/* Leaflet Popups */
+.tactical-leaflet-popup .leaflet-popup-content-wrapper {
+  background: rgba(11, 15, 25, 0.96) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 12px !important;
+  color: #f8fafc !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6) !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+html.light .tactical-leaflet-popup .leaflet-popup-content-wrapper {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.15) !important;
+}
+.tactical-leaflet-popup .leaflet-popup-content {
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+.tactical-leaflet-popup .leaflet-popup-tip {
+  background: rgba(11, 15, 25, 0.96) !important;
+}
+html.light .tactical-leaflet-popup .leaflet-popup-tip {
+  background: #ffffff !important;
+}
+
+

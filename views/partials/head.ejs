@@ -1,14 +1,28 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>{{ title | default('TERRA-PULSE OS - Live Telemetry &amp; GIS | SIH 2026') }}</title>
+<title><%= locals.title || 'TERRA-PULSE OS - Live Telemetry & GIS | SIH 2026' %></title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="/css/hud.css" rel="stylesheet"/>
-<!-- CesiumJS Photorealistic 3D Globe Engine (God's Eye View - Bilawal Sidhu) -->
-<link href="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
-<script src="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Cesium.js"></script>
+<script>
+  (function() {
+    var saved = localStorage.getItem('terra_theme_v2');
+    var isDark = saved ? (saved === 'dark') : false;
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    }
+  })();
+</script>
+<!-- Leaflet 1.9.4 Modern High-Performance GIS Tactical Mapping Engine -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
 <style>
   /* God's Eye View Optical Shader Overlays */
   .optic-flir {
@@ -83,5 +97,27 @@
     }
   };
 </script>
-
-
+<style>
+  [ng\:cloak], [ng-cloak], .ng-cloak {
+    display: none !important;
+  }
+</style>
+<!-- AngularJS 1.8.3 Modern Component Framework Engine -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+<!-- Socket.IO Client -->
+<script src="/socket.io/socket.io.js"></script>
+<!-- Angular Application Core & Modular Services -->
+<script src="/js/angular/app.js"></script>
+<script src="/js/angular/services/telemetryService.js"></script>
+<script src="/js/angular/services/chatService.js"></script>
+<script src="/js/angular/services/audioService.js"></script>
+<script src="/js/angular/services/themeService.js"></script>
+<!-- Angular Reactive Components & Directives -->
+<script src="/js/angular/components/chatWidget.component.js"></script>
+<script src="/js/angular/components/telemetryDashboard.component.js"></script>
+<script src="/js/angular/components/evacuationModal.component.js"></script>
+<script src="/js/angular/components/explainableMl.component.js"></script>
+<script src="/js/angular/components/commandPalette.component.js"></script>
+<script src="/js/angular/directives/tacticalMap.directive.js"></script>
+<script src="/js/angular/directives/vibrationOscilloscope.directive.js"></script>
+<script src="/js/angular/directives/sparkline.directive.js"></script>

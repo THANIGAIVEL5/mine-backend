@@ -1,173 +1,187 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html class="light" lang="en" ng-app="terraPulseApp">
 <head>
-  {% with title='TERRA-PULSE OS - Explainable ML & Subsidence Risk | SIH 2026' %}{% include 'partials/head.ejs' %}{% endwith %}
+  <%- include('partials/head', { title: 'TERRA-PULSE OS - Explainable ML & Subsidence Risk | SIH 2026' }) %>
 </head>
-<body class="bg-[#07090e] font-sans text-on-surface antialiased">
-  <!-- Tactical Sidebar -->
-  {% with activePage='ml' %}{% include 'partials/sidebar.ejs' %}{% endwith %}
+<body ng-controller="ExplainableMlController as vm" ng-cloak class="bg-slate-50 dark:bg-[#07090e] font-['Space_Grotesk'] text-[13px] text-slate-800 dark:text-white antialiased selection:bg-cyan-400 selection:text-black min-h-screen relative overflow-x-hidden">
+  <!-- Ambient Glow Gradients -->
+  <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_25%_15%,rgba(2,132,199,0.04),transparent_45%),radial-gradient(circle_at_80%_25%,rgba(225,29,72,0.03),transparent_40%),radial-gradient(circle_at_50%_75%,rgba(241,245,249,0.8),transparent_50%)] dark:bg-[radial-gradient(circle_at_25%_15%,rgba(0,245,255,0.04),transparent_45%),radial-gradient(circle_at_80%_25%,rgba(239,68,68,0.05),transparent_40%),radial-gradient(circle_at_50%_75%,rgba(255,255,255,0.02),transparent_50%)] z-0"></div>
 
-  <!-- Main Content Shell -->
-  <div class="pl-64 min-h-screen flex flex-col">
-    <!-- Top Header -->
-    {% with systemMode='SYSTEM MODE: XAI TREE-SHAP & DGMS PROTOCOL', targetGeometry='TARGET GEOMETRY: DRIFT & SHAFT 12' %}{% include 'partials/header.ejs' %}{% endwith %}
+  <!-- Tactical Sidebar -->
+  <%- include('partials/sidebar', { activePage: 'ml' }) %>
+
+  <!-- Main Content Wrapper with Top Margin for Fixed Header -->
+  <div class="pl-64 relative z-10 min-h-screen flex flex-col">
+    <!-- Top HUD Header -->
+    <%- include('partials/header', { systemMode: 'SYSTEM MODE: XAI TREE-SHAP & DGMS PROTOCOL', targetGeometry: 'TARGET GEOMETRY: DRIFT & SHAFT 12' }) %>
 
     <!-- Main Container -->
-    <main class="flex-1 p-6 space-y-5 max-w-[1680px] w-full mx-auto">
+    <main class="relative pt-24 w-full px-6 pb-16 space-y-5 max-w-[1680px] mx-auto bg-slate-50 dark:bg-[#07090e]">
       
-      <!-- Telemetry Sub-Banner -->
-      <div class="flex flex-wrap items-center justify-between gap-4 bg-surface-container-low border border-outline-variant/50 px-4 py-2.5 rounded">
+      <!-- 1. Top Telemetry Status Rail -->
+      <div class="flex flex-wrap items-center justify-between gap-4 bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md border border-slate-200 dark:border-white/20 px-4 py-3 rounded-lg shadow-sm">
         <div class="flex flex-wrap items-center gap-3">
-          <span class="font-mono text-xs uppercase tracking-widest text-primary-container font-bold px-2 py-1 bg-surface-container-highest/60 rounded border border-primary-container/30 flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span> MASTER AI ACTIVE
+          <span class="font-['JetBrains_Mono'] text-xs uppercase tracking-widest text-sky-700 dark:text-cyan-400 font-bold px-2.5 py-1 bg-sky-50 dark:bg-cyan-500/10 rounded border border-sky-200 dark:border-cyan-500/30 flex items-center gap-1.5 shadow-xs">
+            <span class="w-2 h-2 rounded-full bg-sky-600 dark:bg-cyan-400 animate-pulse"></span> MASTER AI ACTIVE
           </span>
-          <span class="font-mono text-xs text-on-surface-variant">TERRA-SENTINEL CENTRAL CONTROLLER</span>
-          <span class="text-outline-variant">/</span>
-          <span class="font-mono text-xs text-on-surface-variant">XAI TREE-SHAP EXPLAINABILITY</span>
-          <span class="text-outline-variant">/</span>
-          <span class="font-mono text-xs text-secondary font-semibold">DGMS 1957/2017 SAFETY CORE</span>
+          <span class="font-['JetBrains_Mono'] text-xs text-slate-800 dark:text-zinc-300 font-semibold">TERRA-SENTINEL CENTRAL CONTROLLER</span>
+          <span class="text-slate-300 dark:text-zinc-600">/</span>
+          <span class="font-['JetBrains_Mono'] text-xs text-sky-700 dark:text-cyan-300 font-bold">XAI TREE-SHAP EXPLAINABILITY</span>
+          <span class="text-slate-300 dark:text-zinc-600">/</span>
+          <span class="font-['JetBrains_Mono'] text-xs text-amber-700 dark:text-amber-400 font-semibold">DGMS 1957/2017 SAFETY CORE</span>
         </div>
-        <div class="flex flex-wrap items-center gap-5 font-mono text-xs">
-          <div><span class="text-on-surface-variant uppercase text-[10px] mr-1.5">LATENCY:</span><span id="ml-latency" class="text-primary font-bold">18ms</span></div>
-          <div><span class="text-on-surface-variant uppercase text-[10px] mr-1.5">CYCLE:</span><span class="text-primary font-bold">3600s</span></div>
-          <div><span class="text-on-surface-variant uppercase text-[10px] mr-1.5">BAYES CONF:</span><span id="ml-bayes" class="text-primary-container font-bold">94.2%</span></div>
-          <div><span class="text-on-surface-variant uppercase text-[10px] mr-1.5">DGMS PROTOCOL:</span><span class="text-error font-bold px-1.5 py-0.5 rounded bg-error-container/30 border border-error/40">STAGE-III ALERT</span></div>
+        <div class="flex flex-wrap items-center gap-5 font-['JetBrains_Mono'] text-xs">
+          <div><span class="text-slate-500 dark:text-zinc-400 uppercase text-[10px] mr-1.5 font-semibold">LATENCY:</span><span class="text-sky-700 dark:text-cyan-400 font-bold">{{ vm.latency }}</span></div>
+          <div><span class="text-slate-500 dark:text-zinc-400 uppercase text-[10px] mr-1.5 font-semibold">CYCLE:</span><span class="text-slate-900 dark:text-white font-bold">3600s</span></div>
+          <div><span class="text-slate-500 dark:text-zinc-400 uppercase text-[10px] mr-1.5 font-semibold">BAYES CONF:</span><span class="text-emerald-700 dark:text-emerald-400 font-bold">{{ vm.bayesConf }}</span></div>
+          <div><span class="text-slate-500 dark:text-zinc-400 uppercase text-[10px] mr-1.5 font-semibold">DGMS PROTOCOL:</span><span class="text-rose-700 dark:text-rose-400 font-bold px-2 py-0.5 rounded bg-rose-50 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40">STAGE-III ALERT</span></div>
         </div>
       </div>
 
-      <!-- Real-Time Neural Geotechnical Intelligence Ribbon -->
-      <div class="bg-surface-container-lowest/90 border border-primary-container/30 rounded px-4 py-2.5 flex items-center justify-between gap-3 font-mono text-xs">
+      <!-- 2. Master AI Geotechnical Directive Ticker -->
+      <div class="bg-white dark:bg-[#05080c] border border-sky-200 dark:border-cyan-500/30 rounded-lg px-4 py-2.5 flex items-center justify-between gap-3 font-['JetBrains_Mono'] text-xs shadow-xs">
         <div class="flex items-center gap-2.5 overflow-hidden flex-1">
-          <span class="px-2 py-0.5 rounded bg-surface-container-high border border-primary-container/40 text-primary-container text-[10px] font-bold uppercase shrink-0 flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-ping"></span> MASTER AI DIRECTIVE
+          <span class="px-2 py-0.5 rounded bg-sky-50 dark:bg-neutral-900 border border-sky-300 dark:border-cyan-500/40 text-sky-800 dark:text-cyan-400 text-[10px] font-bold uppercase shrink-0 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-sky-600 dark:bg-cyan-400 animate-ping"></span> MASTER AI DIRECTIVE
           </span>
-          <span class="text-on-surface truncate font-sans text-xs tracking-wide" id="ai-insight-text">
-            [TERRA-SENTINEL MASTER AI] Telemetry baseline nominal. All 5 sensor nodes synchronized.
+          <span class="text-slate-800 dark:text-zinc-100 truncate font-sans text-xs tracking-wide font-medium">
+            {{ vm.aiInsightDisplay }}
           </span>
         </div>
-        <a href="/" class="shrink-0 text-primary-container hover:text-white text-[11px] underline flex items-center gap-1 transition-colors">
+        <a href="/" onclick="if(location.protocol==='file:' || location.pathname.indexOf('.html')!==-1){location.href='index.html'; return false;}" class="shrink-0 text-sky-600 dark:text-cyan-400 hover:text-sky-800 dark:hover:text-white text-[11px] underline flex items-center gap-1 transition-colors font-bold cursor-pointer">
           <span>Live HUD</span> <span class="material-symbols-outlined text-xs">open_in_new</span>
         </a>
       </div>
 
-      <!-- Critical Hazard Window Alert Banner -->
-      <div class="relative overflow-hidden bg-gradient-to-r from-error-container/40 via-surface-container-low to-surface-container-low border border-error/50 rounded p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-[0_0_20px_rgba(255,77,109,0.1)]">
+      <!-- 3. Critical Subsidence Hazard Alert Banner -->
+      <div class="relative overflow-hidden bg-rose-50 dark:bg-gradient-to-r dark:from-rose-950/40 dark:via-[#0b0f19] dark:to-[#0b0f19] border border-rose-200 dark:border-rose-500/50 rounded-xl p-4.5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
         <div class="flex items-start md:items-center gap-3.5">
-          <div class="w-10 h-10 rounded bg-error/20 border border-error/40 flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-error text-[24px] animate-pulse">crisis_alert</span>
+          <div class="w-10 h-10 rounded-lg bg-rose-100 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/50 flex items-center justify-center shrink-0 shadow-xs">
+            <span class="material-symbols-outlined text-rose-600 dark:text-rose-400 text-[24px] animate-pulse">crisis_alert</span>
           </div>
           <div>
             <div class="flex flex-wrap items-center gap-2">
-              <span class="font-mono text-xs font-bold text-error tracking-wider uppercase">ELEVATED SUBSIDENCE WINDOW FORECAST</span>
-              <span class="text-outline-variant">•</span>
-              <span class="font-mono text-xs font-bold text-primary tracking-wide uppercase bg-surface-container-highest px-2 py-0.5 rounded">T+4.5 HRS TO TENSILE FAILURE THRESHOLD</span>
+              <span class="font-['JetBrains_Mono'] text-xs font-extrabold text-rose-700 dark:text-rose-400 tracking-wider uppercase">
+                {{ ml.t('ELEVATED SUBSIDENCE WINDOW FORECAST', 'उन्नत अवतलन खिड़की पूर्वानुमान') }}
+              </span>
+              <span class="text-slate-300 dark:text-zinc-600">•</span>
+              <span class="font-['JetBrains_Mono'] text-xs font-bold text-sky-700 dark:text-cyan-300 tracking-wide uppercase bg-white dark:bg-neutral-900 px-2.5 py-0.5 rounded border border-slate-200 dark:border-white/10 shadow-2xs">
+                {{ ml.t('T+4.5 HRS TO TENSILE FAILURE THRESHOLD', 'T+4.5 घंटे तक तन्य विफलता सीमा') }}
+              </span>
+              <!-- Language Toggle -->
+              <div class="lang-toggle ml-2">
+                <button ng-click="ml.toggleLang()" ng-class="ml.lang === 'en' ? 'active' : ''">EN</button>
+                <button ng-click="ml.toggleLang()" ng-class="ml.lang === 'hi' ? 'active' : ''">हिं</button>
+              </div>
             </div>
-            <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">
-              Chasnala Deep Mine • Sector 4B Shaft 12 • Strata delamination velocity accelerated at Pillar 4B Gallery. MPU6050 tilt gradient crossed 2.8°/hr dynamic limit.
+            <p class="text-xs text-slate-600 dark:text-zinc-300 mt-1 leading-relaxed font-sans font-medium">
+              {{ ml.t(
+                'Chasnala Deep Mine • Sector 4B Shaft 12 • Strata delamination velocity accelerated at Pillar 4B Gallery. MPU6050 tilt gradient crossed 2.8°/hr dynamic limit.',
+                'चासनाला गहरी खान • क्षेत्र 4B शाफ्ट 12 • स्तर विलगाव वेग पिलर 4B गैलरी में बढ़ा। MPU6050 झुकाव ढाल 2.8°/hr सीमा पार।'
+              ) }}
             </p>
           </div>
         </div>
-        <div class="shrink-0 flex items-center">
-          <button class="px-4 py-2 bg-error text-white font-mono text-xs uppercase font-bold tracking-wider rounded hover:bg-error/90 transition-all flex items-center gap-2 shadow-[0_0_12px_rgba(255,77,109,0.35)]" onclick="document.getElementById('evac-modal').classList.remove('hidden')">
-            <span class="material-symbols-outlined text-[16px]">campaign</span> EVACUATION PROTOCOL
+        <div class="shrink-0 flex items-center gap-2">
+          <button class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-['JetBrains_Mono'] text-xs uppercase font-extrabold tracking-wider rounded-lg transition-all flex items-center gap-2 shadow-md hover:shadow-lg cursor-pointer active:scale-95" ng-click="ml.openEvacModal()">
+            <span class="material-symbols-outlined text-[17px]">campaign</span> {{ ml.t('EVACUATION PROTOCOL', 'निकासी प्रोटोकॉल') }}
           </button>
         </div>
       </div>
+</div>
 
-      <!-- PRIMARY SECTION: 2-COL BENTO GRID (Deformation Projection & LSTM Trajectory) -->
+      <!-- 4. PRIMARY SECTION: 2-COL BENTO GRID (Strata Cross-Section & LSTM Trajectory) -->
       <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
         <!-- Left: Geometric Deformation Projection (7 cols) -->
-        <div class="xl:col-span-7 bg-surface-container-low border border-outline-variant/50 rounded p-5 relative flex flex-col justify-between">
-          <span class="hud-bracket-tl">┌</span><span class="hud-bracket-tr">┐</span>
-          <span class="hud-bracket-bl">└</span><span class="hud-bracket-br">┘</span>
+        <div class="xl:col-span-7 bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md border border-slate-200 dark:border-white/20 rounded-xl p-5 relative flex flex-col justify-between shadow-sm">
           <div>
-            <!-- Header & Toggles -->
+            <!-- Header & Projection Mode Tabs -->
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div>
-                <span class="font-mono text-[10px] tracking-widest text-primary-container uppercase font-bold block mb-0.5">GEOMETRIC DEFORMATION PROJECTION</span>
-                <h3 id="proj-header-title" class="font-display text-base font-bold text-primary">Subsurface Strata Stress Vector &amp; Void Delamination</h3>
+                <span class="font-['JetBrains_Mono'] text-[10px] tracking-widest text-sky-700 dark:text-cyan-400 uppercase font-bold block mb-0.5">GEOMETRIC DEFORMATION PROJECTION</span>
+                <h3 class="font-['Space_Grotesk'] text-base font-bold text-slate-900 dark:text-white">{{ vm.getProjectionTitle() }}</h3>
               </div>
-              <div class="flex items-center gap-1 bg-surface-container-lowest p-1 rounded border border-outline-variant/40 font-mono text-[11px]">
-                <button onclick="selectProjectionTab(this, 'insar')" class="proj-tab-btn px-2.5 py-1 text-primary-container bg-surface-container-high rounded font-bold border border-primary-container/30 cursor-pointer">InSAR/GNSS</button>
-                <button onclick="selectProjectionTab(this, 'strain')" class="proj-tab-btn px-2.5 py-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer">STRAIN-4B</button>
-                <button onclick="selectProjectionTab(this, 'hydro')" class="proj-tab-btn px-2.5 py-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer">HYDRO-SUMP</button>
-                <button onclick="selectProjectionTab(this, 'seismic')" class="proj-tab-btn px-2.5 py-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer">SEISMIC FFT</button>
+              <div class="flex items-center gap-1 bg-slate-100 dark:bg-[#05080c] p-1 rounded-lg border border-slate-200 dark:border-white/10 font-['JetBrains_Mono'] text-[11px]">
+                <button ng-click="vm.selectTab('insar')" class="px-2.5 py-1 transition-all rounded cursor-pointer" ng-class="vm.activeTab === 'insar' ? 'text-sky-700 dark:text-cyan-400 bg-white dark:bg-neutral-800 font-bold border border-slate-200 dark:border-cyan-500/40 shadow-xs' : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'">InSAR/GNSS</button>
+                <button ng-click="vm.selectTab('strain')" class="px-2.5 py-1 transition-all rounded cursor-pointer" ng-class="vm.activeTab === 'strain' ? 'text-sky-700 dark:text-cyan-400 bg-white dark:bg-neutral-800 font-bold border border-slate-200 dark:border-cyan-500/40 shadow-xs' : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'">STRAIN-4B</button>
+                <button ng-click="vm.selectTab('hydro')" class="px-2.5 py-1 transition-all rounded cursor-pointer" ng-class="vm.activeTab === 'hydro' ? 'text-sky-700 dark:text-cyan-400 bg-white dark:bg-neutral-800 font-bold border border-slate-200 dark:border-cyan-500/40 shadow-xs' : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'">HYDRO-SUMP</button>
+                <button ng-click="vm.selectTab('seismic')" class="px-2.5 py-1 transition-all rounded cursor-pointer" ng-class="vm.activeTab === 'seismic' ? 'text-sky-700 dark:text-cyan-400 bg-white dark:bg-neutral-800 font-bold border border-slate-200 dark:border-cyan-500/40 shadow-xs' : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'">SEISMIC FFT</button>
               </div>
             </div>
             
             <!-- Isometric SVG Strata Cross-Section -->
-            <div class="relative w-full h-72 bg-surface-container-lowest rounded border border-outline-variant/40 overflow-hidden">
+            <div class="relative w-full h-72 bg-slate-50 dark:bg-[#05080c] rounded-lg border border-slate-200 dark:border-white/10 overflow-hidden">
               <svg class="w-full h-full" fill="none" viewbox="0 0 760 288" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                  <pattern height="24" id="grid-pattern" patternunits="userSpaceOnUse" width="24">
-                    <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"></path>
+                  <pattern height="24" id="grid-pattern-ml" patternunits="userSpaceOnUse" width="24">
+                    <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(15,23,42,0.06)" stroke-width="1"></path>
                   </pattern>
-                  <lineargradient id="delaminationGrad" x1="0%" x2="100%" y1="0%" y2="100%">
-                    <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.1"></stop>
-                    <stop offset="50%" stop-color="#ff4d6d" stop-opacity="0.45"></stop>
-                    <stop offset="100%" stop-color="#ff4d6d" stop-opacity="0.75"></stop>
+                  <lineargradient id="delaminationGradMl" x1="0%" x2="100%" y1="0%" y2="100%">
+                    <stop offset="0%" stop-color="#0284c7" stop-opacity="0.25"></stop>
+                    <stop offset="50%" stop-color="#e11d48" stop-opacity="0.6"></stop>
+                    <stop offset="100%" stop-color="#be123c" stop-opacity="0.9"></stop>
                   </lineargradient>
                 </defs>
                 
-                <rect fill="url(#grid-pattern)" height="100%" width="100%"></rect>
+                <rect fill="url(#grid-pattern-ml)" height="100%" width="100%"></rect>
                 
                 <!-- Strata Plane 1: Surface / Overburden (0m to -120m) -->
-                <polygon fill="#131924" points="90,45 640,45 720,85 170,85" stroke="#2a3848" stroke-width="1.5"></polygon>
+                <polygon fill="#101724" points="90,45 640,45 720,85 170,85" stroke="#1e293b" stroke-width="1.5"></polygon>
                 
                 <!-- Strata Plane 2: Intermediate Sandstone (-120m to -220m) -->
-                <polygon fill="#18202d" points="70,105 620,105 700,145 150,145" stroke="#2a3848" stroke-dasharray="4 3" stroke-width="1.2"></polygon>
+                <polygon fill="#151e2e" points="70,105 620,105 700,145 150,145" stroke="#1e293b" stroke-dasharray="4 3" stroke-width="1.2"></polygon>
                 
                 <!-- Strata Plane 3: Coal Seam V / Mining Gallery (-280m) -->
-                <polygon fill="#0f141d" points="50,165 600,165 680,215 130,215" stroke="#2a3848" stroke-width="1.5"></polygon>
+                <polygon fill="#0d1420" points="50,165 600,165 680,215 130,215" stroke="#1e293b" stroke-width="1.5"></polygon>
                 
                 <!-- Flexure Depressed Curvature Mesh Lines -->
-                <path d="M 170,85 Q 405,125 540,85" fill="none" stroke="#00f2fe" stroke-dasharray="4 2" stroke-width="2"></path>
-                <path d="M 150,145 Q 395,200 520,145" fill="none" stroke="#ffc83b" stroke-width="2"></path>
-                <path d="M 130,215 Q 375,268 495,215" fill="none" stroke="#ff4d6d" stroke-width="2.5"></path>
+                <path d="M 170,85 Q 405,125 540,85" fill="none" stroke="#0284c7" stroke-dasharray="4 2" stroke-width="2"></path>
+                <path d="M 150,145 Q 395,200 520,145" fill="none" stroke="#b45309" stroke-width="2"></path>
+                <path d="M 130,215 Q 375,268 495,215" fill="none" stroke="#be123c" stroke-width="2.5"></path>
                 
-                <!-- Critical Delamination Void polygon -->
-                <polygon id="delam-polygon" class="transition-all duration-500" fill="url(#delaminationGrad)" points="310,185 450,180 435,245 295,240" stroke="#ff4d6d" stroke-width="1.5"></polygon>
+                <!-- Critical Delamination Void Polygon (Reacts to live pitch & what-if sliders) -->
+                <polygon id="delam-polygon" class="transition-all duration-500" ng-attr-transform="{{ vm.getDelaminationTransform() }}" fill="url(#delaminationGradMl)" points="310,185 450,180 435,245 295,240" stroke="#be123c" stroke-width="2"></polygon>
                 
                 <!-- Depth Markers on Left Axis -->
-                <g class="font-mono text-[9px]" fill="#64748b">
-                  <line stroke="#2a3848" stroke-width="1" x1="28" x2="28" y1="45" y2="215"></line>
+                <g class="font-mono text-[9px]" fill="#475569">
+                  <line stroke="#cbd5e1" stroke-width="1" x1="28" x2="28" y1="45" y2="215"></line>
                   <text x="35" y="48">0m (SURFACE)</text>
                   <text x="35" y="108">-120m (OVERBURDEN)</text>
-                  <text fill="#ffc83b" x="35" y="185">-280m (SEAM V DRIFT)</text>
+                  <text fill="#b45309" x="35" y="185">-280m (SEAM V DRIFT)</text>
                 </g>
                 
                 <!-- Sensor Nodes Placed in Isometric Space -->
                 <g transform="translate(195, 78)">
-                  <circle cx="0" cy="0" fill="#00f2fe" r="4.5"></circle>
-                  <circle cx="0" cy="0" opacity="0.6" r="9" stroke="#00f2fe" stroke-width="1"></circle>
-                  <line stroke="#00f2fe" stroke-width="1" x1="0" x2="-25" y1="0" y2="-22"></line>
-                  <text class="font-mono text-[9px] font-bold" fill="#00f2fe" x="-95" y="-26">NODE-01 [STABLE: 0.12]</text>
+                  <circle cx="0" cy="0" fill="#0284c7" r="4.5"></circle>
+                  <circle cx="0" cy="0" opacity="0.6" r="9" stroke="#0284c7" stroke-width="1"></circle>
+                  <line stroke="#0284c7" stroke-width="1" x1="0" x2="-25" y1="0" y2="-22"></line>
+                  <text class="font-mono text-[9px] font-bold" fill="#0284c7" x="-95" y="-26">NODE-01 [STABLE: 0.12]</text>
                 </g>
                 
                 <g transform="translate(585, 65)">
-                  <circle cx="0" cy="0" fill="#00f2fe" r="4.5"></circle>
-                  <circle cx="0" cy="0" opacity="0.6" r="8" stroke="#00f2fe" stroke-width="1"></circle>
-                  <text class="font-mono text-[9px]" fill="#cbd5e1" x="14" y="4">NODE-04 [NEO-6M: 0.08]</text>
+                  <circle cx="0" cy="0" fill="#0284c7" r="4.5"></circle>
+                  <circle cx="0" cy="0" opacity="0.6" r="8" stroke="#0284c7" stroke-width="1"></circle>
+                  <text class="font-mono text-[9px] font-semibold" fill="#334155" x="14" y="4">NODE-04 [NEO-6M: 0.08]</text>
                 </g>
                 
                 <g transform="translate(285, 155)">
-                  <circle cx="0" cy="0" fill="#ffc83b" r="5"></circle>
-                  <circle cx="0" cy="0" r="11" stroke="#ffc83b" stroke-dasharray="2 2" stroke-width="1"></circle>
-                  <text class="font-mono text-[9px] font-bold" fill="#ffc83b" x="-105" y="14">NODE-02 [WATCH: 0.62]</text>
+                  <circle cx="0" cy="0" fill="#b45309" r="5"></circle>
+                  <circle cx="0" cy="0" r="11" stroke="#b45309" stroke-dasharray="2 2" stroke-width="1"></circle>
+                  <text class="font-mono text-[9px] font-bold" fill="#b45309" x="-105" y="14">NODE-02 [WATCH: 0.62]</text>
                 </g>
                 
                 <g transform="translate(385, 218)">
-                  <circle cx="0" cy="0" fill="#ff4d6d" r="7">
+                  <circle cx="0" cy="0" fill="#be123c" r="7">
                     <animate attributename="r" dur="1.8s" repeatcount="indefinite" values="7;10;7"></animate>
                   </circle>
-                  <circle cx="0" cy="0" r="18" stroke="#ff4d6d" stroke-dasharray="3 2" stroke-width="1.5">
+                  <circle cx="0" cy="0" r="18" stroke="#be123c" stroke-dasharray="3 2" stroke-width="1.5">
                     <animate attributename="stroke-opacity" dur="1.8s" repeatcount="indefinite" values="1;0.2;1"></animate>
                   </circle>
-                  <line stroke="#ff4d6d" stroke-width="1.5" x1="0" x2="0" y1="-10" y2="-24"></line>
-                  <line stroke="#ff4d6d" stroke-width="1.5" x1="0" x2="0" y1="10" y2="24"></line>
-                  <text class="font-mono text-[10px] font-bold" fill="#ffb4ab" x="24" y="2">NODE-03 (PILLAR 4B)</text>
-                  <text class="font-mono text-[9px] font-bold" fill="#ff4d6d" x="24" y="14">CRITICAL STRAIN (0.89)</text>
-                  <text class="font-mono text-[8.5px]" fill="#cbd5e1" x="24" y="26">dθ/dt: 3.12°/hr | 13.8mm DELAM</text>
+                  <line stroke="#be123c" stroke-width="1.5" x1="0" x2="0" y1="-10" y2="-24"></line>
+                  <line stroke="#be123c" stroke-width="1.5" x1="0" x2="0" y1="10" y2="24"></line>
+                  <text class="font-mono text-[10px] font-bold" fill="#be123c" x="24" y="2">NODE-03 (PILLAR 4B)</text>
+                  <text class="font-mono text-[9px] font-bold" fill="#be123c" x="24" y="14">CRITICAL STRAIN (0.89)</text>
+                  <text class="font-mono text-[8.5px] font-semibold" fill="#334155" x="24" y="26">dθ/dt: {{ vm.telemetry.pitch | number:2 }}°/hr | {{ vm.telemetry.disp | number:1 }}mm DELAM</text>
                 </g>
                 
                 <g transform="translate(635, 185)">
@@ -178,81 +192,79 @@
               </svg>
               
               <!-- Inset Telemetry Overlays -->
-              <div class="absolute bottom-3 left-3 bg-surface-container-high/90 backdrop-blur border border-outline-variant/60 px-3 py-1.5 rounded">
-                <span class="font-mono text-[9px] text-secondary tracking-widest uppercase block">ZONE MAX FLEXURE</span>
-                <span class="font-mono text-xl font-bold text-error"><span id="zone-max-flexure">14.18</span><span class="text-xs text-on-surface-variant ml-1 font-normal">mm</span></span>
+              <div class="absolute bottom-3 left-3 bg-white/95 dark:bg-[#080c14]/90 backdrop-blur border border-slate-200 dark:border-white/20 px-3 py-1.5 rounded shadow-xs">
+                <span class="font-mono text-[9px] text-slate-500 dark:text-zinc-400 tracking-widest uppercase block font-semibold">ZONE MAX FLEXURE</span>
+                <span class="font-mono text-xl font-bold text-rose-600 dark:text-rose-400"><span>{{ vm.getZoneMaxFlexure() }}</span><span class="text-xs text-slate-500 dark:text-zinc-400 ml-1 font-normal">mm</span></span>
               </div>
-              <div class="absolute top-3 right-3 bg-surface-container-high/90 backdrop-blur border border-outline-variant/60 px-3 py-1.5 rounded text-right">
-                <span class="font-mono text-[9px] text-on-surface-variant uppercase tracking-wider block">SIMULATED CRITICAL VOID</span>
-                <span class="font-mono text-xs font-bold text-primary-container">142.6 m³ DELAMINATION</span>
+              <div class="absolute top-3 right-3 bg-white/95 dark:bg-[#080c14]/90 backdrop-blur border border-slate-200 dark:border-white/20 px-3 py-1.5 rounded text-right shadow-xs">
+                <span class="font-mono text-[9px] text-slate-500 dark:text-zinc-400 uppercase tracking-wider block font-semibold">SIMULATED CRITICAL VOID</span>
+                <span class="font-mono text-xs font-bold text-sky-700 dark:text-cyan-400">142.6 m³ DELAMINATION</span>
               </div>
             </div>
           </div>
 
           <!-- Bottom Metric Bar -->
-          <div class="grid grid-cols-3 gap-3 mt-4 pt-3 border-t border-outline-variant/40 font-mono">
-            <div class="bg-surface-container-lowest/60 p-2 rounded border border-outline-variant/30">
-              <span class="text-[10px] text-on-surface-variant uppercase block">FAULT DIP ANGLE</span>
-              <span class="text-sm font-bold text-primary">64.3° SW</span>
+          <div class="grid grid-cols-3 gap-3 mt-4 pt-3 border-t border-slate-200 dark:border-white/10 font-['JetBrains_Mono']">
+            <div class="bg-slate-50 dark:bg-[#05080c] p-2.5 rounded border border-slate-200 dark:border-white/10">
+              <span class="text-[10px] text-slate-500 dark:text-zinc-400 uppercase block font-semibold">FAULT DIP ANGLE</span>
+              <span class="text-sm font-bold text-sky-700 dark:text-cyan-400">64.3° SW</span>
             </div>
-            <div class="bg-surface-container-lowest/60 p-2 rounded border border-outline-variant/30">
-              <span class="text-[10px] text-on-surface-variant uppercase block">PORE WATER PRESS.</span>
-              <span class="text-sm font-bold text-secondary">2.41 MPa <span class="text-xs text-error font-normal">(+18%)</span></span>
+            <div class="bg-slate-50 dark:bg-[#05080c] p-2.5 rounded border border-slate-200 dark:border-white/10">
+              <span class="text-[10px] text-slate-500 dark:text-zinc-400 uppercase block font-semibold">PORE WATER PRESS.</span>
+              <span class="text-sm font-bold text-amber-700 dark:text-amber-400">2.41 MPa <span class="text-xs text-rose-600 dark:text-rose-400 font-normal">(+18%)</span></span>
             </div>
-            <div class="bg-surface-container-lowest/60 p-2 rounded border border-outline-variant/30">
-              <span class="text-[10px] text-on-surface-variant uppercase block">ACOUSTIC EMISSION</span>
-              <span class="text-sm font-bold text-error">412 eV/s <span class="text-[10px] font-normal">[HIGH]</span></span>
+            <div class="bg-slate-50 dark:bg-[#05080c] p-2.5 rounded border border-slate-200 dark:border-white/10">
+              <span class="text-[10px] text-slate-500 dark:text-zinc-400 uppercase block font-semibold">ACOUSTIC EMISSION</span>
+              <span class="text-sm font-bold text-rose-600 dark:text-rose-400">412 eV/s <span class="text-[10px] font-normal">[HIGH]</span></span>
             </div>
           </div>
         </div>
 
         <!-- Right: LSTM Sequence Forecast Horizon (5 cols) -->
-        <div class="xl:col-span-5 bg-surface-container-low border border-outline-variant/50 rounded p-5 relative flex flex-col justify-between">
-          <span class="hud-bracket-tl">┌</span><span class="hud-bracket-tr">┐</span>
-          <span class="hud-bracket-bl">└</span><span class="hud-bracket-br">┘</span>
+        <div class="xl:col-span-5 bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md border border-slate-200 dark:border-white/20 rounded-xl p-5 relative flex flex-col justify-between shadow-sm">
           <div>
             <div class="flex items-center justify-between gap-2 mb-2">
               <div>
-                <span class="font-mono text-[10px] tracking-widest text-secondary uppercase font-bold block mb-0.5">LSTM SEQUENCE FORECAST HORIZON</span>
-                <h3 class="font-display text-base font-bold text-primary">Time-to-Failure (TTF) Trajectory</h3>
+                <span class="font-['JetBrains_Mono'] text-[10px] tracking-widest text-amber-700 dark:text-amber-400 uppercase font-bold block mb-0.5">LSTM SEQUENCE FORECAST HORIZON</span>
+                <h3 class="font-['Space_Grotesk'] text-base font-bold text-slate-900 dark:text-white">Time-to-Failure (TTF) Trajectory</h3>
               </div>
-              <span class="font-mono text-xs font-bold px-2 py-1 rounded bg-error/20 border border-error/40 text-error uppercase">
+              <span class="font-['JetBrains_Mono'] text-xs font-bold px-2 py-1 rounded bg-rose-50 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 text-rose-700 dark:text-rose-400 uppercase">
                 T-MINUS 04:31:12
               </span>
             </div>
-            <p class="text-xs text-on-surface-variant mb-3 leading-relaxed">
+            <p class="text-xs text-slate-600 dark:text-zinc-400 mb-3 leading-relaxed font-sans">
               Historical 24h MPU6050 displacement vector + projected 12h subsidence trajectory with 95% Bayesian confidence intervals.
             </p>
 
             <!-- Trajectory Graph SVG -->
-            <div class="relative w-full h-56 bg-surface-container-lowest rounded border border-outline-variant/40 p-2">
+            <div class="relative w-full h-56 bg-slate-50 dark:bg-[#05080c] rounded-lg border border-slate-200 dark:border-white/10 p-2">
               <svg class="w-full h-full" fill="none" viewbox="0 0 460 200" xmlns="http://www.w3.org/2000/svg">
-                <line stroke="#2a3642" stroke-dasharray="2 2" stroke-width="0.8" x1="45" x2="445" y1="25" y2="25"></line>
-                <line stroke="#2a3642" stroke-dasharray="2 2" stroke-width="0.8" x1="45" x2="445" y1="65" y2="65"></line>
-                <line stroke="#2a3642" stroke-dasharray="2 2" stroke-width="0.8" x1="45" x2="445" y1="105" y2="105"></line>
-                <line stroke="#2a3642" stroke-width="1" x1="45" x2="445" y1="145" y2="145"></line>
+                <line stroke="#e2e8f0" stroke-dasharray="2 2" stroke-width="0.8" x1="45" x2="445" y1="25" y2="25"></line>
+                <line stroke="#e2e8f0" stroke-dasharray="2 2" stroke-width="0.8" x1="45" x2="445" y1="65" y2="65"></line>
+                <line stroke="#e2e8f0" stroke-dasharray="2 2" stroke-width="0.8" x1="45" x2="445" y1="105" y2="105"></line>
+                <line stroke="#cbd5e1" stroke-width="1" x1="45" x2="445" y1="145" y2="145"></line>
                 
-                <line stroke="#ff4d6d" stroke-dasharray="4 3" stroke-width="1.5" x1="45" x2="445" y1="40" y2="40"></line>
-                <text class="font-mono text-[8.5px] font-bold" fill="#ff4d6d" x="50" y="34">CRITICAL COLLAPSE BOUNDARY (15.00mm DGMS LIMIT)</text>
+                <line stroke="#be123c" stroke-dasharray="4 3" stroke-width="1.5" x1="45" x2="445" y1="40" y2="40"></line>
+                <text class="font-mono text-[8.5px] font-bold" fill="#be123c" x="50" y="34">CRITICAL COLLAPSE BOUNDARY (15.00mm DGMS LIMIT)</text>
                 
-                <line stroke="#00f2fe" stroke-dasharray="3 2" stroke-width="1.2" x1="260" x2="260" y1="15" y2="155"></line>
-                <text class="font-mono text-[8px] font-bold" fill="#00f2fe" x="264" y="152">T=0 (NOW)</text>
+                <line stroke="#0284c7" stroke-dasharray="3 2" stroke-width="1.2" x1="260" x2="260" y1="15" y2="155"></line>
+                <text class="font-mono text-[8px] font-bold" fill="#0284c7" x="264" y="152">T=0 (NOW)</text>
                 
-                <polygon fill="#00f2fe" fill-opacity="0.08" points="260,105 440,20 440,65 260,105"></polygon>
-                <path d="M 45,142 Q 130,140 180,132 T 260,105" fill="none" stroke="#00f2fe" stroke-width="2.5"></path>
-                <path d="M 260,105 Q 330,80 375,40 T 440,26" fill="none" stroke="#ff4d6d" stroke-dasharray="4 2" stroke-width="2.5"></path>
+                <polygon fill="#0284c7" fill-opacity="0.08" points="260,105 440,20 440,65 260,105"></polygon>
+                <path d="M 45,142 Q 130,140 180,132 T 260,105" fill="none" stroke="#0284c7" stroke-width="2.5"></path>
+                <path d="M 260,105 Q 330,80 375,40 T 440,26" fill="none" stroke="#be123c" stroke-dasharray="4 2" stroke-width="2.5"></path>
                 
-                <g class="font-mono text-[8.5px]" fill="#64748b">
-                  <text fill="#ff4d6d" x="12" y="43">15mm</text>
+                <g class="font-mono text-[8.5px]" fill="#475569">
+                  <text fill="#be123c" font-weight="bold" x="12" y="43">15mm</text>
                   <text x="12" y="68">10mm</text>
                   <text x="12" y="108">5mm</text>
                   <text x="12" y="148">0mm</text>
                 </g>
-                <g class="font-mono text-[8px]" fill="#64748b">
+                <g class="font-mono text-[8px]" fill="#475569">
                   <text x="45" y="165">-24H</text>
                   <text x="145" y="165">-12H</text>
-                  <text fill="#00f2fe" x="248" y="165">00:00 (LIVE)</text>
-                  <text fill="#ff4d6d" font-weight="bold" x="352" y="165">+4.5H TTF</text>
+                  <text fill="#0284c7" font-weight="bold" x="248" y="165">00:00 (LIVE)</text>
+                  <text fill="#be123c" font-weight="bold" x="352" y="165">+4.5H TTF</text>
                   <text x="420" y="165">+12H</text>
                 </g>
               </svg>
@@ -260,168 +272,231 @@
           </div>
 
           <!-- Bottom Trajectory Metrics -->
-          <div class="grid grid-cols-2 gap-3 mt-4 pt-3 border-t border-outline-variant/40 font-mono">
-            <div class="bg-surface-container-lowest/60 p-2.5 rounded border border-outline-variant/30 flex flex-col justify-between">
-              <span class="text-[10px] text-on-surface-variant uppercase">CURRENT ACCELERATION</span>
-              <span class="text-xl font-bold text-error my-1">+0.38 <span class="text-xs text-on-surface-variant font-normal">mm/h²</span></span>
-              <span class="text-[10px] text-secondary">Exponential tertiary creep</span>
+          <div class="grid grid-cols-2 gap-3 mt-4 pt-3 border-t border-slate-200 dark:border-white/10 font-['JetBrains_Mono']">
+            <div class="bg-slate-50 dark:bg-[#05080c] p-2.5 rounded border border-slate-200 dark:border-white/10 flex flex-col justify-between">
+              <span class="text-[10px] text-slate-500 dark:text-zinc-400 uppercase font-semibold">CURRENT ACCELERATION</span>
+              <span class="text-xl font-bold text-rose-600 dark:text-rose-400 my-1">+0.38 <span class="text-xs text-slate-500 dark:text-zinc-400 font-normal">mm/h²</span></span>
+              <span class="text-[10px] text-amber-700 dark:text-amber-400 font-bold">Exponential tertiary creep</span>
             </div>
-            <div class="bg-surface-container-lowest/60 p-2.5 rounded border border-outline-variant/30 flex flex-col justify-between">
-              <span class="text-[10px] text-on-surface-variant uppercase">INTERCEPT PREDICTION</span>
-              <span class="text-xl font-bold text-primary-container my-1">04h 28m</span>
-              <span class="text-[10px] text-on-surface-variant">Until 15mm limit reached</span>
+            <div class="bg-slate-50 dark:bg-[#05080c] p-2.5 rounded border border-slate-200 dark:border-white/10 flex flex-col justify-between">
+              <span class="text-[10px] text-slate-500 dark:text-zinc-400 uppercase font-semibold">INTERCEPT PREDICTION</span>
+              <span class="text-xl font-bold text-sky-700 dark:text-cyan-400 my-1">04h 28m</span>
+              <span class="text-[10px] text-slate-500 dark:text-zinc-400">Until 15mm limit reached</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- MIDDLE SECTION: 2-COL BENTO GRID (TreeSHAP & Spatial Co-Variance) -->
+      <!-- 5. INTERACTIVE XAI "WHAT-IF" COUNTERFACTUAL STRESS SIMULATOR -->
+      <div class="bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md border border-sky-200 dark:border-cyan-500/40 p-5 rounded-xl space-y-4 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-white/10 pb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded bg-sky-50 dark:bg-cyan-500/10 border border-sky-200 dark:border-cyan-500/40 flex items-center justify-center">
+              <span class="material-symbols-outlined text-sky-600 dark:text-cyan-400 text-[18px]">tune</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-['JetBrains_Mono'] text-xs text-sky-700 dark:text-cyan-400 font-bold uppercase tracking-wider">XAI WHAT-IF COUNTERFACTUAL STRESS SIMULATOR</span>
+                <span class="px-2 py-0.5 bg-sky-50 dark:bg-cyan-500/20 text-sky-700 dark:text-cyan-300 text-[9px] font-['JetBrains_Mono'] font-bold rounded border border-sky-200 dark:border-cyan-500/30">INTERACTIVE TWIN</span>
+              </div>
+              <span class="text-slate-500 dark:text-zinc-400 text-[11px] font-['JetBrains_Mono'] block">Real-time simulation of geotechnical mitigations on TreeSHAP risk &amp; strata TTF</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 font-['JetBrains_Mono'] text-xs">
+            <div class="px-3 py-1.5 rounded bg-slate-50 dark:bg-[#05080c] border border-slate-200 dark:border-white/15 flex items-center gap-2">
+              <span class="text-slate-500 dark:text-zinc-400 text-[10px] uppercase font-semibold">SIMULATED RISK:</span>
+              <span class="font-bold text-sm" ng-class="vm.getSimulatedRisk() > 50 ? 'text-rose-600 dark:text-rose-400' : (vm.getSimulatedRisk() > 25 ? 'text-amber-700 dark:text-amber-400' : 'text-sky-700 dark:text-cyan-400')">{{ vm.getSimulatedRisk() }}%</span>
+            </div>
+            <div class="px-3 py-1.5 rounded bg-slate-50 dark:bg-[#05080c] border border-slate-200 dark:border-white/15 flex items-center gap-2">
+              <span class="text-slate-500 dark:text-zinc-400 text-[10px] uppercase font-semibold">PROJECTED TTF:</span>
+              <span class="text-sky-700 dark:text-cyan-400 font-bold text-sm">+{{ vm.getSimulatedTTF() }}H</span>
+            </div>
+            <button ng-click="vm.resetWhatIf()" class="px-3 py-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-white text-xs font-bold uppercase transition active:scale-95 cursor-pointer border border-slate-300 dark:border-white/20">Reset</button>
+          </div>
+        </div>
+
+        <!-- Sliders Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-['JetBrains_Mono'] text-xs">
+          <!-- Slider 1: Hydraulic Props -->
+          <div class="bg-slate-50 dark:bg-[#05080c] p-3.5 rounded-lg border border-slate-200 dark:border-white/10 flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-800 dark:text-zinc-300 text-xs font-bold flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px] text-sky-600 dark:text-cyan-400">compress</span> Hydraulic Chock Pre-load
+              </span>
+              <span class="text-sky-700 dark:text-cyan-400 font-bold text-sm">+{{ vm.whatIf.propReinforce }}%</span>
+            </div>
+            <input type="range" min="0" max="100" step="5" ng-model="vm.whatIf.propReinforce" class="w-full accent-sky-600 dark:accent-cyan-400 cursor-pointer h-2 bg-slate-200 dark:bg-neutral-900 rounded" />
+            <span class="text-[10px] text-slate-500 dark:text-zinc-500">Increases canopy resistance across Drift 12</span>
+          </div>
+
+          <!-- Slider 2: Sump Dewatering -->
+          <div class="bg-slate-50 dark:bg-[#05080c] p-3.5 rounded-lg border border-slate-200 dark:border-white/10 flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-800 dark:text-zinc-300 text-xs font-bold flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px] text-amber-600 dark:text-amber-400">water_drop</span> Sump Dewatering Relief
+              </span>
+              <span class="text-amber-700 dark:text-amber-400 font-bold text-sm">+{{ vm.whatIf.poreRelief }}%</span>
+            </div>
+            <input type="range" min="0" max="100" step="5" ng-model="vm.whatIf.poreRelief" class="w-full accent-amber-600 dark:accent-amber-400 cursor-pointer h-2 bg-slate-200 dark:bg-neutral-900 rounded" />
+            <span class="text-[10px] text-slate-500 dark:text-zinc-500">Drops hydrostatic pore pressure at Seam V contact</span>
+          </div>
+
+          <!-- Slider 3: Gas Drainage -->
+          <div class="bg-slate-50 dark:bg-[#05080c] p-3.5 rounded-lg border border-slate-200 dark:border-white/10 flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-800 dark:text-zinc-300 text-xs font-bold flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px] text-emerald-600 dark:text-emerald-400">mode_fan</span> Methane Vent Drainage
+              </span>
+              <span class="text-emerald-700 dark:text-emerald-400 font-bold text-sm">+{{ vm.whatIf.gasDrain }}%</span>
+            </div>
+            <input type="range" min="0" max="100" step="5" ng-model="vm.whatIf.gasDrain" class="w-full accent-emerald-600 dark:accent-emerald-400 cursor-pointer h-2 bg-slate-200 dark:bg-neutral-900 rounded" />
+            <span class="text-[10px] text-slate-500 dark:text-zinc-500">Expels toxic CO/NH3 from goaf void delamination</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. MIDDLE SECTION: 2-COL BENTO GRID (TreeSHAP & Spatial Co-Variance) -->
       <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
         <!-- Left: Model Explainability Engine (6 cols) -->
-        <div class="xl:col-span-6 bg-surface-container-low border border-outline-variant/50 rounded p-5 relative flex flex-col justify-between">
-          <span class="hud-bracket-tl">┌</span><span class="hud-bracket-tr">┐</span>
-          <span class="hud-bracket-bl">└</span><span class="hud-bracket-br">┘</span>
+        <div class="xl:col-span-6 bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md border border-slate-200 dark:border-white/20 rounded-xl p-5 relative flex flex-col justify-between shadow-sm">
           <div>
             <div class="flex items-center justify-between gap-2 mb-2">
               <div>
-                <span class="font-mono text-[10px] tracking-widest text-primary-container uppercase font-bold block mb-0.5">MODEL EXPLAINABILITY ENGINE</span>
-                <h3 class="font-display text-base font-bold text-primary">Global Feature Attribution (TreeSHAP)</h3>
+                <span class="font-['JetBrains_Mono'] text-[10px] tracking-widest text-sky-700 dark:text-cyan-400 uppercase font-bold block mb-0.5">MODEL EXPLAINABILITY ENGINE</span>
+                <h3 class="font-['Space_Grotesk'] text-base font-bold text-slate-900 dark:text-white">Global Feature Attribution (TreeSHAP)</h3>
               </div>
-              <span class="font-mono text-[10px] font-bold text-secondary uppercase bg-surface-container-highest px-2 py-1 rounded border border-secondary/30">
+              <span class="font-['JetBrains_Mono'] text-[10px] font-bold text-amber-800 dark:text-amber-400 uppercase bg-slate-100 dark:bg-neutral-900 px-2.5 py-1 rounded border border-slate-200 dark:border-amber-500/30">
                 BASE VALUE E[f(x)] = 0.14
               </span>
             </div>
-            <p class="text-xs text-on-surface-variant mb-4 leading-relaxed">
+            <p class="text-xs text-slate-600 dark:text-zinc-400 mb-4 leading-relaxed font-sans">
               Geotechnical physics constraints mapping sensor inputs to subsidence anomaly scores. Evaluates pre-rupture delamination.
             </p>
 
             <!-- Feature Attributions List -->
             <div class="space-y-3">
-              <div class="bg-surface-container-lowest/70 p-2.5 rounded border border-outline-variant/30">
-                <div class="flex items-center justify-between font-mono text-xs mb-1.5">
-                  <span class="text-primary font-bold flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[15px] text-error">screen_rotation</span>
+              <div class="bg-slate-50 dark:bg-[#05080c] p-3 rounded-lg border border-slate-200 dark:border-white/10">
+                <div class="flex items-center justify-between font-['JetBrains_Mono'] text-xs mb-1.5">
+                  <span class="text-slate-800 dark:text-white font-bold flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[15px] text-rose-600 dark:text-rose-400">screen_rotation</span>
                     Tilt Angular Velocity (dθ/dt) [MPU6050]
                   </span>
-                  <span class="text-error font-bold">+38.4% ATTRIBUTION</span>
+                  <span class="text-rose-700 dark:text-rose-400 font-bold">+38.4% ATTRIBUTION</span>
                 </div>
-                <div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
-                  <div id="shap-1" class="bg-error h-full rounded-full transition-all duration-500" style="width: 38.4%"></div>
+                <div class="w-full bg-slate-200 dark:bg-neutral-800 h-2 rounded-full overflow-hidden">
+                  <div id="shap-1" class="bg-rose-600 dark:bg-rose-500 h-full rounded-full transition-all duration-500" ng-style="{ width: vm.getShap1Width() }"></div>
                 </div>
-                <div class="flex items-center justify-between text-on-surface-variant font-mono text-[10px] mt-1.5">
-                  <span>Value: 3.12 deg/h (Z-score +3.4σ)</span>
-                  <span class="text-secondary">Physical: Tensile shear micro-fracture of pillar roof</span>
+                <div class="flex items-center justify-between text-slate-600 dark:text-zinc-400 font-['JetBrains_Mono'] text-[10px] mt-1.5">
+                  <span>Value: {{ vm.telemetry.pitch | number:2 }} deg/h (Z-score +3.4σ)</span>
+                  <span class="text-amber-700 dark:text-amber-400 font-semibold">Physical: Tensile shear micro-fracture of pillar roof</span>
                 </div>
               </div>
 
-              <div class="bg-surface-container-lowest/70 p-2.5 rounded border border-outline-variant/30">
-                <div class="flex items-center justify-between font-mono text-xs mb-1.5">
-                  <span class="text-primary font-bold flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[15px] text-error">vibration</span>
+              <div class="bg-slate-50 dark:bg-[#05080c] p-3 rounded-lg border border-slate-200 dark:border-white/10">
+                <div class="flex items-center justify-between font-['JetBrains_Mono'] text-xs mb-1.5">
+                  <span class="text-slate-800 dark:text-white font-bold flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[15px] text-rose-600 dark:text-rose-400">vibration</span>
                     HF Vibration Variance (RMS Accel) [MPU6050]
                   </span>
-                  <span class="text-error font-bold">+27.1% ATTRIBUTION</span>
+                  <span class="text-rose-700 dark:text-rose-400 font-bold">+27.1% ATTRIBUTION</span>
                 </div>
-                <div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
-                  <div id="shap-2" class="bg-error h-full rounded-full transition-all duration-500" style="width: 27.1%"></div>
+                <div class="w-full bg-slate-200 dark:bg-neutral-800 h-2 rounded-full overflow-hidden">
+                  <div id="shap-2" class="bg-rose-600 dark:bg-rose-500 h-full rounded-full transition-all duration-500" ng-style="{ width: vm.getShap2Width() }"></div>
                 </div>
-                <div class="flex items-center justify-between text-on-surface-variant font-mono text-[10px] mt-1.5">
-                  <span>Value: 1.84 g RMS (Normal &lt;0.22g)</span>
-                  <span class="text-secondary">Physical: Micro-seismic strata crack propagation</span>
+                <div class="flex items-center justify-between text-slate-600 dark:text-zinc-400 font-['JetBrains_Mono'] text-[10px] mt-1.5">
+                  <span>Value: {{ vm.telemetry.rms | number:3 }} g RMS (Normal &lt;0.22g)</span>
+                  <span class="text-amber-700 dark:text-amber-400 font-semibold">Physical: Micro-seismic strata crack propagation</span>
                 </div>
               </div>
 
-              <div class="bg-surface-container-lowest/70 p-2.5 rounded border border-outline-variant/30">
-                <div class="flex items-center justify-between font-mono text-xs mb-1.5">
-                  <span class="text-primary font-bold flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[15px] text-secondary">water_drop</span>
+              <div class="bg-slate-50 dark:bg-[#05080c] p-3 rounded-lg border border-slate-200 dark:border-white/10">
+                <div class="flex items-center justify-between font-['JetBrains_Mono'] text-xs mb-1.5">
+                  <span class="text-slate-800 dark:text-white font-bold flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[15px] text-amber-600 dark:text-amber-400">water_drop</span>
                     Submersible Sump Water Level [REL_35]
                   </span>
-                  <span class="text-secondary font-bold">+14.8% ATTRIBUTION</span>
+                  <span class="text-amber-700 dark:text-amber-400 font-bold">+14.8% ATTRIBUTION</span>
                 </div>
-                <div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
-                  <div id="shap-3" class="bg-secondary-container h-full rounded-full transition-all duration-500" style="width: 14.8%"></div>
+                <div class="w-full bg-slate-200 dark:bg-neutral-800 h-2 rounded-full overflow-hidden">
+                  <div id="shap-3" class="bg-amber-500 h-full rounded-full transition-all duration-500" ng-style="{ width: vm.getShap3Width() }"></div>
                 </div>
-                <div class="flex items-center justify-between text-on-surface-variant font-mono text-[10px] mt-1.5">
+                <div class="flex items-center justify-between text-slate-600 dark:text-zinc-400 font-['JetBrains_Mono'] text-[10px] mt-1.5">
                   <span>Value: +4.2 cm/hr rise in Shaft 12 sump</span>
-                  <span>Physical: Water table breaching roof strata plane</span>
+                  <span class="text-slate-600 dark:text-zinc-300">Physical: Water table breaching roof strata plane</span>
                 </div>
               </div>
 
-              <div class="bg-surface-container-lowest/70 p-2.5 rounded border border-outline-variant/30">
-                <div class="flex items-center justify-between font-mono text-xs mb-1.5">
-                  <span class="text-primary font-bold flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[15px] text-secondary">cloud_done</span>
+              <div class="bg-slate-50 dark:bg-[#05080c] p-3 rounded-lg border border-slate-200 dark:border-white/10">
+                <div class="flex items-center justify-between font-['JetBrains_Mono'] text-xs mb-1.5">
+                  <span class="text-slate-800 dark:text-white font-bold flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[15px] text-emerald-600 dark:text-emerald-400">cloud_done</span>
                     MQ135 CO/CH4 Desorption Flexure Proxy
                   </span>
-                  <span class="text-secondary font-bold">+11.2% ATTRIBUTION</span>
+                  <span class="text-emerald-700 dark:text-emerald-400 font-bold">+11.2% ATTRIBUTION</span>
                 </div>
-                <div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
-                  <div class="bg-secondary-container h-full rounded-full" style="width: 11.2%"></div>
+                <div class="w-full bg-slate-200 dark:bg-neutral-800 h-2 rounded-full overflow-hidden">
+                  <div class="bg-emerald-600 dark:bg-emerald-500 h-full rounded-full" style="width: 11.2%"></div>
                 </div>
-                <div class="flex items-center justify-between text-on-surface-variant font-mono text-[10px] mt-1.5">
+                <div class="flex items-center justify-between text-slate-600 dark:text-zinc-400 font-['JetBrains_Mono'] text-[10px] mt-1.5">
                   <span>Value: 382 PPM (+65 PPM surge)</span>
-                  <span>Physical: Coal matrix crushing gas extrusion</span>
+                  <span class="text-slate-600 dark:text-zinc-300">Physical: Coal matrix crushing gas extrusion</span>
                 </div>
               </div>
 
-              <div class="bg-surface-container-lowest/70 p-2.5 rounded border border-outline-variant/30">
-                <div class="flex items-center justify-between font-mono text-xs mb-1.5">
-                  <span class="text-primary font-bold flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[15px] text-primary-container">near_me</span>
+              <div class="bg-slate-50 dark:bg-[#05080c] p-3 rounded-lg border border-slate-200 dark:border-white/10">
+                <div class="flex items-center justify-between font-['JetBrains_Mono'] text-xs mb-1.5">
+                  <span class="text-slate-800 dark:text-white font-bold flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[15px] text-sky-600 dark:text-cyan-400">near_me</span>
                     Differential GNSS Vector Drift [NEO-6M]
                   </span>
-                  <span class="text-primary-container font-bold">+8.5% ATTRIBUTION</span>
+                  <span class="text-sky-700 dark:text-cyan-400 font-bold">+8.5% ATTRIBUTION</span>
                 </div>
-                <div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
-                  <div class="bg-primary-container h-full rounded-full" style="width: 8.5%"></div>
+                <div class="w-full bg-slate-200 dark:bg-neutral-800 h-2 rounded-full overflow-hidden">
+                  <div class="bg-sky-600 dark:bg-cyan-500 h-full rounded-full" style="width: 8.5%"></div>
                 </div>
-                <div class="flex items-center justify-between text-on-surface-variant font-mono text-[10px] mt-1.5">
+                <div class="flex items-center justify-between text-slate-600 dark:text-zinc-400 font-['JetBrains_Mono'] text-[10px] mt-1.5">
                   <span>Value: ΔZ -14.2mm lateral slope</span>
-                  <span>Physical: Surface manifest of deep gallery sag</span>
+                  <span class="text-slate-600 dark:text-zinc-300">Physical: Surface manifest of deep gallery sag</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="mt-4 p-3 bg-surface-container-lowest/80 border border-primary-container/40 rounded flex flex-col gap-2 relative overflow-hidden shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-            <div class="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-primary-container to-transparent opacity-50"></div>
+          <div class="mt-4 p-3.5 bg-sky-50/70 dark:bg-[#05080c] border border-sky-200 dark:border-cyan-500/30 rounded-lg flex flex-col gap-2 relative overflow-hidden shadow-xs">
             <div class="flex items-center gap-2 mb-1">
-              <span class="material-symbols-outlined text-primary-container text-[16px] animate-pulse">smart_toy</span>
-              <span class="font-mono text-[10px] text-primary-container uppercase tracking-widest font-bold">AI GEOTECHNICAL ANALYST [LIVE]</span>
+              <span class="material-symbols-outlined text-sky-600 dark:text-cyan-400 text-[16px] animate-pulse">smart_toy</span>
+              <span class="font-['JetBrains_Mono'] text-[10px] text-sky-800 dark:text-cyan-400 uppercase tracking-widest font-bold">AI GEOTECHNICAL ANALYST [LIVE INSIGHT]</span>
             </div>
-            <div class="h-[3.5rem] flex items-start">
-              <span id="ai-insight-text" class="text-xs text-on-surface font-mono leading-relaxed">
-                Initializing AI analysis stream...
+            <div class="min-h-[2.8rem] flex items-start">
+              <span class="text-xs text-slate-800 dark:text-zinc-200 font-['JetBrains_Mono'] leading-relaxed font-medium">
+                {{ vm.aiInsightDisplay }}
               </span>
-              <span id="ai-cursor" class="inline-block w-1.5 h-3 bg-primary-container ml-0.5 animate-pulse"></span>
+              <span class="inline-block w-1.5 h-3.5 bg-sky-600 dark:bg-cyan-400 ml-1 animate-pulse"></span>
             </div>
           </div>
         </div>
 
         <!-- Right: Spatial Telemetry Co-Variance (6 cols) -->
-        <div class="xl:col-span-6 bg-surface-container-low border border-outline-variant/50 rounded p-5 relative flex flex-col justify-between">
-          <span class="hud-bracket-tl">┌</span><span class="hud-bracket-tr">┐</span>
-          <span class="hud-bracket-bl">└</span><span class="hud-bracket-br">┘</span>
+        <div class="xl:col-span-6 bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md border border-slate-200 dark:border-white/20 rounded-xl p-5 relative flex flex-col justify-between shadow-sm">
           <div>
             <div class="flex items-center justify-between gap-2 mb-2">
               <div>
-                <span class="font-mono text-[10px] tracking-widest text-secondary uppercase font-bold block mb-0.5">SPATIAL TELEMETRY CO-VARIANCE</span>
-                <h3 class="font-display text-base font-bold text-primary">Cross-Node Anomaly Correlation Heatmap</h3>
+                <span class="font-['JetBrains_Mono'] text-[10px] tracking-widest text-amber-700 dark:text-amber-400 uppercase font-bold block mb-0.5">SPATIAL TELEMETRY CO-VARIANCE</span>
+                <h3 class="font-['Space_Grotesk'] text-base font-bold text-slate-900 dark:text-white">Cross-Node Anomaly Correlation Heatmap</h3>
               </div>
-              <span class="font-mono text-[10px] font-bold text-primary uppercase bg-surface-container-highest px-2 py-1 rounded border border-outline-variant/60">
+              <span class="font-['JetBrains_Mono'] text-[10px] font-bold text-sky-700 dark:text-cyan-400 uppercase bg-slate-100 dark:bg-neutral-900 px-2.5 py-1 rounded border border-slate-200 dark:border-white/20">
                 5 NODES DEPLOYED
               </span>
             </div>
-            <p class="text-xs text-on-surface-variant mb-4 leading-relaxed">
+            <p class="text-xs text-slate-600 dark:text-zinc-400 mb-4 leading-relaxed font-sans">
               Matrix compares inter-node stress propagation. Isolates epicenter of deformation vs. mechanical load transfer zones.
             </p>
 
             <!-- Cross-Node Correlation Table -->
-            <div class="overflow-x-auto rounded border border-outline-variant/40">
-              <table class="w-full text-left font-mono text-xs">
+            <div class="overflow-x-auto rounded-lg border border-slate-200 dark:border-white/10">
+              <table class="w-full text-left font-['JetBrains_Mono'] text-xs">
                 <thead>
-                  <tr class="bg-surface-container-lowest/80 text-on-surface-variant text-[10px] uppercase border-b border-outline-variant/40">
+                  <tr class="bg-slate-100 dark:bg-[#05080c] text-slate-600 dark:text-zinc-400 text-[10px] uppercase border-b border-slate-200 dark:border-white/10">
                     <th class="py-2.5 px-3">Node ID</th>
                     <th class="py-2.5 px-3">Zone Location</th>
                     <th class="py-2.5 px-3 text-center">Anomaly Score</th>
@@ -429,372 +504,248 @@
                     <th class="py-2.5 px-3 text-right">Stress Coupling</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-outline-variant/30">
-                  <tr class="hover:bg-surface-container/50">
-                    <td class="py-2.5 px-3 font-bold text-primary">NODE-01</td>
-                    <td class="py-2.5 px-3 text-on-surface font-sans">Gallery Head Sec-4A</td>
-                    <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-bold">0.12</span></td>
-                    <td class="py-2.5 px-3"><span class="inline-flex items-center gap-1.5 text-primary text-[11px]"><span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span> STABLE</span></td>
-                    <td class="py-2.5 px-3 text-right text-on-surface-variant text-[11px]">0.18 (Normal)</td>
+                <tbody class="divide-y divide-slate-200 dark:divide-white/5">
+                  <tr class="hover:bg-slate-50 dark:hover:bg-neutral-800/40">
+                    <td class="py-2.5 px-3 font-bold text-sky-700 dark:text-cyan-400">NODE-01</td>
+                    <td class="py-2.5 px-3 text-slate-800 dark:text-zinc-200 font-sans font-medium">Gallery Head Sec-4A</td>
+                    <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-neutral-800 text-sky-800 dark:text-cyan-400 font-bold border border-slate-200 dark:border-cyan-500/20">0.12</span></td>
+                    <td class="py-2.5 px-3"><span class="inline-flex items-center gap-1.5 text-sky-700 dark:text-cyan-400 text-[11px] font-bold"><span class="w-1.5 h-1.5 rounded-full bg-sky-600 dark:bg-cyan-400"></span> STABLE</span></td>
+                    <td class="py-2.5 px-3 text-right text-slate-500 dark:text-zinc-400 text-[11px]">0.18 (Normal)</td>
                   </tr>
-                  <tr class="hover:bg-secondary/5">
-                    <td class="py-2.5 px-3 font-bold text-secondary">NODE-02</td>
-                    <td class="py-2.5 px-3 text-on-surface font-sans">Drift-12 Rib Pillar</td>
-                    <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded bg-secondary/20 text-secondary font-bold">0.62</span></td>
-                    <td class="py-2.5 px-3"><span class="inline-flex items-center gap-1.5 text-secondary text-[11px]"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span> LOAD TRANSFER</span></td>
-                    <td class="py-2.5 px-3 text-right text-secondary font-bold text-[11px]">0.78 → N-03</td>
+                  <tr class="hover:bg-amber-50/50 dark:hover:bg-amber-950/20">
+                    <td class="py-2.5 px-3 font-bold text-amber-700 dark:text-amber-400">NODE-02</td>
+                    <td class="py-2.5 px-3 text-slate-800 dark:text-zinc-200 font-sans font-medium">Drift-12 Rib Pillar</td>
+                    <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 font-bold border border-amber-200 dark:border-amber-500/30">0.62</span></td>
+                    <td class="py-2.5 px-3"><span class="inline-flex items-center gap-1.5 text-amber-700 dark:text-amber-300 text-[11px] font-bold"><span class="w-1.5 h-1.5 rounded-full bg-amber-600 dark:bg-amber-400 animate-pulse"></span> LOAD TRANSFER</span></td>
+                    <td class="py-2.5 px-3 text-right text-amber-700 dark:text-amber-400 font-bold text-[11px]">0.78 → N-03</td>
                   </tr>
-                  <tr class="bg-error-container/20 hover:bg-error-container/30">
-                    <td class="py-2.5 px-3 font-bold text-error">NODE-03</td>
-                    <td class="py-2.5 px-3 text-on-surface font-sans font-bold">Pillar 4B Chamber (Shaft 12)</td>
-                    <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded bg-error/30 text-error font-bold">0.89</span></td>
-                    <td class="py-2.5 px-3"><span class="inline-flex items-center gap-1.5 text-error font-bold text-[11px]"><span class="w-2 h-2 rounded-full bg-error animate-ping"></span> CRITICAL ANOMALY</span></td>
-                    <td class="py-2.5 px-3 text-right text-error font-bold text-[11px]">EPICENTER</td>
+                  <tr class="bg-rose-50/60 dark:bg-rose-950/20 hover:bg-rose-50 dark:hover:bg-rose-950/30">
+                    <td class="py-2.5 px-3 font-bold text-rose-700 dark:text-rose-400">NODE-03</td>
+                    <td class="py-2.5 px-3 text-rose-950 dark:text-white font-sans font-bold">Pillar 4B Chamber (Shaft 12)</td>
+                    <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-500/30 text-rose-800 dark:text-rose-300 font-bold border border-rose-300 dark:border-rose-500/40">0.89</span></td>
+                    <td class="py-2.5 px-3"><span class="inline-flex items-center gap-1.5 text-rose-700 dark:text-rose-400 font-bold text-[11px]"><span class="w-2 h-2 rounded-full bg-rose-600 dark:bg-rose-500 animate-ping"></span> CRITICAL ANOMALY</span></td>
+                    <td class="py-2.5 px-3 text-right text-rose-700 dark:text-rose-400 font-bold text-[11px]">EPICENTER</td>
                   </tr>
-                  <tr class="hover:bg-surface-container/50">
-                    <td class="py-2.5 px-3 font-bold text-primary">NODE-04</td>
-                    <td class="py-2.5 px-3 text-on-surface font-sans">Surface Benchmark Bench 3</td>
-                    <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-bold">0.08</span></td>
-                    <td class="py-2.5 px-3"><span class="inline-flex items-center gap-1.5 text-primary text-[11px]"><span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span> STABLE</span></td>
-                    <td class="py-2.5 px-3 text-right text-on-surface-variant text-[11px]">0.05 (Rigid)</td>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-neutral-800/40">
+                    <td class="py-2.5 px-3 font-bold text-sky-700 dark:text-cyan-400">NODE-04</td>
+                    <td class="py-2.5 px-3 text-slate-800 dark:text-zinc-200 font-sans font-medium">Surface Benchmark Bench 3</td>
+                    <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-neutral-800 text-sky-800 dark:text-cyan-400 font-bold border border-slate-200 dark:border-cyan-500/20">0.08</span></td>
+                    <td class="py-2.5 px-3"><span class="inline-flex items-center gap-1.5 text-sky-700 dark:text-cyan-400 text-[11px] font-bold"><span class="w-1.5 h-1.5 rounded-full bg-sky-600 dark:bg-cyan-400"></span> STABLE</span></td>
+                    <td class="py-2.5 px-3 text-right text-slate-500 dark:text-zinc-400 text-[11px]">0.05 (Rigid)</td>
                   </tr>
-                  <tr class="opacity-50 bg-surface-container-lowest/40">
-                    <td class="py-2.5 px-3 font-bold text-outline">NODE-05</td>
-                    <td class="py-2.5 px-3 text-on-surface-variant font-sans">Sub-Drainage Crosscut 9</td>
-                    <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded bg-surface-container-high text-outline">--</span></td>
-                    <td class="py-2.5 px-3"><span class="inline-flex items-center gap-1.5 text-outline text-[11px]"><span class="w-1.5 h-1.5 rounded-full bg-outline"></span> PACKET TIMEOUT</span></td>
-                    <td class="py-2.5 px-3 text-right text-outline text-[11px]">UNREACHABLE</td>
+                  <tr class="opacity-60 bg-slate-50 dark:bg-[#05080c]">
+                    <td class="py-2.5 px-3 font-bold text-slate-500 dark:text-zinc-500">NODE-05</td>
+                    <td class="py-2.5 px-3 text-slate-500 dark:text-zinc-500 font-sans">Sub-Drainage Crosscut 9</td>
+                    <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded bg-slate-200 dark:bg-neutral-800 text-slate-600 dark:text-zinc-500">--</span></td>
+                    <td class="py-2.5 px-3"><span class="inline-flex items-center gap-1.5 text-slate-500 dark:text-zinc-500 text-[11px]"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-zinc-600"></span> PACKET TIMEOUT</span></td>
+                    <td class="py-2.5 px-3 text-right text-slate-500 dark:text-zinc-500 text-[11px]">UNREACHABLE</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
             <!-- Strata Mechanical Coupling Vector Flow -->
-            <div class="mt-4 p-3 bg-surface-container-lowest/60 border border-outline-variant/40 rounded">
-              <div class="flex items-center justify-between font-mono text-[10px] text-on-surface-variant mb-2">
-                <span>STRATA MECHANICAL COUPLING VECTOR</span>
-                <span class="text-primary-container font-bold">r = 0.84 (Pillar 4B • Rib Pillar 12)</span>
+            <div class="mt-4 p-3 bg-slate-50 dark:bg-[#05080c] border border-slate-200 dark:border-white/10 rounded-lg">
+              <div class="flex items-center justify-between font-['JetBrains_Mono'] text-[10px] text-slate-600 dark:text-zinc-400 mb-2">
+                <span class="font-bold">STRATA MECHANICAL COUPLING VECTOR</span>
+                <span class="text-sky-700 dark:text-cyan-400 font-bold">r = 0.84 (Pillar 4B • Rib Pillar 12)</span>
               </div>
-              <div class="flex items-center gap-2 text-center font-mono text-xs">
-                <div class="flex-1 py-1.5 bg-surface-container-high rounded border border-outline-variant/40 text-primary">
+              <div class="flex items-center gap-2 text-center font-['JetBrains_Mono'] text-xs">
+                <div class="flex-1 py-2 bg-white dark:bg-neutral-900 rounded border border-slate-200 dark:border-white/10 text-sky-700 dark:text-cyan-400 shadow-2xs">
                   <span class="block font-bold">NODE-01</span>
-                  <span class="text-on-surface-variant text-[9px]">Anchor</span>
+                  <span class="text-slate-500 dark:text-zinc-500 text-[9px]">Anchor</span>
                 </div>
-                <span class="text-outline-variant">→</span>
-                <div class="flex-1 py-1.5 bg-secondary-container/20 rounded border border-secondary/30 text-secondary">
+                <span class="text-slate-400 dark:text-zinc-600">→</span>
+                <div class="flex-1 py-2 bg-amber-50 dark:bg-amber-500/10 rounded border border-amber-200 dark:border-amber-500/30 text-amber-800 dark:text-amber-300 shadow-2xs">
                   <span class="block font-bold">NODE-02</span>
-                  <span class="text-[9px]">Absorbing Shear</span>
+                  <span class="text-slate-500 text-[9px]">Absorbing Shear</span>
                 </div>
-                <span class="text-error font-bold">⇒</span>
-                <div class="flex-1 py-1.5 bg-error-container/40 rounded border border-error/40 text-error">
+                <span class="text-rose-600 dark:text-rose-400 font-bold">⇒</span>
+                <div class="flex-1 py-2 bg-rose-100 dark:bg-rose-500/20 rounded border border-rose-300 dark:border-rose-500/40 text-rose-800 dark:text-rose-300 shadow-2xs">
                   <span class="block font-bold">NODE-03</span>
-                  <span class="text-[9px]">Delaminating</span>
+                  <span class="text-slate-600 text-[9px]">Delaminating</span>
                 </div>
-                <span class="text-outline-variant">→</span>
-                <div class="flex-1 py-1.5 bg-surface-container-high rounded border border-outline-variant/40 text-primary">
+                <span class="text-slate-400 dark:text-zinc-600">→</span>
+                <div class="flex-1 py-2 bg-white dark:bg-neutral-900 rounded border border-slate-200 dark:border-white/10 text-sky-700 dark:text-cyan-400 shadow-2xs">
                   <span class="block font-bold">NODE-04</span>
-                  <span class="text-on-surface-variant text-[9px]">Surface Datum</span>
+                  <span class="text-slate-500 dark:text-zinc-500 text-[9px]">Surface Datum</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="mt-4 pt-3 border-t border-outline-variant/40 flex items-center justify-between text-on-surface-variant font-mono text-xs">
+          <div class="mt-4 pt-3 border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-slate-500 dark:text-zinc-400 font-['JetBrains_Mono'] text-xs">
             <span>RF RSSI SX1278 BUS: -94 dBm avg</span>
-            <span class="text-primary font-semibold">NODE-03 RE-POLL: 12 SEC INTERVAL</span>
+            <span class="text-sky-700 dark:text-cyan-400 font-semibold">NODE-03 RE-POLL: 12 SEC INTERVAL</span>
           </div>
         </div>
       </div>
 
-      <!-- BOTTOM SECTION: DGMS Emergency Interlock & Action Priorities -->
-      <div class="bg-surface-container-low border border-outline-variant/50 rounded p-5 relative">
-        <span class="hud-bracket-tl">┌</span><span class="hud-bracket-tr">┐</span>
-        <span class="hud-bracket-bl">└</span><span class="hud-bracket-br">┘</span>
+      <!-- 7. BOTTOM SECTION: DGMS Emergency Interlock & Action Priorities -->
+      <div class="bg-white dark:bg-[#0b0f19]/90 backdrop-blur-md border border-slate-200 dark:border-white/20 rounded-xl p-5 relative shadow-sm">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-5">
           <div>
             <div class="flex flex-wrap items-center gap-2">
-              <span class="font-mono text-[10px] text-error uppercase font-bold tracking-widest px-2 py-0.5 bg-error-container/30 border border-error/40 rounded">
+              <span class="font-['JetBrains_Mono'] text-[10px] text-rose-700 dark:text-rose-400 uppercase font-bold tracking-widest px-2 py-0.5 bg-rose-50 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 rounded">
                 DGMS REGULATION 124 COMPLIANCE TRIGGER
               </span>
-              <span class="font-mono text-xs text-on-surface-variant">• AUTOMATED SAFETY INTERLOCK</span>
+              <span class="font-['JetBrains_Mono'] text-xs text-slate-500 dark:text-zinc-400 font-semibold">• AUTOMATED SAFETY INTERLOCK</span>
             </div>
-            <h2 class="font-display text-lg font-bold text-primary mt-1">Geotechnical Mitigation &amp; Emergency Dispatch Engine</h2>
+            <h2 class="font-['Space_Grotesk'] text-lg font-bold text-slate-900 dark:text-white mt-1">Geotechnical Mitigation &amp; Emergency Dispatch Engine</h2>
           </div>
           <div class="flex items-center gap-3">
-            <div class="bg-surface-container-lowest border border-outline-variant/40 px-3 py-1.5 rounded text-right font-mono">
-              <span class="text-[9px] text-on-surface-variant uppercase block">CIVIL DEFENSE COMS</span>
-              <span class="text-xs text-primary font-bold">READY (DHANBAD HQ)</span>
+            <div class="bg-slate-50 dark:bg-[#05080c] border border-slate-200 dark:border-white/10 px-3 py-1.5 rounded text-right font-['JetBrains_Mono']">
+              <span class="text-[9px] text-slate-500 dark:text-zinc-400 uppercase block font-semibold">CIVIL DEFENSE COMS</span>
+              <span class="text-xs text-sky-700 dark:text-cyan-400 font-bold">READY (DHANBAD HQ)</span>
             </div>
-            <div class="bg-surface-container-lowest border border-outline-variant/40 px-3 py-1.5 rounded text-right font-mono">
-              <span class="text-[9px] text-on-surface-variant uppercase block">FORM-IV GENERATOR</span>
-              <span class="text-xs text-primary-container font-bold">SERIALIZED #9928-DG</span>
+            <div class="bg-slate-50 dark:bg-[#05080c] border border-slate-200 dark:border-white/10 px-3 py-1.5 rounded text-right font-['JetBrains_Mono']">
+              <span class="text-[9px] text-slate-500 dark:text-zinc-400 uppercase block font-semibold">FORM-IV GENERATOR</span>
+              <span class="text-xs text-emerald-700 dark:text-emerald-400 font-bold">SERIALIZED #9928-DG</span>
             </div>
           </div>
         </div>
 
         <!-- 3 Action Priority Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
           <!-- Priority 1 -->
-          <div class="bg-surface-container-lowest border border-outline-variant/40 p-4 rounded flex flex-col justify-between">
+          <div class="bg-slate-50 dark:bg-[#05080c] border border-slate-200 dark:border-white/10 p-4 rounded-xl flex flex-col justify-between shadow-xs">
             <div>
               <div class="flex items-center justify-between mb-2">
-                <span class="px-2 py-0.5 bg-error/20 border border-error/40 text-error font-mono text-[10px] font-bold uppercase rounded">
+                <span class="px-2 py-0.5 bg-rose-50 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 text-rose-700 dark:text-rose-400 font-['JetBrains_Mono'] text-[10px] font-bold uppercase rounded">
                   ACTION PRIORITY 1
                 </span>
-                <span class="material-symbols-outlined text-error text-[20px]">warning</span>
+                <span class="material-symbols-outlined text-rose-600 dark:text-rose-400 text-[20px]">warning</span>
               </div>
-              <h4 class="font-display text-sm font-bold text-primary mb-1">Sector 4B Immediate Worker Withdrawal</h4>
-              <p class="text-xs text-on-surface-variant leading-relaxed">
+              <h4 class="font-['Space_Grotesk'] text-sm font-bold text-slate-900 dark:text-white mb-1">Sector 4B Immediate Worker Withdrawal</h4>
+              <p class="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed font-sans">
                 Initiate withdrawal of all underground mining personnel from Drift 12 through Incline 3. Estimated personnel in zone: 18 miners.
               </p>
             </div>
             <div class="mt-4">
-              <button class="w-full py-2 bg-error/20 hover:bg-error hover:text-white text-error border border-error/40 rounded font-mono text-xs uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1.5" onclick="document.getElementById('evac-modal').classList.remove('hidden')">
+              <button class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded font-['JetBrains_Mono'] text-xs uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow" ng-click="vm.openEvacModal()">
                 <span class="material-symbols-outlined text-[16px]">notifications_active</span> BROADCAST KLAXON EVACUATION
               </button>
             </div>
           </div>
 
           <!-- Priority 2 -->
-          <div class="bg-surface-container-lowest border border-outline-variant/40 p-4 rounded flex flex-col justify-between">
+          <div class="bg-slate-50 dark:bg-[#05080c] border border-slate-200 dark:border-white/10 p-4 rounded-xl flex flex-col justify-between shadow-xs">
             <div>
               <div class="flex items-center justify-between mb-2">
-                <span class="px-2 py-0.5 bg-secondary/20 border border-secondary/40 text-secondary font-mono text-[10px] font-bold uppercase rounded">
+                <span class="px-2 py-0.5 bg-amber-50 dark:bg-amber-500/20 border border-amber-200 dark:border-amber-500/40 text-amber-800 dark:text-amber-300 font-['JetBrains_Mono'] text-[10px] font-bold uppercase rounded">
                   ACTION PRIORITY 2
                 </span>
-                <span class="material-symbols-outlined text-secondary text-[20px]">water_pump</span>
+                <span class="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[20px]">water_pump</span>
               </div>
-              <h4 class="font-display text-sm font-bold text-primary mb-1">Remote Sump Dewatering Override</h4>
-              <p class="text-xs text-on-surface-variant leading-relaxed">
+              <h4 class="font-['Space_Grotesk'] text-sm font-bold text-slate-900 dark:text-white mb-1">Remote Sump Dewatering Override</h4>
+              <p class="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed font-sans">
                 Engage high-capacity 500GPM turbine pump at Shaft 12 sump to drop hydrostatic pressure across Seam V sandstone contact horizon.
               </p>
             </div>
             <div class="mt-4">
-              <button class="w-full py-2 bg-primary-container/10 hover:bg-primary-container hover:text-on-primary text-primary-container border border-primary-container/40 rounded font-mono text-xs uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1.5" id="btn-pump" onclick="togglePump()">
+              <button class="w-full py-2.5 font-['JetBrains_Mono'] text-xs uppercase tracking-wider font-bold rounded transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow" ng-class="vm.isPumpActive ? 'bg-sky-600 text-white border border-sky-500 dark:bg-cyan-400 dark:text-black font-extrabold shadow-md' : 'bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-300 dark:bg-cyan-500/10 dark:hover:bg-cyan-500/20 dark:text-cyan-300 dark:border-cyan-500/40'" ng-click="vm.togglePump()">
                 <span class="material-symbols-outlined text-[16px]">power_settings_new</span>
-                <span id="pump-status-text">ENGAGE SUMP PUMP OVERRIDE</span>
+                <span>{{ vm.isPumpActive ? 'PUMP ACTIVE (500 GPM ENGAGED)' : 'ENGAGE SUMP PUMP OVERRIDE' }}</span>
               </button>
             </div>
           </div>
 
           <!-- Priority 3 -->
-          <div class="bg-surface-container-lowest border border-outline-variant/40 p-4 rounded flex flex-col justify-between">
+          <div class="bg-slate-50 dark:bg-[#05080c] border border-slate-200 dark:border-white/10 p-4 rounded-xl flex flex-col justify-between shadow-xs">
             <div>
               <div class="flex items-center justify-between mb-2">
-                <span class="px-2 py-0.5 bg-primary-container/20 border border-primary-container/40 text-primary-container font-mono text-[10px] font-bold uppercase rounded">
+                <span class="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/40 text-emerald-800 dark:text-emerald-300 font-['JetBrains_Mono'] text-[10px] font-bold uppercase rounded">
                   REGULATORY COMPLIANCE
                 </span>
-                <span class="material-symbols-outlined text-primary-container text-[20px]">send_and_archive</span>
+                <span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-[20px]">send_and_archive</span>
               </div>
-              <h4 class="font-display text-sm font-bold text-primary mb-1">Transmit DGMS Form-IV Hazard Dossier</h4>
-              <p class="text-xs text-on-surface-variant leading-relaxed">
+              <h4 class="font-['Space_Grotesk'] text-sm font-bold text-slate-900 dark:text-white mb-1">Transmit DGMS Form-IV Hazard Dossier</h4>
+              <p class="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed font-sans">
                 Digitally dispatch compiled sensor logs, Bayesian failure trajectory, and SHAP attribution graphs to Mines Safety Inspectorate via encrypted link.
               </p>
             </div>
             <div class="mt-4">
-              <button class="w-full py-2 bg-surface-container-high hover:bg-primary hover:text-on-primary text-on-surface border border-outline-variant/50 rounded font-mono text-xs uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1.5" id="btn-dossier" onclick="transmitDossier()">
-                <span class="material-symbols-outlined text-[16px]">description</span>
-                <span id="dossier-status-text">TRANSMIT DGMS INCIDENT DOSSIER</span>
+              <button class="w-full py-2.5 font-['JetBrains_Mono'] text-xs uppercase tracking-wider font-bold rounded transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow" ng-class="vm.dossierSent ? 'bg-emerald-100 text-emerald-900 border border-emerald-400 dark:bg-emerald-500/30 dark:text-emerald-200 shadow-sm' : 'bg-slate-800 hover:bg-slate-900 text-white dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-zinc-200 border border-slate-700 dark:border-white/20'" ng-click="vm.transmitDossier()">
+                <span class="material-symbols-outlined text-[16px]">{{ vm.dossierSent ? 'done_all' : 'description' }}</span>
+                <span>{{ vm.dossierSent ? 'DOSSIER #9928-DG DISPATCHED' : 'TRANSMIT DGMS INCIDENT DOSSIER' }}</span>
               </button>
             </div>
-          </div>
-        </div>
-
-        <!-- Interactive Physics Twin Ribbon -->
-        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-outline-variant/40 font-mono text-xs">
-          <div class="flex flex-wrap items-center gap-3">
-            <span class="text-on-surface-variant uppercase text-[10px]">INTERACTIVE PHYSICS TWIN:</span>
-            <button class="px-3 py-1.5 bg-primary/10 hover:bg-primary hover:text-on-primary text-primary border border-primary/30 rounded font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5" onclick="runSimulation()">
-              <span class="material-symbols-outlined text-[15px]">model_training</span> SIMULATE STRATA LOAD MITIGATION
-            </button>
-            <span class="text-primary-container hidden font-semibold" id="sim-feedback">Simulating 20% Hydraulic Relief: TTF extended by +6.2h</span>
-          </div>
-          <div class="flex items-center gap-1 text-on-surface-variant text-[11px]">
-            <span>HARDWARE VERIFIED:</span>
-            <span class="text-primary font-bold">SX1278 // ADXL345 // REL_35 // NEO-6M</span>
           </div>
         </div>
       </div>
     </main>
   </div>
 
-  <!-- Interactive Evacuation Confirmation Modal -->
-  <div class="fixed inset-0 bg-surface-container-lowest/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden" id="evac-modal">
-    <div class="bg-surface-container-low max-w-lg w-full p-6 rounded border border-error/50 shadow-2xl relative">
-      <span class="hud-bracket-tl">┌</span><span class="hud-bracket-tr">┐</span>
-      <span class="hud-bracket-bl">└</span><span class="hud-bracket-br">┘</span>
-      <div class="flex items-center gap-3 mb-3">
-        <div class="w-10 h-10 rounded bg-error/20 border border-error/40 flex items-center justify-center shrink-0">
-          <span class="material-symbols-outlined text-error text-[28px] animate-pulse">crisis_alert</span>
+  <!-- DGMS Statutory Emergency Evacuation Dispatch Component -->
+  <evacuation-modal is-open="vm.isEvacModalOpen" telemetry="vm.telemetry" on-close="vm.closeEvacModal()" on-confirm="vm.confirmEvacDispatch()"></evacuation-modal>
+
+  <!-- Floating Cyber HUD AI Chat Assistant Widget -->
+  <!-- Command Palette (Ctrl+K) -->
+  <div ng-controller="CommandPaletteController as cp">
+    <div ng-if="cp.isOpen" class="cmd-palette-backdrop" ng-click="$event.target === $event.currentTarget && cp.close()">
+      <div class="cmd-palette-modal">
+        <div class="flex items-center gap-3 px-4 border-b border-white/10">
+          <span class="material-symbols-outlined text-slate-400 dark:text-zinc-400 text-[18px]">search</span>
+          <input id="cmd-palette-input" type="text" class="cmd-palette-input" ng-model="cp.query" ng-change="cp.filterCommands()" placeholder="Search commands... (↑↓ to navigate, Enter to run, Esc to close)" autocomplete="off" />
+          <kbd class="text-slate-500 dark:text-zinc-500 font-['JetBrains_Mono'] text-[10px] border border-white/10 px-1.5 py-0.5 rounded">ESC</kbd>
+        </div>
+        <div class="py-2 max-h-[55vh] overflow-y-auto">
+          <div ng-if="cp.filtered.length === 0" class="px-6 py-8 text-center font-['JetBrains_Mono'] text-[12px] text-slate-500 dark:text-zinc-500">No commands match "{{ cp.query }}"</div>
+          <div ng-repeat="cmd in cp.filtered track by $index" class="cmd-palette-item" ng-class="$index === cp.activeIndex ? 'active' : ''" ng-click="cp.execute(cmd)">
+            <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-white/5 flex-shrink-0">
+              <span class="material-symbols-outlined text-[16px]" ng-class="cp.getCategoryColor(cmd.category)">{{ cmd.icon }}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="font-['Space_Grotesk'] text-[13px] font-semibold text-slate-900 dark:text-white block">{{ cmd.label }}</span>
+            </div>
+            <span class="font-['JetBrains_Mono'] text-[9px] font-bold uppercase px-2 py-0.5 rounded-full border" ng-class="cp.getCategoryColor(cmd.category)" style="border-color: currentColor; opacity: 0.7;">{{ cmd.category }}</span>
+          </div>
+        </div>
+        <div class="px-4 py-2 border-t border-white/8 flex items-center gap-3 font-['JetBrains_Mono'] text-[9px] text-slate-500 dark:text-zinc-500">
+          <span><kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white/60">↑↓</kbd> navigate</span>
+          <span><kbd class="bg-white/10 px-1.5 py-0.5 rounded text-white/60">↵</kbd> execute</span>
+          <span class="ml-auto">{{ cp.filtered.length }} commands</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Officer Chain-of-Custody Acknowledgement Modal -->
+  <div ng-if="ml.isOfficerAckOpen" class="audit-modal-backdrop" ng-click="$event.target === $event.currentTarget && ml.closeOfficerAck()">
+    <div class="audit-modal" style="max-width: 480px;">
+      <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-emerald-400 text-[22px]">verified_user</span>
+          <div class="font-['Space_Grotesk'] text-[16px] font-bold text-slate-900 dark:text-white">{{ ml.t('OFFICER ACKNOWLEDGEMENT', 'अधिकारी अभिस्वीकृति') }}</div>
+        </div>
+        <button ng-click="ml.closeOfficerAck()" class="text-slate-400 hover:text-white transition cursor-pointer"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="px-6 py-4 space-y-3">
+        <p class="font-['Space_Grotesk'] text-[13px] text-slate-600 dark:text-zinc-300 leading-relaxed">
+          {{ ml.t('Record officer chain-of-custody for this anomaly event. This will be logged in the DGMS statutory audit trail.', 'इस विसंगति घटना के लिए अधिकारी श्रृंखला-की-हिरासत दर्ज करें।') }}
+        </p>
+        <div>
+          <label class="font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-zinc-400 uppercase block mb-1">{{ ml.t('Officer Name', 'अधिकारी नाम') }}</label>
+          <input type="text" ng-model="ml.officerName" placeholder="Er. R. Sharma" class="w-full bg-slate-50 dark:bg-white/5 border border-slate-300 dark:border-white/20 rounded-lg px-3 py-2 font-['JetBrains_Mono'] text-[12px] text-slate-900 dark:text-white focus:outline-none focus:border-sky-500" />
         </div>
         <div>
-          <span class="font-mono text-[10px] text-error uppercase font-bold tracking-wider block">CRITICAL SAFETY OVERRIDE</span>
-          <h3 class="font-display text-lg font-bold text-primary">Initiate Sector 4B Evacuation Klaxon</h3>
+          <label class="font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-zinc-400 uppercase block mb-1">{{ ml.t('DGMS Badge ID', 'डीजीएमएस बैज आईडी') }}</label>
+          <input type="text" ng-model="ml.officerBadge" placeholder="DGMS-JH-2024-0042" class="w-full bg-slate-50 dark:bg-white/5 border border-slate-300 dark:border-white/20 rounded-lg px-3 py-2 font-['JetBrains_Mono'] text-[12px] text-slate-900 dark:text-white focus:outline-none focus:border-sky-500" />
+        </div>
+        <div>
+          <label class="font-['JetBrains_Mono'] text-[10px] text-slate-500 dark:text-zinc-400 uppercase block mb-1">{{ ml.t('Mitigation Action', 'शमन कार्रवाई') }}</label>
+          <textarea ng-model="ml.officerMitigation" placeholder="e.g. Increased prop density at Pillar 4B. Reduced extraction rate to 60%." rows="2" class="w-full bg-slate-50 dark:bg-white/5 border border-slate-300 dark:border-white/20 rounded-lg px-3 py-2 font-['Space_Grotesk'] text-[12px] text-slate-900 dark:text-white focus:outline-none focus:border-sky-500 resize-none"></textarea>
         </div>
       </div>
-      <p class="text-xs text-on-surface-variant mb-4 leading-relaxed">
-        This action activates underground acoustic audio horns across Sector 4B &amp; Shaft 12, cuts non-essential power to gallery drilling equipment, and broadcasts LoRa packets commanding emergency beacons to strobe.
-      </p>
-      <div class="bg-surface-container-lowest border border-outline-variant/40 p-3 rounded mb-5 font-mono text-xs space-y-1.5">
-        <div class="flex justify-between">
-          <span class="text-on-surface-variant">AFFECTED REGION:</span>
-          <span class="text-primary font-bold">CHASNALA DEEP MINE // SEC-4B</span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-on-surface-variant">CRITICAL SENSOR:</span>
-          <span class="text-error font-bold">NODE-03 (PILLAR 4B TILT 3.12°/hr)</span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-on-surface-variant">TELEMETRY TIMEOUT:</span>
-          <span class="text-secondary font-bold">TTF T-MINUS 04:31:12</span>
-        </div>
-      </div>
-      <div class="flex items-center justify-end gap-3 font-mono text-xs">
-        <button class="px-4 py-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface border border-outline-variant/50 rounded uppercase tracking-wider" onclick="document.getElementById('evac-modal').classList.add('hidden')">
-          CANCEL / ABORT
-        </button>
-        <button class="px-4 py-2 bg-error text-white hover:bg-error/90 border border-error/50 rounded uppercase tracking-wider font-bold shadow-[0_0_12px_rgba(255,77,109,0.35)]" onclick="confirmEvacuation()">
-          CONFIRM EMERGENCY BROADCAST
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-white/10 flex items-center gap-3">
+        <button ng-click="ml.closeOfficerAck()" class="px-4 py-2 rounded-lg border border-slate-300 dark:border-white/20 text-slate-600 dark:text-zinc-400 font-['JetBrains_Mono'] text-[11px] uppercase font-bold transition cursor-pointer">{{ ml.t('Cancel', 'रद्द करें') }}</button>
+        <button ng-click="ml.submitOfficerAck()" ng-disabled="!ml.officerName" class="flex-1 py-2 rounded-lg font-['JetBrains_Mono'] text-[11px] uppercase font-bold flex items-center justify-center gap-2 transition cursor-pointer" ng-class="ml.officerName ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-md' : 'bg-slate-200 dark:bg-white/10 text-slate-400 cursor-not-allowed'">
+          <span class="material-symbols-outlined text-[15px]">check_circle</span> {{ ml.t('SUBMIT ACKNOWLEDGEMENT', 'अभिस्वीकृति जमा करें') }}
         </button>
       </div>
     </div>
   </div>
 
-  <script>
-    function togglePump() {
-      const btn = document.getElementById('btn-pump');
-      const text = document.getElementById('pump-status-text');
-      if (btn.classList.contains('bg-secondary-container')) {
-        btn.classList.remove('bg-secondary-container', 'text-black');
-        btn.classList.add('bg-primary-container/10', 'text-primary-container');
-        text.innerText = 'ENGAGE SUMP PUMP OVERRIDE';
-      } else {
-        btn.classList.add('bg-secondary-container', 'text-black');
-        btn.classList.remove('bg-primary-container/10', 'text-primary-container');
-        text.innerText = 'OVERRIDE RUNNING (500 GPM ACTIVE)';
-      }
-    }
-
-    function transmitDossier() {
-      const text = document.getElementById('dossier-status-text');
-      text.innerText = 'TRANSMITTING VIA ENCRYPTED UPLINK...';
-      setTimeout(() => {
-        text.innerText = 'DISPATCH ACKNOWLEDGED (DGMS-OK #9928)';
-      }, 1200);
-    }
-
-    function runSimulation() {
-      const fb = document.getElementById('sim-feedback');
-      fb.classList.remove('hidden');
-    }
-
-    function confirmEvacuation() {
-      const modal = document.getElementById('evac-modal');
-      modal.classList.add('hidden');
-      alert("EMERGENCY KLAXON BROADCASTED: Evacuation sequence initiated across Sector 4B Shaft 12.");
-    }
-
-    // Header live clock
-    setInterval(() => {
-      const d = new Date();
-      const timeStr = d.toLocaleTimeString('en-US', { hour12: false }) + ' IST';
-      const clockEl = document.getElementById('header-clock');
-      if (clockEl) clockEl.innerText = timeStr + ' UTC+5:30 REAL-TIME';
-    }, 1000);
-  </script>
-  </div>
-
-  <!-- Floating Cyber HUD AI Chat Assistant Widget -->
-  {% include 'partials/chat-widget.ejs' %}
-
-  <!-- Modular Scripts -->
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/chat-assistant.js"></script>
-  <script>
-    const el = (id) => document.getElementById(id);
-    let currentAiText = null;
-    let typewriterInterval = null;
-
-    let socket = null;
-    try {
-      if (typeof io !== 'undefined') {
-        socket = io();
-      }
-    } catch(e) {
-      console.log('Socket init notice:', e);
-    }
-
-    if (socket) {
-      socket.on('telemetry', (data) => {
-        // Animate Delamination Polygon based on strain/disp
-        const polygon = el('delam-polygon');
-        if (polygon) {
-          const strainScale = 1.0 + (data.disp * 0.5);
-          polygon.setAttribute('transform', `scale(${strainScale}) translate(${-(strainScale-1)*370}, ${-(strainScale-1)*210})`);
-        }
-
-        // Update Zone Max Flexure text
-        if (el('zone-max-flexure')) {
-          el('zone-max-flexure').innerText = (14.18 + (data.disp * 5)).toFixed(2);
-        }
-
-        // Update TreeSHAP attribution bars dynamically
-        if (el('shap-1')) el('shap-1').style.width = `${Math.min(100, 38.4 + (Math.abs(data.pitch) * 5))}%`;
-        if (el('shap-2')) el('shap-2').style.width = `${Math.min(100, 27.1 + (data.rms * 50))}%`;
-        if (el('shap-3')) el('shap-3').style.width = `${Math.min(100, 14.8 + (data.co / 2))}%`;
-
-        // Live AI Analyst Logic
-        const aiTextEl = el('ai-insight-text');
-        if (aiTextEl && data.aiText && data.aiText !== currentAiText) {
-          currentAiText = data.aiText;
-          clearInterval(typewriterInterval);
-          aiTextEl.innerText = "";
-          let charIndex = 0;
-          typewriterInterval = setInterval(() => {
-            if (charIndex < currentAiText.length) {
-              aiTextEl.innerText += currentAiText.charAt(charIndex);
-              charIndex++;
-            } else {
-              clearInterval(typewriterInterval);
-            }
-          }, 30);
-        }
-      });
-    }
-
-    // Projection tab switcher
-    window.selectProjectionTab = function(btn, mode) {
-      document.querySelectorAll('.proj-tab-btn').forEach(b => {
-        b.className = 'proj-tab-btn px-2.5 py-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer';
-      });
-      if (btn) {
-        btn.className = 'proj-tab-btn px-2.5 py-1 text-primary-container bg-surface-container-high rounded font-bold border border-primary-container/30 cursor-pointer';
-      }
-
-      const titles = {
-        'insar': 'Subsurface Strata Stress Vector & Void Delamination (InSAR/GNSS)',
-        'strain': 'Zone SEC-4B High-Resolution Strain Gauge Network',
-        'hydro': 'Hydrostatic Pore Pressure vs Sump Delamination Interface',
-        'seismic': 'Acoustic Emission & FFT Micro-Seismic Resonances'
-      };
-
-      const titleEl = el('proj-header-title');
-      if (titleEl && titles[mode]) {
-        titleEl.innerText = titles[mode];
-      }
-    };
-
-    // Live ML Telemetry Simulation
-    setInterval(() => {
-      const latencyEl = el('ml-latency');
-      if (latencyEl) {
-        latencyEl.innerText = (18 + Math.floor(Math.random() * 8 - 4)) + 'ms';
-      }
-      const bayesEl = el('ml-bayes');
-      if (bayesEl) {
-        bayesEl.innerText = (94 + Math.random() * 2).toFixed(1) + '%';
-      }
-    }, 2000);
-  </script>
+  <%- include('partials/chat-widget') %>
 </body>
 </html>

@@ -26,8 +26,8 @@ async function initAi() {
   const totalMemMb = Math.round(os.totalmem() / (1024 * 1024));
   console.log(`Available System Memory: ${totalMemMb}MB`);
   
-  if (totalMemMb < 1024 && process.env.ENABLE_LOCAL_AI !== 'true') {
-    console.log("Operating Master AI in High-Efficiency Geotechnical Mode.");
+  if (process.env.ENABLE_LOCAL_AI === 'false' || process.env.CLOUDFLARE_API_TOKEN || totalMemMb < 1024) {
+    console.log("Master AI operating via Cloudflare Workers AI Edge GPU (Meta Llama 3.1 8B).");
     latestAiAnalysis = masterAi.getDeterministicDirective('STABLE', 0.5, 0.15, 12.0, 0.1);
     return;
   }
@@ -93,7 +93,10 @@ app.get('/explainable-ml', (req, res) => res.render('explainable-ml', {
   activePage: 'ml'
 }));
 
-app.get('/gods-eye-view', (req, res) => res.redirect('/'));
+app.get('/gods-eye-view', (req, res) => res.render('gods-eye-view', {
+  title: "TERRA-PULSE OS // GOD'S EYE VIEW - 3D Satellite & Spatial Intel",
+  activePage: 'gods-eye'
+}));
 
 // REST API Routes
 app.use('/api/auth', authRoutes);

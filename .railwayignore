@@ -1,0 +1,8 @@
+node_modules
+.git
+.env
+database.sqlite
+*.log
+models/
+gods-eye-view/
+cloudflared.exe

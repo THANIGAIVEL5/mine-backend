@@ -80,7 +80,16 @@ class TerraSentinelMasterAI {
       };
     }
 
-    // 1. Cloud-Augmented Reasoning (if key available)
+    // 1. Cloudflare Workers AI (Meta Llama 3.1 8B Edge GPU)
+    const cfReply = await this.queryCloudflareWorkersAi(message, telemetry);
+    if (cfReply) {
+      return {
+        reply: cfReply,
+        source: 'TERRA-SENTINEL Master AI (Cloudflare Workers AI Llama-3.1 8B)'
+      };
+    }
+
+    // 2. Cloud-Augmented Reasoning (Gemini if key available)
     if (apiKey) {
       try {
         const cloudReply = await this.queryCloudIntelligence(apiKey, message, telemetry);
@@ -156,6 +165,61 @@ class TerraSentinelMasterAI {
         `• Intervention Directive: Master AI alarm state manually acknowledged and reset by Mine Operator.\n` +
         `• Sensor Bus Status: 5 subterranean nodes reset to STABLE baseline surveillance mode.\n` +
         `• Safety Interlocks: Normal monitoring resumed under DGMS standards.`;
+    }
+    return null;
+  }
+
+  async queryCloudflareWorkersAi(message, telemetry = {}) {
+    const token = process.env.CLOUDFLARE_API_TOKEN;
+    const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+    if (!token || !accountId) return null;
+
+    const phase = telemetry.phase || 'STABLE';
+    const pitch = Number(telemetry.pitch || 0.5).toFixed(2);
+    const disp = Number(telemetry.disp || 0.1).toFixed(2);
+    const rms = Number(telemetry.rms || 0.15).toFixed(2);
+    const co = Math.floor(telemetry.co || 12);
+    const sump = Number(telemetry.sump || 1.3).toFixed(2);
+
+    const systemPrompt = (
+      "You are an experienced, authoritative senior geotechnical mining engineer and AI co-pilot in the mine control room. " +
+      "Speak completely naturally, warmly, and conversationally in 2-4 sentences, like an expert human engineer talking to a colleague. " +
+      "Never use robotic ASCII art or rigid bullet lists. " +
+      "Answer what the operator asked directly and clearly, seamlessly weaving in relevant live sensor readings and DGMS statutory safety context."
+    );
+
+    const userContent = (
+      `Live readings right now: mine status is ${phase}, strata pitch is ${pitch}°, roof displacement is ${disp}mm, ` +
+      `micro-seismic vibration is ${rms}g, CO gas is ${co}ppm, sump water is ${sump}m. ` +
+      `Operator question: ${message}`
+    );
+
+    try {
+      const response = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/meta/llama-3.1-8b-instruct`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userContent }
+            ],
+            max_tokens: 160
+          })
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const reply = data?.result?.response || data?.result?.choices?.[0]?.message?.content;
+        if (reply && reply.trim()) return reply.trim();
+      }
+    } catch (e) {
+      console.warn('Cloudflare Workers AI reasoning bypass:', e.message);
     }
     return null;
   }

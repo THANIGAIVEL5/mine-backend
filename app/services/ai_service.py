@@ -3,11 +3,14 @@ import re
 import random
 import httpx
 from typing import Dict, Any, Optional
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class TerraSentinelMasterAI:
     def __init__(self):
-        self.name = 'TERRA-SENTINEL MASTER AI (SmolLM2 1.7B Conversational Core)'
-        self.status = 'ACTIVE // SmolLM2 1.7B NATURAL REASONING // ZERO-TOKEN-LIMIT'
+        self.name = 'TERRA-SENTINEL MASTER AI (Cloudflare Workers AI + SmolLM2 1.7B Core)'
+        self.status = 'ACTIVE // Llama-3.1 8B CLOUD EDGE + SmolLM2 1.7B // ZERO-TOKEN-LIMIT'
 
     async def analyze_telemetry_stream(self, telemetry: Dict[str, Any]) -> str:
         phase = telemetry.get('phase', 'STABLE')
@@ -35,6 +38,57 @@ class TerraSentinelMasterAI:
                     f"Auxiliary ventilation purging gallery. Sump water at {sump}m.")
         else:
             return f"Continuous geotechnical telemetry surveillance synchronized across Sector 4B gallery."
+
+    async def query_cloudflare_workers_ai(self, message: str, telemetry: Dict[str, Any]) -> Optional[str]:
+        token = os.getenv("CLOUDFLARE_API_TOKEN")
+        account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID")
+        if not token or not account_id:
+            return None
+
+        phase = telemetry.get('phase', 'STABLE')
+        pitch = float(telemetry.get('pitch', 0.5))
+        disp = float(telemetry.get('disp', 0.1))
+        rms = float(telemetry.get('rms', 0.15))
+        co = int(telemetry.get('co', 12))
+        sump = float(telemetry.get('sump', 1.3))
+
+        system_prompt = (
+            "You are an experienced, authoritative senior geotechnical mining engineer and AI co-pilot in the mine control room. "
+            "Speak completely naturally, warmly, and conversationally in 2-4 sentences, like an expert human engineer talking to a colleague. "
+            "Never use robotic ASCII art or rigid bullet lists. "
+            "Answer what the operator asked directly and clearly, seamlessly weaving in relevant live sensor readings and DGMS statutory safety context."
+        )
+
+        user_content = (
+            f"Live readings right now: mine status is {phase}, strata pitch is {pitch:.2f}°, roof displacement is {disp:.2f}mm, "
+            f"micro-seismic vibration is {rms:.2f}g, CO gas is {co}ppm, sump water is {sump:.2f}m. "
+            f"Operator question: {message}"
+        )
+
+        url = f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/@cf/meta/llama-3.1-8b-instruct"
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_content}
+            ],
+            "max_tokens": 160
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=4.0) as client:
+                res = await client.post(url, headers=headers, json=payload)
+                if res.status_code == 200:
+                    data = res.json()
+                    response_text = data.get("result", {}).get("response", "").strip()
+                    if response_text and len(response_text) > 10:
+                        return response_text
+        except Exception:
+            pass
+        return None
 
     async def query_local_neural_model(self, message: str, telemetry: Dict[str, Any]) -> Optional[str]:
         phase = telemetry.get('phase', 'STABLE')
@@ -98,7 +152,16 @@ class TerraSentinelMasterAI:
                 'isIntervention': True
             }
 
-        # 2. Query On-Device Natural Language Neural Model (SmolLM2 1.7B)
+        # 2. Query Cloudflare Workers AI (Meta Llama 3.1 8B Edge GPU)
+        cf_reply = await self.query_cloudflare_workers_ai(message, telemetry)
+        if cf_reply:
+            return {
+                'reply': cf_reply,
+                'source': 'TERRA-SENTINEL Master AI (Cloudflare Workers AI Llama-3.1 8B)',
+                'isIntervention': False
+            }
+
+        # 3. Query On-Device Natural Language Neural Model (SmolLM2 1.7B)
         neural_reply = await self.query_local_neural_model(message, telemetry)
         if neural_reply:
             return {
@@ -107,7 +170,7 @@ class TerraSentinelMasterAI:
                 'isIntervention': False
             }
 
-        # 3. Dynamic Natural Conversational Reasoning (Speaks naturally, no readymade ASCII templates)
+        # 4. Dynamic Natural Conversational Reasoning (Speaks naturally, no readymade ASCII templates)
         natural_reply = self.execute_deep_reasoning(message, telemetry)
         return {
             'reply': natural_reply,
