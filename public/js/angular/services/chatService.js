@@ -1,6 +1,6 @@
 /**
  * Chat Service - Master AI Communication & Hybrid Cloud/Client Geotechnical AI Core
- * Supports Live Cloud Backend, WebSockets, Direct Google Gemini, and DGMS Fail-Safe Engine.
+ * Supports Live Render Backend, WebSockets, Direct Google Gemini, and DGMS Fail-Safe Engine.
  */
 (function () {
   'use strict';
@@ -27,7 +27,7 @@
               text: 'Welcome Operator. I am the central TERRA-SENTINEL Master AI Controller with autonomous oversight of all 5 underground sensor nodes, hydraulic powered roof chocks, drainage sumps, and DGMS emergency safety interlocks.',
               isAi: true,
               time: 'INITIALIZED',
-              source: 'SmolLM2 / GEMINI NEURAL CORE',
+              source: 'SmolLM2 / DGMS NEURAL CORE',
               isIntervention: false
             }
           ],
@@ -41,21 +41,22 @@
         function initSocket() {
           try {
             if (typeof io !== 'undefined') {
-              var targetUrl = service.backendUrl || window.location.origin;
+              var targetUrl = service.backendUrl || 'https://mine-backend-1.onrender.com';
               service.socketIo = io(targetUrl, {
                 transports: ['websocket', 'polling'],
-                timeout: 5000
+                timeout: 6000
               });
 
               service.socketIo.on('chat_broadcast', function (data) {
-                if (data && data.text) {
+                if (data && (data.text || data.reply)) {
+                  var textMsg = data.text || data.reply;
                   var isDupe = service.messages.some(function (m) {
-                    return m.text === data.text && m.sender === data.sender;
+                    return m.text === textMsg && m.sender === data.sender;
                   });
                   if (!isDupe) {
                     service.messages.push({
                       sender: data.sender || 'Operator',
-                      text: data.text,
+                      text: textMsg,
                       isAi: !!data.isAi,
                       time: data.timestamp || new Date().toLocaleTimeString(),
                       source: data.source || 'CENTRAL CLOUD BACKEND',
@@ -74,53 +75,53 @@
 
         // Local Geotechnical Knowledge Engine for Instant Client-Side AI Responses
         function generateLocalGeotechnicalResponse(query) {
-          var q = (query || '').toLowerCase();
+          var q = (query || '').toLowerCase().trim();
           
-          if (q.includes('evacuat') || q.includes('emergency') || q.includes('alarm') || q.includes('danger')) {
+          if (q.includes('evacuat') || q.includes('emergency') || q.includes('alarm') || q.includes('danger') || q.includes('klaxon')) {
             return {
-              reply: '🚨 [DGMS CRITICAL DIRECTIVE] Emergency protocol acknowledged. Activating Sector 4B evacuation sirens and emergency egress illumination. All underground personnel command: Evacuate immediately via Shaft #2 and report to Refuge Bay 3B.',
-              source: 'DGMS REGULATION 1957/2017 EMERGENCY CORE',
+              reply: '🚨 [DGMS CRITICAL DIRECTIVE // EMERGENCY KLAXON ENGAGED]\n• Status: Mandatory emergency evacuation protocol activated for Chasnala Deep Mine Sector 4B.\n• Acoustic Sirens: Continuous 3-tone acoustic klaxons active across Drift 12 & Shaft 12.\n• Escape Directive: All underground personnel must don 60-minute SCSR and report immediately to Refuge Bay 3B via illuminated escapeway.',
+              source: 'DGMS CMR-2017 EMERGENCY INTERLOCK',
               isIntervention: true
             };
           }
-          if (q.includes('sensor') || q.includes('node') || q.includes('node-03') || q.includes('pillar')) {
+          if (q.includes('sensor') || q.includes('node') || q.includes('node-03') || q.includes('pillar') || q.includes('reading')) {
             return {
-              reply: '📊 [TELEMETRY AUDIT] 5 sensor nodes online. Node-03 (Pillar 4B) reporting tilt flexure: Pitch 3.84°, Vibration RMS: 0.15g (ISO Zone A), Atmospheric CO: 12 ppm (Safe < 25 ppm). Strata delamination velocity is currently within stable safety margins.',
+              reply: '📊 [TELEMETRY AUDIT // 5 NODES SYNCHRONIZED]\n• Node-01 (Shaft #2 Collar): Nominal flexure, LoRa RSSI -82 dBm\n• Node-02 (Overburden Bench): Stable pore pressure, Pitch 0.4°\n• Node-03 (Pillar 4B Stope): Tilt 0.5°, Seismic RMS 0.15g (ISO Zone A Nominal)\n• Node-04 (Sump Sub-Level): Water depth 34.0 cm (Safe capacity < 150 cm)\n• Node-05 (Haulage Drift #12): Atmospheric CO at 12 ppm (DGMS Safe < 25 ppm)',
               source: 'AUTONOMOUS SENSOR SURVEILLANCE ENGINE',
               isIntervention: false
             };
           }
-          if (q.includes('ventilat') || q.includes('gas') || q.includes('co') || q.includes('air') || q.includes('fan')) {
+          if (q.includes('ventilat') || q.includes('gas') || q.includes('co') || q.includes('air') || q.includes('fan') || q.includes('methane')) {
             return {
-              reply: '💨 [VENTILATION OVERRIDE] Auxiliary ventilation fan speed set to 100% capacity. Main return airway CO level at 12 ppm, methane CH4 below detectable threshold. Airflow velocity measured at 2.4 m/s in Haulage Drift #12.',
+              reply: '💨 [ATMOSPHERIC SAFETY & VENTILATION GOVERNANCE]\n• Carbon Monoxide (CO): 12 ppm (DGMS 8-Hour TWA Limit: 25 ppm, Alarm: 50 ppm) — SAFE\n• Methane (CH4): Below 0.05% detection threshold (DGMS Limit: 1.25%)\n• Auxiliary Ventilation Fan: Operating at nominal 78% capacity (Airflow: 2.4 m/s in Drift 12)',
               source: 'DGMS VENTILATION & LIFE SAFETY INTERLOCK',
-              isIntervention: true
+              isIntervention: q.includes('boost') || q.includes('100%')
             };
           }
-          if (q.includes('rockfall') || q.includes('subsidence') || q.includes('strain') || q.includes('strata') || q.includes('risk')) {
+          if (q.includes('rockfall') || q.includes('subsidence') || q.includes('strain') || q.includes('strata') || q.includes('collapse') || q.includes('risk')) {
             return {
-              reply: '🏔️ [XAI TREE-SHAP RISK] Bayesian Subsidence Probability evaluated at 14.2% (Low Risk). Primary risk drivers: Overburden pore pressure (42%), Roof shear strain (28%). Rock Mass Rating (RMR) evaluated at 74 (Good Rock). Automated hydraulic chock pre-tensioning on standby.',
+              reply: '🏔️ [XAI TREE-SHAP SUBSIDENCE RISK FORECAST]\n• Subsidence Probability: 14.2% (Low Risk Stage-I)\n• Strata Roof Flexure: 0.10 mm convergence rate (Stable)\n• Rock Mass Rating (RMR): 74 (Good Rock Strata)\n• Tree-SHAP Risk Drivers: 1) Overburden pore pressure (42%), 2) Roof shear strain (28%)\n• Hydraulic powered roof chocks at Face 4B pre-set to maintain yield pressure > 320 bar.',
               source: 'XAI TREE-SHAP & SUBSIDENCE RISK MODEL',
               isIntervention: false
             };
           }
-          if (q.includes('sump') || q.includes('water') || q.includes('flood') || q.includes('pump')) {
+          if (q.includes('sump') || q.includes('water') || q.includes('flood') || q.includes('pump') || q.includes('drain')) {
             return {
-              reply: '💧 [HYDROLOGICAL STATUS] Sump water depth at 34.0 cm (Safe capacity < 150 cm). Primary submersible dewatering pump #1 operating at nominal 42 L/min.',
+              reply: '💧 [HYDROLOGICAL DRAINAGE STATUS]\n• Sump Water Level: 34.0 cm (Critical Inundation Threshold: > 150 cm)\n• Submersible Dewatering Pump #1: Running at 42 L/min nominal discharge\n• Infiltration Velocity: 0.02 mm/h (Stable dry strata)',
               source: 'HYDROGEOLOGICAL DRAINAGE CONTROLLER',
               isIntervention: false
             };
           }
-          if (q.includes('status') || q.includes('hello') || q.includes('hi') || q.includes('who are you') || q.includes('help')) {
+          if (q === 'hi' || q === 'hello' || q === 'hey' || q.includes('who are you') || q.includes('help') || q.includes('status')) {
             return {
-              reply: '🛡️ [TERRA-SENTINEL MASTER AI] All subterranean monitoring channels operational. Strata equilibrium is STABLE. You can query sensor telemetry, trigger ventilation overrides, check Tree-SHAP risk metrics, or issue emergency evacuation directives.',
+              reply: '🛡️ [TERRA-SENTINEL MASTER AI] Greetings Operator. Central monitoring and autonomous safety oversight active across Chasnala Deep Mine Sector 4B.\n\n• Operational Phase: STABLE (All 5 Sensor Nodes Synchronized)\n• Strata Displacement: 0.10 mm (Nominal)\n• Seismic RMS: 0.15g (ISO 10816-3 Zone A - Stable)\n• Atmospheric CO: 12 ppm (DGMS Safe < 25 ppm)\n\nYou can issue commands such as "Report mine status", "Check gas & CO levels", "Explain subsidence risk", "100% ventilation boost", or "Trigger evacuation klaxon".',
               source: 'TERRA-SENTINEL MASTER CONTROLLER',
               isIntervention: false
             };
           }
 
           return {
-            reply: '[MASTER AI DIRECTIVE] Query analyzed against DGMS geotechnical parameters for Chasnala Deep Mine. Telemetry stability confirmed across all active drifts. No anomalous strata convergence or acoustic emission spikes detected.',
+            reply: '[TERRA-SENTINEL MASTER AI DIRECTIVE]\nGeotechnical query evaluated for Chasnala Deep Mine Sector 4B. Micro-seismic vibration RMS is 0.15g and strata roof displacement is 0.10 mm. All parameters are within DGMS 1957/2017 safety guidelines. No anomalous acoustic emission or ground delamination detected.',
             source: 'DGMS CMR-2017 GEOTECHNICAL CORE',
             isIntervention: false
           };
@@ -173,7 +174,7 @@
           }
 
           var currentBackend = getBackendUrl();
-          var postUrl = (currentBackend ? currentBackend : '') + '/api/chat';
+          var postUrl = (currentBackend ? currentBackend : 'https://mine-backend-1.onrender.com') + '/api/chat';
 
           // Try cloud/local backend first
           return $http.post(postUrl, {
@@ -183,9 +184,18 @@
           }, { timeout: 8000 }).then(
             function (res) {
               service.isSending = false;
-              var data = res.data || {};
-              var replyText = data.reply || data.text || 'Directive processed.';
-              
+              var data = res.data;
+
+              // Validate that response is a real JSON object with meaningful reply
+              if (!data || typeof data !== 'object' || (!data.reply && !data.text)) {
+                return applyLocalFallback(text);
+              }
+
+              var replyText = (data.reply || data.text || '').trim();
+              if (!replyText) {
+                return applyLocalFallback(text);
+              }
+
               var isDupe = service.messages.some(function (m) {
                 return m.text === replyText && m.isAi;
               });

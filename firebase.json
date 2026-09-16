@@ -6,6 +6,17 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "headers": [
+      {
+        "source": "**/*.@(js|html|json)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      }
+    ],
     "rewrites": [
       {
         "source": "/explainable-ml",
@@ -16,7 +27,7 @@
         "destination": "/gods-eye-view.html"
       },
       {
-        "source": "**",
+        "source": "!/api/**",
         "destination": "/index.html"
       }
     ]

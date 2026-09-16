@@ -18,7 +18,7 @@
           if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             return '';
           }
-          return 'https://mine-backend.onrender.com';
+          return 'https://mine-backend-1.onrender.com';
         }
 
         var service = {
