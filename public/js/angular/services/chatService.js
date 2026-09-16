@@ -17,7 +17,7 @@
           if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             return '';
           }
-          return 'https://mine-backend.onrender.com';
+          return 'https://mine-backend-1.onrender.com';
         }
 
         var service = {
@@ -177,9 +177,10 @@
 
           // Try cloud/local backend first
           return $http.post(postUrl, {
+            message: text,
             query: text,
             geminiApiKey: service.geminiApiKey
-          }, { timeout: 4000 }).then(
+          }, { timeout: 8000 }).then(
             function (res) {
               service.isSending = false;
               var data = res.data || {};

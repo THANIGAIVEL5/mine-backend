@@ -373,16 +373,17 @@ router.get('/status', (req, res) => {
 // REST API: POST /api/chat
 router.post('/', async (req, res) => {
   try {
-    const { message, telemetry, geminiApiKey } = req.body;
+    const queryText = req.body.message || req.body.query || req.body.text || '';
+    const { telemetry, geminiApiKey } = req.body;
     
-    if (!message || typeof message !== 'string') {
-      return res.status(400).json({ error: 'Message text is required' });
+    if (!queryText || typeof queryText !== 'string') {
+      return res.status(400).json({ error: 'Message or query text is required' });
     }
 
     const getAiGenerator = req.app.get('getAiGenerator');
     const aiGenerator = getAiGenerator ? getAiGenerator() : null;
 
-    const result = await masterAi.processOperatorQuery(message, telemetry, {
+    const result = await masterAi.processOperatorQuery(queryText, telemetry, {
       geminiApiKey: geminiApiKey || req.headers['x-gemini-key'],
       aiGenerator: aiGenerator
     });
