@@ -13,15 +13,30 @@ const authRoutes = require('./routes/auth');
 const { router: chatRoutes, masterAi } = require('./routes/chat');
 const seedDatabase = require('./services/seedDatabase');
 
-// Master AI Controller Initialization (Cloud AI / DGMS Rule Core)
-let activeModelName = 'Google Gemini Cloud AI / DGMS Core';
+// Master AI Controller Initialization (SmolLM2-360M-Instruct / Cloud AI / DGMS Rule Core)
+const LOCAL_MODEL = process.env.LOCAL_AI_MODEL || 'HuggingFaceTB/SmolLM2-360M-Instruct';
+let activeModelName = LOCAL_MODEL;
 let aiGenerator = null;
 let latestAiAnalysis = masterAi.getDeterministicDirective('STABLE', 0.5, 0.15, 12.0, 0.1);
 let currentAiPhase = null;
 let generatingAi = false;
 
-function initAi() {
-  console.log("Master AI operating via Cloud AI (Gemini) / DGMS Statutory Core.");
+async function initAi() {
+  if (process.env.ENABLE_LOCAL_AI === 'false') {
+    console.log("Master AI operating via Cloud AI / DGMS Statutory Core.");
+    return;
+  }
+  try {
+    const { pipeline } = require('@huggingface/transformers');
+    console.log(`🤖 Loading Neural Engine (${LOCAL_MODEL})...`);
+    aiGenerator = await pipeline('text-generation', LOCAL_MODEL, {
+      dtype: 'q4'
+    });
+    console.log(`✅ Neural Engine [${LOCAL_MODEL}] Loaded Successfully!`);
+    latestAiAnalysis = `[MINE GUARDER MASTER AI] Neural Engine (${LOCAL_MODEL}) active. Full telemetry surveillance engaged.`;
+  } catch (err) {
+    console.warn(`Neural engine load notice (${err.message}). Operating via Cloud AI / DGMS Core.`);
+  }
 }
 initAi();
 
