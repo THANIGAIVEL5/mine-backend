@@ -81,7 +81,31 @@ class MineGuarderMasterAI {
       };
     }
 
-    // 1. Cloudflare Workers AI (Meta Llama 3.1 8B Edge GPU)
+    // 1. On-Device Neural Brain (SmolLM2-360M-Instruct local ONNX)
+    if (aiGenerator) {
+      try {
+        const neuralReply = await this.queryNeuralIntelligence(aiGenerator, message, telemetry);
+        if (neuralReply) {
+          return {
+            reply: neuralReply,
+            source: 'MINE GUARDER Master AI (HuggingFaceTB/SmolLM2-360M-Instruct Neural Engine)'
+          };
+        }
+      } catch (e) {
+        console.warn('Neural reasoning bypass:', e.message);
+      }
+    }
+
+    // 2. HuggingFace SmolLM2 Serverless Inference API
+    const hfReply = await this.queryHuggingFaceInference(message, telemetry);
+    if (hfReply) {
+      return {
+        reply: hfReply,
+        source: 'MINE GUARDER Master AI (HuggingFaceTB/SmolLM2-360M-Instruct API)'
+      };
+    }
+
+    // 3. Cloudflare Workers AI (Meta Llama 3.1 8B Edge GPU)
     const cfReply = await this.queryCloudflareWorkersAi(message, telemetry);
     if (cfReply) {
       return {
@@ -90,7 +114,7 @@ class MineGuarderMasterAI {
       };
     }
 
-    // 2. Cloud-Augmented Reasoning (Gemini if key available)
+    // 4. Cloud-Augmented Reasoning (Gemini if key available)
     if (apiKey) {
       try {
         const cloudReply = await this.queryCloudIntelligence(apiKey, message, telemetry);
@@ -102,21 +126,6 @@ class MineGuarderMasterAI {
         }
       } catch (e) {
         console.warn('Cloud reasoning bypass:', e.message);
-      }
-    }
-
-    // 3. On-Device Neural Brain
-    if (aiGenerator) {
-      try {
-        const neuralReply = await this.queryNeuralIntelligence(aiGenerator, message, telemetry);
-        if (neuralReply) {
-          return {
-            reply: neuralReply,
-            source: 'MINE GUARDER Master AI (On-Device Qwen 2.5 Neural)'
-          };
-        }
-      } catch (e) {
-        console.warn('Neural reasoning bypass:', e.message);
       }
     }
 
@@ -166,6 +175,56 @@ class MineGuarderMasterAI {
         `• Intervention Directive: Master AI alarm state manually acknowledged and reset by Mine Operator.\n` +
         `• Sensor Bus Status: 5 subterranean nodes reset to STABLE baseline surveillance mode.\n` +
         `• Safety Interlocks: Normal monitoring resumed under DGMS standards.`;
+    }
+  async queryHuggingFaceInference(message, telemetry = {}) {
+    const model = process.env.LOCAL_AI_MODEL || 'HuggingFaceTB/SmolLM2-360M-Instruct';
+    const hfToken = process.env.HUGGINGFACE_API_KEY || process.env.HF_TOKEN;
+
+    const phase = telemetry.phase || 'STABLE';
+    const pitch = Number(telemetry.pitch || 0.5).toFixed(1);
+    const rms = Number(telemetry.rms || 0.15).toFixed(2);
+    const co = Math.floor(telemetry.co || 12);
+    const disp = Number(telemetry.disp || 0.1).toFixed(2);
+
+    const systemPrompt = "You are MINE GUARDER MASTER AI, the single authoritative geotechnical engineering and safety control system for this coal mine. Speak authoritatively in 2-3 sentences based on the live sensor data and DGMS statutory standards.";
+    const userPrompt = `Live Telemetry: [Phase: ${phase}, Pitch: ${pitch}°, Micro-Seismic RMS: ${rms}g, CO: ${co} ppm, Displacement: ${disp} mm]. Operator query: "${message}". What is your immediate assessment and directive?`;
+    const prompt = `<|im_start|>system\n${systemPrompt}<|im_end|>\n<|im_start|>user\n${userPrompt}<|im_end|>\n<|im_start|>assistant\n`;
+
+    const headers = { 'Content-Type': 'application/json' };
+    if (hfToken) {
+      headers['Authorization'] = `Bearer ${hfToken}`;
+    }
+
+    const endpoints = [
+      `https://router.huggingface.co/hf-inference/models/${model}`,
+      `https://api-inference.huggingface.co/models/${model}`
+    ];
+
+    for (const url of endpoints) {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            inputs: prompt,
+            parameters: { max_new_tokens: 120, temperature: 0.6, return_full_text: false }
+          })
+        });
+        if (response.ok) {
+          const data = await response.json();
+          let text = '';
+          if (Array.isArray(data) && data[0]?.generated_text) {
+            text = data[0].generated_text;
+          } else if (typeof data === 'string') {
+            text = data;
+          }
+          if (text) {
+            return text.replace(/<\|im_end\|>/g, '').replace(/<\|im_start\|>/g, '').trim();
+          }
+        }
+      } catch (e) {
+        // Continue to fallback
+      }
     }
     return null;
   }

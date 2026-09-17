@@ -24,27 +24,29 @@ let currentAiPhase = null;
 let generatingAi = false;
 
 async function initAi() {
-  const totalMemMb = Math.round(os.totalmem() / (1024 * 1024));
-  console.log(`Available System Memory: ${totalMemMb}MB`);
-
-  // Protect 512MB RAM cloud tiers (e.g. Render Free Tier) from Out-Of-Memory crashes
-  if (process.env.ENABLE_LOCAL_AI === 'false' || totalMemMb < 1024) {
-    console.log("Master AI operating via Cloud AI (Gemini / Workers AI) / DGMS Statutory Core.");
+  if (process.env.ENABLE_LOCAL_AI === 'false') {
+    console.log("Master AI operating via Cloud AI (Gemini / Workers AI / HuggingFace API) / DGMS Statutory Core.");
     return;
   }
   try {
-    const { pipeline } = require('@huggingface/transformers');
-    console.log(`🤖 Loading Neural Engine (${LOCAL_MODEL})...`);
+    const { pipeline, env } = require('@huggingface/transformers');
+    env.cacheDir = path.join(__dirname, '.cache');
+    console.log(`🤖 Loading Neural Engine (${LOCAL_MODEL}) from ${env.cacheDir}...`);
     aiGenerator = await pipeline('text-generation', LOCAL_MODEL, {
-      dtype: 'q4'
+      dtype: 'q4',
+      device: 'cpu'
     });
     console.log(`✅ Neural Engine [${LOCAL_MODEL}] Loaded Successfully!`);
     latestAiAnalysis = `[MINE GUARDER MASTER AI] Neural Engine (${LOCAL_MODEL}) active. Full telemetry surveillance engaged.`;
+    if (global.gc) global.gc();
   } catch (err) {
     console.warn(`Neural engine load notice (${err.message}). Operating via Cloud AI / DGMS Core.`);
   }
 }
-initAi();
+// Start background AI load after server is bound to port
+setTimeout(() => {
+  initAi();
+}, 1500);
 
 const app = express();
 const server = http.createServer(app);
