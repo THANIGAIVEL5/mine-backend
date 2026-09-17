@@ -19,7 +19,7 @@
         <span class="material-symbols-outlined text-slate-800 dark:text-white text-base">psychology</span>
         <div>
           <div class="flex items-center gap-2">
-            <h4 class="text-xs font-bold text-slate-900 dark:text-white tracking-wide">TERRA-SENTINEL MASTER AI</h4>
+            <h4 class="text-xs font-bold text-slate-900 dark:text-white tracking-wide">MINE GUARDER MASTER AI</h4>
             <span class="px-1.5 py-0.5 rounded text-[8px] font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40">SmolLM2 1.7B NEURAL ENGINE</span>
           </div>
           <div class="flex items-center gap-1.5 text-[9px] text-slate-500 dark:text-zinc-400">
@@ -41,16 +41,21 @@
       </div>
     </div>
 
-    <!-- Telemetry Governance Ribbon -->
+    <!-- Telemetry Governance Ribbon & Mode Switcher -->
     <div class="flex items-center justify-between px-3 py-1.5 bg-slate-100 dark:bg-[#0f0f0f] border-b border-slate-200 dark:border-white/10 text-[10px] text-slate-600 dark:text-zinc-400">
-      <span class="flex items-center gap-1">
-        <span class="material-symbols-outlined text-xs text-slate-700 dark:text-white">tune</span> 5 Nodes • 12 Channels Synced
-      </span>
-      <span class="text-slate-900 dark:text-white font-mono text-[9px] font-bold">AUTONOMOUS INTERLOCK READY</span>
+      <div class="flex items-center gap-1 font-mono">
+        <button ng-click="chat.setMode('CHAT')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer" ng-class="chat.activeMode === 'CHAT' ? 'bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white'">
+          💬 CHAT ASSISTANT
+        </button>
+        <button ng-click="chat.setMode('SQL')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer" ng-class="chat.activeMode === 'SQL' ? 'bg-sky-600 text-white dark:bg-cyan-400 dark:text-black shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white'">
+          🔍 AI TEXT-TO-SQL
+        </button>
+      </div>
+      <span class="text-slate-900 dark:text-white font-mono text-[9px] font-bold uppercase">{{ chat.activeMode === 'SQL' ? 'SQL ENGINE ACTIVE' : 'INTERLOCK READY' }}</span>
     </div>
 
-      <!-- AI Quick-Action Macro Chips -->
-      <div class="px-3 pt-2 pb-1.5 bg-slate-50 dark:bg-[#0e0e0e] border-b border-slate-200 dark:border-white/10">
+      <!-- Quick-Action Macro Chips for Active Mode -->
+      <div class="px-3 pt-2 pb-1.5 bg-slate-50 dark:bg-[#0e0e0e] border-b border-slate-200 dark:border-white/10" ng-if="chat.activeMode === 'CHAT'">
         <div class="flex items-center justify-between text-[9px] font-mono text-slate-500 dark:text-zinc-500 uppercase mb-1.5">
           <span class="flex items-center gap-1">
             <span class="material-symbols-outlined text-[11px] text-sky-600 dark:text-cyan-400">psychology</span>
@@ -67,8 +72,29 @@
           <button ng-click="chat.sendQuickChat('Check LoRa SX1278 RSSI health for all 5 nodes: flag any nodes with RSSI worse than -90dBm and recommend antenna re-positioning.')" class="macro-chip">
             <span class="material-symbols-outlined text-[11px]">cell_tower</span> LoRa RSSI Check
           </button>
-          <button ng-click="chat.sendQuickChat('Draft a formal shift handover safety log for the Chasnala Mine Sector 4B, including sensor summaries, triggered alerts, and actions taken.')" class="macro-chip">
-            <span class="material-symbols-outlined text-[11px]">assignment</span> Shift Handover Log
+        </div>
+      </div>
+
+      <!-- Quick SQL Query Chips when SQL Mode is active -->
+      <div class="px-3 pt-2 pb-1.5 bg-sky-50/50 dark:bg-cyan-950/20 border-b border-sky-100 dark:border-cyan-500/20" ng-if="chat.activeMode === 'SQL'">
+        <div class="flex items-center justify-between text-[9px] font-mono text-sky-700 dark:text-cyan-400 uppercase mb-1.5 font-bold">
+          <span class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-[11px]">database</span>
+            NATURAL LANGUAGE SQL EXAMPLES
+          </span>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <button ng-click="chat.messageInput = 'Show all incident alerts in Sector 4B'; chat.sendMessage();" class="macro-chip">
+            <span class="material-symbols-outlined text-[11px]">warning</span> Incident Alerts
+          </button>
+          <button ng-click="chat.messageInput = 'List active underground miners and their SCSR status'; chat.sendMessage();" class="macro-chip">
+            <span class="material-symbols-outlined text-[11px]">engineering</span> Underground Miners
+          </button>
+          <button ng-click="chat.messageInput = 'Find max roof displacement and average seismic RMS'; chat.sendMessage();" class="macro-chip">
+            <span class="material-symbols-outlined text-[11px]">analytics</span> Roof &amp; Seismic Stats
+          </button>
+          <button ng-click="chat.messageInput = 'Show all DGMS Form IV safety audits'; chat.sendMessage();" class="macro-chip">
+            <span class="material-symbols-outlined text-[11px]">verified</span> DGMS Audits
           </button>
         </div>
       </div>
@@ -118,24 +144,46 @@
           <span class="bg-amber-100 dark:bg-amber-500/20 border border-amber-300 dark:border-amber-500 text-amber-800 dark:text-amber-300 text-[9px] px-1.5 py-0.5 rounded font-bold animate-pulse" ng-if="msg.isIntervention">SAFETY INTERVENTION</span>
           <span class="text-slate-400 dark:text-slate-500">• {{ msg.time }}</span>
         </div>
-        <div class="max-w-[85%] rounded-lg px-3.5 py-2 text-xs font-sans whitespace-pre-line leading-relaxed shadow-sm" ng-class="{'bg-amber-50 border border-amber-200 text-amber-950 dark:bg-amber-950/60 dark:border-amber-500/60 dark:text-amber-100': msg.isIntervention, 'bg-white border border-slate-200 text-slate-800 dark:bg-[#141414] dark:border-white/20 dark:text-zinc-100': msg.isAi && !msg.isIntervention, 'bg-sky-50 border border-sky-200 text-sky-950 dark:bg-cyan-950/50 dark:border-cyan-500/40 dark:text-cyan-50': !msg.isAi}">
+
+        <!-- Standard Message Text -->
+        <div ng-if="!msg.isSqlResult" class="max-w-[90%] rounded-lg px-3.5 py-2 text-xs font-sans whitespace-pre-line leading-relaxed shadow-sm" ng-class="{'bg-amber-50 border border-amber-200 text-amber-950 dark:bg-amber-950/60 dark:border-amber-500/60 dark:text-amber-100': msg.isIntervention, 'bg-white border border-slate-200 text-slate-800 dark:bg-[#141414] dark:border-white/20 dark:text-zinc-100': msg.isAi && !msg.isIntervention, 'bg-sky-50 border border-sky-200 text-sky-950 dark:bg-cyan-950/50 dark:border-cyan-500/40 dark:text-cyan-50': !msg.isAi}">
           {{ msg.text }}
+        </div>
+
+        <!-- SQL Query Execution Result Display Block -->
+        <div ng-if="msg.isSqlResult" class="max-w-[95%] w-full rounded-lg p-3 bg-white dark:bg-[#121212] border border-sky-200 dark:border-cyan-500/30 text-xs font-mono space-y-2 shadow-sm">
+          <div class="flex items-center justify-between text-[10px] text-sky-700 dark:text-cyan-400 font-bold border-b border-slate-200 dark:border-white/10 pb-1.5">
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-xs">terminal</span> GENERATED SQL QUERY
+            </span>
+            <span class="text-slate-500 dark:text-zinc-400 font-normal">{{ msg.executionTimeMs }}ms • {{ msg.rowCount }} row(s)</span>
+          </div>
+          <div class="bg-slate-900 text-emerald-400 p-2.5 rounded font-mono text-[11px] overflow-x-auto select-all">
+            {{ msg.generatedSql }}
+          </div>
+          <div class="text-slate-700 dark:text-zinc-200 font-sans text-xs leading-relaxed">
+            {{ msg.text }}
+          </div>
+          <details class="text-[10px] text-slate-600 dark:text-zinc-400 pt-1" ng-if="msg.results && msg.results.length > 0">
+            <summary class="cursor-pointer hover:text-sky-600 dark:hover:text-cyan-300 font-bold font-mono">View Raw JSON Dataset ({{ msg.rowCount }} items)</summary>
+            <pre class="mt-1.5 p-2 bg-slate-100 dark:bg-[#080808] border border-slate-200 dark:border-white/10 rounded overflow-x-auto text-[10px] text-slate-800 dark:text-zinc-300 font-mono max-h-40">{{ msg.results | json }}</pre>
+          </details>
         </div>
       </div>
       <div ng-if="chat.isSending" class="flex items-center gap-2 text-xs font-mono text-sky-700 dark:text-cyan-400 py-1 font-bold">
         <span class="w-2 h-2 rounded-full bg-sky-600 dark:bg-cyan-400 animate-ping"></span>
-        <span>MASTER AI COMPUTING NEURAL DIRECTIVE...</span>
+        <span>{{ chat.activeMode === 'SQL' ? 'AI TRANSLATING PROMPT TO SQL & EXECUTING QUERY...' : 'MASTER AI COMPUTING NEURAL DIRECTIVE...' }}</span>
       </div>
     </div>
 
     <!-- Chat Input Area -->
     <div class="p-2.5 bg-slate-50 dark:bg-[#141414] border-t border-slate-200 dark:border-white/10 flex items-center gap-2">
-      <input id="chat-input" type="text" ng-model="chat.messageInput" ng-keydown="$event.keyCode === 13 && chat.sendMessage()" placeholder="Command Master AI or enter intervention directive (e.g. Evacuate, Drain Sump)..." class="flex-1 bg-white dark:bg-[#050505] border border-slate-300 dark:border-white/20 focus:border-slate-600 dark:focus:border-white focus:outline-none text-xs text-slate-900 dark:text-white px-3 py-2 rounded-lg font-sans placeholder-slate-400 dark:placeholder-zinc-500 shadow-2xs" />
+      <input id="chat-input" type="text" ng-model="chat.messageInput" ng-keydown="$event.keyCode === 13 && chat.sendMessage()" ng-attr-placeholder="{{ chat.activeMode === 'SQL' ? 'Ask a database question (e.g. Show all incident alerts in Sector 4B)...' : 'Command Master AI or enter intervention directive...' }}" class="flex-1 bg-white dark:bg-[#050505] border border-slate-300 dark:border-white/20 focus:border-slate-600 dark:focus:border-white focus:outline-none text-xs text-slate-900 dark:text-white px-3 py-2 rounded-lg font-sans placeholder-slate-400 dark:placeholder-zinc-500 shadow-2xs" />
       <button id="chat-voice-btn" ng-click="chat.startVoiceCommand()" title="Push-to-Talk Voice Command (Speak hands-free)" class="p-2 rounded-lg font-bold transition flex items-center justify-center cursor-pointer active:scale-95" ng-class="chat.isListening ? 'ptt-active' : 'bg-slate-200 hover:bg-slate-300 text-slate-700 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-zinc-300 dark:hover:text-white border border-slate-300 dark:border-white/20'">
         <span class="material-symbols-outlined text-sm">{{ chat.isListening ? 'mic' : 'mic_none' }}</span>
       </button>
       <button id="chat-send-btn" ng-click="chat.sendMessage()" class="bg-slate-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black p-2 rounded-lg font-bold transition flex items-center justify-center cursor-pointer active:scale-95 shadow-xs">
-        <span class="material-symbols-outlined text-sm">send</span>
+        <span class="material-symbols-outlined text-sm">{{ chat.activeMode === 'SQL' ? 'search' : 'send' }}</span>
       </button>
     </div>
   </div>

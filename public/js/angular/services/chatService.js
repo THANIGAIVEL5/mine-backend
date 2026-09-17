@@ -10,21 +10,25 @@
     .factory('chatService', [
       '$rootScope',
       '$http',
-      function ($rootScope, $http) {
+      'telemetryService',
+      function ($rootScope, $http, telemetryService) {
         function getBackendUrl() {
-          var custom = localStorage.getItem('terra_backend_url') || window.TERRA_BACKEND_URL;
-          if (custom) return custom.replace(/\/$/, '');
-          if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          var userCustom = localStorage.getItem('terra_backend_url');
+          if (userCustom !== null && userCustom.trim() !== '') {
+            return userCustom.trim().replace(/\/$/, '');
+          }
+          if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.port === '3000') {
             return '';
           }
-          return 'https://mine-backend-1.onrender.com';
+          var globalUrl = window.TERRA_BACKEND_URL || 'https://mine-backend-1.onrender.com';
+          return globalUrl.replace(/\/$/, '');
         }
 
         var service = {
           messages: [
             {
-              sender: 'TERRA-SENTINEL MASTER AI',
-              text: 'Welcome Operator. I am the central TERRA-SENTINEL Master AI Controller with autonomous oversight of all 5 underground sensor nodes, hydraulic powered roof chocks, drainage sumps, and DGMS emergency safety interlocks.',
+              sender: 'MINE GUARDER MASTER AI',
+              text: 'Welcome Operator. I am the central MINE GUARDER Master AI Controller with autonomous oversight of all 5 underground sensor nodes, hydraulic powered roof chocks, drainage sumps, and DGMS emergency safety interlocks.',
               isAi: true,
               time: 'INITIALIZED',
               source: 'SmolLM2 / DGMS NEURAL CORE',
@@ -41,14 +45,15 @@
         function initSocket() {
           try {
             if (typeof io !== 'undefined') {
-              var targetUrl = service.backendUrl || 'https://mine-backend-1.onrender.com';
-              service.socketIo = io(targetUrl, {
+              var targetUrl = service.backendUrl || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? '' : 'https://mine-backend-1.onrender.com');
+              service.socketIo = io(targetUrl || window.location.origin, {
                 transports: ['websocket', 'polling'],
-                timeout: 6000
+                timeout: 4000
               });
 
               service.socketIo.on('chat_broadcast', function (data) {
                 if (data && (data.text || data.reply)) {
+                  service.isSending = false;
                   var textMsg = data.text || data.reply;
                   var isDupe = service.messages.some(function (m) {
                     return m.text === textMsg && m.sender === data.sender;
@@ -114,14 +119,14 @@
           }
           if (q === 'hi' || q === 'hello' || q === 'hey' || q.includes('who are you') || q.includes('help') || q.includes('status')) {
             return {
-              reply: '🛡️ [TERRA-SENTINEL MASTER AI] Greetings Operator. Central monitoring and autonomous safety oversight active across Chasnala Deep Mine Sector 4B.\n\n• Operational Phase: STABLE (All 5 Sensor Nodes Synchronized)\n• Strata Displacement: 0.10 mm (Nominal)\n• Seismic RMS: 0.15g (ISO 10816-3 Zone A - Stable)\n• Atmospheric CO: 12 ppm (DGMS Safe < 25 ppm)\n\nYou can issue commands such as "Report mine status", "Check gas & CO levels", "Explain subsidence risk", "100% ventilation boost", or "Trigger evacuation klaxon".',
-              source: 'TERRA-SENTINEL MASTER CONTROLLER',
+              reply: '🛡️ [MINE GUARDER MASTER AI] Greetings Operator. Central monitoring and autonomous safety oversight active across Chasnala Deep Mine Sector 4B.\n\n• Operational Phase: STABLE (All 5 Sensor Nodes Synchronized)\n• Strata Displacement: 0.10 mm (Nominal)\n• Seismic RMS: 0.15g (ISO 10816-3 Zone A - Stable)\n• Atmospheric CO: 12 ppm (DGMS Safe < 25 ppm)\n\nYou can issue commands such as "Report mine status", "Check gas & CO levels", "Explain subsidence risk", "100% ventilation boost", or "Trigger evacuation klaxon".',
+              source: 'MINE GUARDER MASTER CONTROLLER',
               isIntervention: false
             };
           }
 
           return {
-            reply: '[TERRA-SENTINEL MASTER AI DIRECTIVE]\nGeotechnical query evaluated for Chasnala Deep Mine Sector 4B. Micro-seismic vibration RMS is 0.15g and strata roof displacement is 0.10 mm. All parameters are within DGMS 1957/2017 safety guidelines. No anomalous acoustic emission or ground delamination detected.',
+            reply: '[MINE GUARDER MASTER AI DIRECTIVE]\nGeotechnical query evaluated for Chasnala Deep Mine Sector 4B. Micro-seismic vibration RMS is 0.15g and strata roof displacement is 0.10 mm. All parameters are within DGMS 1957/2017 safety guidelines. No anomalous acoustic emission or ground delamination detected.',
             source: 'DGMS CMR-2017 GEOTECHNICAL CORE',
             isIntervention: false
           };
@@ -129,7 +134,7 @@
 
         // Direct Google Gemini Flash Integration for Client-Side AI Execution
         function callGeminiDirect(query, apiKey) {
-          var prompt = "You are the TERRA-SENTINEL Master AI Controller for an underground coal mine (Chasnala Deep Mine, Sector 4B) complying with DGMS safety standards. The operator asks: \"" + query + "\". Provide a sharp, professional, authoritative geotechnical response (2-3 sentences max) with actionable engineering recommendations.";
+          var prompt = "You are the MINE GUARDER Master AI Controller for an underground coal mine (Chasnala Deep Mine, Sector 4B) complying with DGMS safety standards. The operator asks: \"" + query + "\". Provide a sharp, professional, authoritative geotechnical response (2-3 sentences max) with actionable engineering recommendations.";
           var endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + apiKey;
 
           return $http.post(endpoint, {
@@ -153,6 +158,14 @@
           text = text.trim();
           user = user || 'Mine Operator';
 
+          // Apply immediate local physical override if intervention command
+          if (telemetryService && typeof telemetryService.applyOperatorOverride === 'function') {
+            var lText = text.toLowerCase();
+            if (lText.includes('intervene') || lText.includes('evacuat') || lText.includes('boost') || lText.includes('pump') || lText.includes('chock') || lText.includes('reset') || lText.includes('stable')) {
+              telemetryService.applyOperatorOverride(text);
+            }
+          }
+
           var userMsg = {
             sender: user,
             text: text,
@@ -174,14 +187,14 @@
           }
 
           var currentBackend = getBackendUrl();
-          var postUrl = (currentBackend ? currentBackend : 'https://mine-backend-1.onrender.com') + '/api/chat';
+          var postUrl = (currentBackend ? currentBackend : '') + '/api/chat';
 
-          // Try cloud/local backend first
+          // Try cloud/local backend first with fast 3.5s timeout for instant responsiveness
           return $http.post(postUrl, {
             message: text,
             query: text,
             geminiApiKey: service.geminiApiKey
-          }, { timeout: 8000 }).then(
+          }, { timeout: 3500 }).then(
             function (res) {
               service.isSending = false;
               var data = res.data;
@@ -202,7 +215,7 @@
 
               if (!isDupe) {
                 service.messages.push({
-                  sender: 'TERRA-SENTINEL MASTER AI',
+                  sender: 'MINE GUARDER MASTER AI',
                   text: replyText,
                   isAi: true,
                   time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
@@ -241,45 +254,95 @@
 
         function applyLocalFallback(text) {
           service.isSending = false;
-          var local = (window.SmolAi && typeof window.SmolAi.generate === 'function')
-            ? null 
-            : generateLocalGeotechnicalResponse(text);
+          var telemData = (telemetryService && telemetryService.data) || {};
 
           if (window.SmolAi && typeof window.SmolAi.generate === 'function') {
-            window.SmolAi.generate(text).then(function (res) {
-              service.messages.push({
-                sender: 'TERRA-SENTINEL MASTER AI',
-                text: res.reply,
-                isAi: true,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-                source: res.source,
-                isIntervention: res.isIntervention
-              });
-              $rootScope.$applyAsync();
-            }).catch(function () {
-              var fallback = generateLocalGeotechnicalResponse(text);
-              service.messages.push({
-                sender: 'TERRA-SENTINEL MASTER AI',
-                text: fallback.reply,
-                isAi: true,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-                source: fallback.source,
-                isIntervention: fallback.isIntervention
-              });
-              $rootScope.$applyAsync();
-            });
-          } else {
-            service.messages.push({
-              sender: 'TERRA-SENTINEL MASTER AI',
-              text: local.reply,
-              isAi: true,
-              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-              source: local.source,
-              isIntervention: local.isIntervention
-            });
-            $rootScope.$applyAsync();
+            try {
+              var genPromise = window.SmolAi.generate(text, telemData);
+              if (genPromise && typeof genPromise.then === 'function') {
+                genPromise.then(function (res) {
+                  service.isSending = false;
+                  service.messages.push({
+                    sender: 'TERRA-SENTINEL MASTER AI',
+                    text: res.reply,
+                    isAi: true,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                    source: res.source,
+                    isIntervention: res.isIntervention
+                  });
+                  $rootScope.$applyAsync();
+                }).catch(function () {
+                  fallbackToRules(text);
+                });
+                return;
+              }
+            } catch (e) {
+              // Fall through to deterministic rules
+            }
           }
+
+          fallbackToRules(text);
         }
+
+        function fallbackToRules(text) {
+          service.isSending = false;
+          var fallback = generateLocalGeotechnicalResponse(text);
+          service.messages.push({
+            sender: 'TERRA-SENTINEL MASTER AI',
+            text: fallback.reply,
+            isAi: true,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+            source: fallback.source,
+            isIntervention: fallback.isIntervention
+          });
+          $rootScope.$applyAsync();
+        }
+
+        service.sendTextToSql = function (naturalQuery) {
+          if (!naturalQuery || !naturalQuery.trim() || service.isSending) return;
+          var queryText = naturalQuery.trim();
+          service.isSending = true;
+
+          service.messages.push({
+            sender: 'OPERATOR',
+            text: '🔍 [SQL QUERY]: ' + queryText,
+            isAi: false,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+          });
+
+          var endpoint = (service.backendUrl ? service.backendUrl : '') + '/api/chat/text-to-sql';
+
+          $http.post(endpoint, { query: queryText })
+            .then(function (res) {
+              service.isSending = false;
+              var data = res.data;
+              service.messages.push({
+                sender: 'MINE GUARDER SQL ENGINE',
+                text: data.naturalSummary,
+                generatedSql: data.generatedSql,
+                results: data.results,
+                rowCount: data.rowCount,
+                isSqlResult: true,
+                isAi: true,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                source: 'AI Text-to-SQL Translator (SQLite 3)',
+                executionTimeMs: data.executionTimeMs
+              });
+              $rootScope.$applyAsync();
+            })
+            .catch(function (err) {
+              service.isSending = false;
+              var errMessage = (err.data && err.data.error) ? err.data.error : 'SQL Translation Failed.';
+              service.messages.push({
+                sender: 'MINE GUARDER SQL ENGINE',
+                text: '❌ [SQL EXECUTION ERROR]: ' + errMessage,
+                isAi: true,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                source: 'SQL Safety Sandbox Core'
+              });
+              $rootScope.$applyAsync();
+            });
+        };
 
         service.setBackendUrl = function (url) {
           service.backendUrl = (url || '').trim().replace(/\/$/, '');

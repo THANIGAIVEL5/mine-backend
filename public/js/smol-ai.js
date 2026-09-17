@@ -1,6 +1,6 @@
 /**
  * ==============================================================================
- * TERRA-PULSE OS // SMOL-AI ON-DEVICE NEURAL CORE
+ * MINE GUARDER OS // SMOL-AI ON-DEVICE NEURAL CORE
  * Embedded Hugging Face SmolLM2-Instruct In-Browser Neural Engine for Firebase
  * ==============================================================================
  * Enables client-side, zero-server AI execution directly inside Firebase Hosting:
@@ -23,7 +23,7 @@
 
     // Geotechnical domain system prompt
     systemPrompt: 
-      "You are the TERRA-SENTINEL Master AI Controller for the Chasnala Deep Coal Mine (Sector 4B). " +
+      "You are the MINE GUARDER Master AI Controller for the Chasnala Deep Coal Mine (Sector 4B). " +
       "You govern subterranean geotechnical telemetry (strata pitch/roll flexure, micro-seismic vibration, " +
       "roof delamination displacement, atmospheric CO gas, and drainage sump water depth). " +
       "You enforce statutory DGMS 1957/2017 mining safety regulations. " +
@@ -173,7 +173,7 @@
 
       if (q === 'hi' || q === 'hello' || q === 'hey' || q.includes('who are you') || q.includes('help') || q.includes('status')) {
         return {
-          reply: '🛡️ [TERRA-SENTINEL MASTER AI // SMOL-AI ON-DEVICE CORE]\n' +
+          reply: '🛡️ [MINE GUARDER MASTER AI // SMOL-AI ON-DEVICE CORE]\n' +
                  'Greetings Operator. Central autonomous governance active for Chasnala Deep Mine Sector 4B.\n\n' +
                  '• Operational State: ' + phase + ' (All 5 Telemetry Nodes Synchronized)\n' +
                  '• Strata Roof Flexure: ' + disp + ' mm | Vibration RMS: ' + rms + 'g\n' +

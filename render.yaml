@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: terra-pulse-backend
+    name: mine-guarder-backend
     runtime: node
     plan: free
     region: oregon
@@ -9,8 +9,12 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: LOCAL_AI_MODEL
+        value: HuggingFaceTB/SmolLM2-360M-Instruct
       - key: ENABLE_LOCAL_AI
         value: "false"
+      - key: GEMINI_API_KEY
+        sync: false
       - key: CLOUDFLARE_API_TOKEN
         sync: false
       - key: CLOUDFLARE_ACCOUNT_ID

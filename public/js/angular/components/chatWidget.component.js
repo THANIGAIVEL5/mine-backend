@@ -102,12 +102,26 @@
           vm.isKeyModalOpen = false;
         };
 
+        vm.activeMode = 'CHAT'; // 'CHAT' or 'SQL'
+
+        vm.setMode = function (mode) {
+          vm.activeMode = mode;
+          $timeout(function () {
+            var input = document.getElementById('chat-input');
+            if (input) input.focus();
+          }, 50);
+        };
+
         vm.sendMessage = function () {
           if (!vm.messageInput || !vm.messageInput.trim()) return;
           var text = vm.messageInput;
           vm.messageInput = '';
           audioService.playBeep(920, 0.06, 'triangle');
-          chatService.sendMessage(text);
+          if (vm.activeMode === 'SQL') {
+            chatService.sendTextToSql(text);
+          } else {
+            chatService.sendMessage(text);
+          }
           $timeout(vm.scrollToBottom, 50);
         };
 
@@ -139,6 +153,28 @@
             container.scrollTop = container.scrollHeight;
           }
         };
+
+        vm.saveKey = vm.saveSettings;
+
+        // Listen for Command Palette and global trigger events
+        $scope.$on('cmd:openTerminal', function () {
+          vm.openWindow();
+          $scope.$applyAsync();
+        });
+        $scope.$on('cmd:openChat', function () {
+          vm.openWindow();
+          $scope.$applyAsync();
+        });
+
+        // Register on rootScope if available for cross-component access
+        var unbindRoot = $scope.$root ? $scope.$root.$on('cmd:openTerminal', function () {
+          vm.openWindow();
+          $scope.$applyAsync();
+        }) : null;
+
+        $scope.$on('$destroy', function () {
+          if (unbindRoot) unbindRoot();
+        });
       }
     ]);
 })();

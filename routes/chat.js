@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const textToSqlService = require('../services/textToSqlService');
 
 /**
- * TERRA-SENTINEL MASTER AI CONTROLLER
+ * MINE GUARDER MASTER AI CONTROLLER
  * Single authoritative intelligence system that controls and monitors all mine sensor data:
  * - Subterranean Strata Dynamics (Pitch, Roll, Displacement)
  * - Micro-Seismic Vibration (RMS, Peak-to-Peak, FFT)
@@ -10,9 +11,9 @@ const router = express.Router();
  * - Hydrogeological Infiltration (Shaft Sump Water Depth)
  * - DGMS Statutory Compliance (Directorate General of Mines Safety 1957/2017)
  */
-class TerraSentinelMasterAI {
+class MineGuarderMasterAI {
   constructor() {
-    this.name = 'TERRA-SENTINEL MASTER AI';
+    this.name = 'MINE GUARDER MASTER AI';
     this.status = 'ACTIVE // OMNI-GOVERNANCE';
   }
 
@@ -85,7 +86,7 @@ class TerraSentinelMasterAI {
     if (cfReply) {
       return {
         reply: cfReply,
-        source: 'TERRA-SENTINEL Master AI (Cloudflare Workers AI Llama-3.1 8B)'
+        source: 'MINE GUARDER Master AI (Cloudflare Workers AI Llama-3.1 8B)'
       };
     }
 
@@ -96,7 +97,7 @@ class TerraSentinelMasterAI {
         if (cloudReply) {
           return {
             reply: cloudReply,
-            source: 'TERRA-SENTINEL Master AI (Cloud Augmented)'
+            source: 'MINE GUARDER Master AI (Google Gemini Cloud AI)'
           };
         }
       } catch (e) {
@@ -104,14 +105,14 @@ class TerraSentinelMasterAI {
       }
     }
 
-    // 2. On-Device Neural Brain (Local Qwen 2.5)
+    // 3. On-Device Neural Brain
     if (aiGenerator) {
       try {
         const neuralReply = await this.queryNeuralIntelligence(aiGenerator, message, telemetry);
         if (neuralReply) {
           return {
             reply: neuralReply,
-            source: 'TERRA-SENTINEL Master AI (On-Device Neural)'
+            source: 'MINE GUARDER Master AI (On-Device Qwen 2.5 Neural)'
           };
         }
       } catch (e) {
@@ -119,10 +120,10 @@ class TerraSentinelMasterAI {
       }
     }
 
-    // 3. Statutory Regulatory Safety Core
+    // 4. Statutory Regulatory Safety Core
     return {
       reply: this.queryRegulatoryCore(message, telemetry),
-      source: 'TERRA-SENTINEL Master AI (DGMS Regulatory Core)'
+      source: 'MINE GUARDER Master AI (DGMS Regulatory Core)'
     };
   }
 
@@ -242,7 +243,7 @@ Instructions:
 - Quote DGMS (Directorate General of Mines Safety) 1957/2017 thresholds and specify immediate physical engineering commands.
 - Keep response clear, professional, and concise.`;
 
-    const models = ['gemini-2.0-flash', 'gemini-1.5-flash'];
+    const models = ['antigravity-preview-09-2026', 'gemini-2.5-flash-native-audio-latest', 'gemini-1.5-flash-latest', 'gemini-2.0-flash-exp', 'gemini-1.5-pro-latest', 'gemini-1.5-flash', 'gemini-2.0-flash'];
     for (const model of models) {
       try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
@@ -357,7 +358,7 @@ Instructions:
   }
 }
 
-const masterAi = new TerraSentinelMasterAI();
+const masterAi = new MineGuarderMasterAI();
 
 // Status endpoint
 router.get('/status', (req, res) => {
@@ -365,7 +366,7 @@ router.get('/status', (req, res) => {
     controller: masterAi.name,
     status: masterAi.status,
     hasCloudKey: !!process.env.GEMINI_API_KEY,
-    neuralModel: req.app.get('getModelName')?.() || 'Qwen 2.5 (0.5B-Instruct)',
+    neuralModel: req.app.get('getModelName')?.() || 'HuggingFaceTB/SmolLM2-360M-Instruct (~260MB ONNX)',
     governance: '12 Telemetry Channels • 5 Sensor Nodes • Automated Interlocks'
   });
 });
@@ -399,6 +400,75 @@ router.post('/', async (req, res) => {
     console.error('Master AI Controller error:', error);
     res.status(500).json({ error: 'Master AI Controller failed to process request' });
   }
+});
+
+// REST API: POST /api/chat/text-to-sql (AI Natural Language to SQL Execution)
+router.post('/text-to-sql', async (req, res) => {
+  try {
+    const queryText = req.body.query || req.body.message || req.body.text || '';
+    const geminiApiKey = req.body.geminiApiKey || req.headers['x-gemini-key'] || process.env.GEMINI_API_KEY;
+    const cfToken = process.env.CLOUDFLARE_API_TOKEN;
+    const cfAccountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+
+    if (!queryText || typeof queryText !== 'string') {
+      return res.status(400).json({ error: 'Natural language query text is required' });
+    }
+
+    const result = await textToSqlService.processTextToSql(queryText, {
+      apiKey: geminiApiKey,
+      cfToken: cfToken,
+      cfAccountId: cfAccountId
+    });
+
+    return res.json({
+      success: true,
+      query: result.query,
+      generatedSql: result.generatedSql,
+      results: result.results,
+      rowCount: result.rowCount,
+      naturalSummary: result.naturalSummary,
+      executionTimeMs: result.executionTimeMs,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('Text-to-SQL execution error:', error.message);
+    return res.status(400).json({
+      success: false,
+      error: error.message,
+      generatedSql: null,
+      results: []
+    });
+  }
+});
+
+// REST API: GET /api/chat/sql-schema
+router.get('/sql-schema', (req, res) => {
+  res.json({
+    engine: 'SQLite 3 / Sequelize MVVM',
+    tables: [
+      {
+        name: 'telemetry_logs',
+        columns: ['id', 'site', 'sector', 'phase', 'pitch', 'roll', 'rms', 'co', 'ch4', 'disp', 'sump', 'temp', 'timestamp'],
+        description: 'Historical subterranean telemetry sensor ticks'
+      },
+      {
+        name: 'incident_alerts',
+        columns: ['id', 'sector', 'severity', 'alert_type', 'description', 'action_taken', 'timestamp'],
+        description: 'DGMS hazard events and physical interlock logs'
+      },
+      {
+        name: 'miner_shifts',
+        columns: ['id', 'miner_id', 'name', 'role', 'sector', 'zone', 'scsr_status', 'status', 'shift_start'],
+        description: 'Subterranean miner location and SCSR status tracking'
+      },
+      {
+        name: 'safety_audits',
+        columns: ['id', 'form_type', 'auditor', 'sector', 'compliance_rating', 'dgms_rule_reference', 'findings', 'created_at'],
+        description: 'DGMS Form IV statutory compliance audit logs'
+      }
+    ]
+  });
 });
 
 module.exports = {

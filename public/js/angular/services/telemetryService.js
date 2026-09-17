@@ -13,12 +13,15 @@
       '$interval',
       function ($rootScope, $http, $interval) {
         function getBackendUrl() {
-          var custom = localStorage.getItem('terra_backend_url') || window.TERRA_BACKEND_URL;
-          if (custom) return custom.replace(/\/$/, '');
-          if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          var userCustom = localStorage.getItem('terra_backend_url');
+          if (userCustom !== null && userCustom.trim() !== '') {
+            return userCustom.trim().replace(/\/$/, '');
+          }
+          if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.port === '3000') {
             return '';
           }
-          return 'https://mine-backend-1.onrender.com';
+          var globalUrl = window.TERRA_BACKEND_URL || 'https://mine-backend-1.onrender.com';
+          return globalUrl.replace(/\/$/, '');
         }
 
         var service = {
@@ -58,6 +61,47 @@
           listeners: [],
           onUpdate: function (cb) {
             this.listeners.push(cb);
+          },
+          applyOperatorOverride: function (commandText) {
+            var text = (commandText || '').toLowerCase();
+            var summary = '';
+
+            if (text.includes('evacuat') || text.includes('klaxon')) {
+              service.data.phase = 'CRITICAL';
+              service.data.pitch = 7.8;
+              service.data.roll = 3.4;
+              service.data.rms = 1.95;
+              service.data.co = 88;
+              service.data.disp = 8.5;
+              summary = '[OPERATOR INTERVENTION] Emergency evacuation klaxons activated across Sector 4B. Power to stope cut. SCSR donned.';
+            } else if (text.includes('ventilat') || text.includes('boost') || text.includes('fan')) {
+              service.data.co = Math.max(4.0, +(service.data.co * 0.4).toFixed(1));
+              service.data.temp = Math.max(22.0, +(service.data.temp - 3.5).toFixed(1));
+              summary = '[OPERATOR INTERVENTION] Auxiliary high-output fans throttled to 100%. Airflow boosted to 3.8 m/s. CO gas flushing.';
+            } else if (text.includes('pump') || text.includes('drain') || text.includes('water') || text.includes('dewatering')) {
+              service.data.sump = Math.max(2.0, +(service.data.sump * 0.25).toFixed(1));
+              summary = '[OPERATOR INTERVENTION] 500 GPM submersible dewatering pump forced online. Sump depth dropping rapidly.';
+            } else if (text.includes('chock') || text.includes('bar') || text.includes('pre-tension')) {
+              service.data.pitch = Math.max(0.3, +(service.data.pitch * 0.5).toFixed(2));
+              service.data.disp = Math.max(0.08, +(service.data.disp * 0.4).toFixed(2));
+              summary = '[OPERATOR INTERVENTION] Hydraulic powered roof chocks pre-tensioned to 350 Bar. Strata roof convergence arrested.';
+            } else if (text.includes('reset') || text.includes('stable')) {
+              service.data.phase = 'STABLE';
+              service.data.pitch = 0.5;
+              service.data.roll = 0.2;
+              service.data.rms = 0.15;
+              service.data.co = 12.0;
+              service.data.disp = 0.10;
+              service.data.sump = 18.0;
+              summary = '[OPERATOR INTERVENTION] Telemetry baseline reset to STABLE. Autonomous surveillance re-engaged.';
+            }
+
+            if (summary) {
+              service.latestAiText = summary;
+              service.data.aiText = summary;
+              processSnapshot(service.data);
+            }
+            return { snapshot: service.data, summary: summary };
           }
         };
 
