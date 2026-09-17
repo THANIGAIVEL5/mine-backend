@@ -13,6 +13,8 @@ const authRoutes = require('./routes/auth');
 const { router: chatRoutes, masterAi } = require('./routes/chat');
 const seedDatabase = require('./services/seedDatabase');
 
+const os = require('os');
+
 // Master AI Controller Initialization (SmolLM2-360M-Instruct / Cloud AI / DGMS Rule Core)
 const LOCAL_MODEL = process.env.LOCAL_AI_MODEL || 'HuggingFaceTB/SmolLM2-360M-Instruct';
 let activeModelName = LOCAL_MODEL;
@@ -22,8 +24,12 @@ let currentAiPhase = null;
 let generatingAi = false;
 
 async function initAi() {
-  if (process.env.ENABLE_LOCAL_AI === 'false') {
-    console.log("Master AI operating via Cloud AI / DGMS Statutory Core.");
+  const totalMemMb = Math.round(os.totalmem() / (1024 * 1024));
+  console.log(`Available System Memory: ${totalMemMb}MB`);
+
+  // Protect 512MB RAM cloud tiers (e.g. Render Free Tier) from Out-Of-Memory crashes
+  if (process.env.ENABLE_LOCAL_AI === 'false' || totalMemMb < 1024) {
+    console.log("Master AI operating via Cloud AI (Gemini / Workers AI) / DGMS Statutory Core.");
     return;
   }
   try {
@@ -191,8 +197,8 @@ setInterval(() => {
 sequelize.sync().then(async () => {
   console.log('Database synced');
   await seedDatabase();
-  server.listen(PORT, () => {
-    console.log(`MINE GUARDER Master Controller running on http://localhost:${PORT}`);
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`MINE GUARDER Master Controller running on port ${PORT} (0.0.0.0:${PORT})`);
   });
 }).catch(err => {
   console.error('Failed to sync database:', err);

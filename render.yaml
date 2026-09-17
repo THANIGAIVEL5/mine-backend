@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     region: oregon
-    buildCommand: npm install && npm rebuild sqlite3 --build-from-source && node scripts/download_model.js
+    buildCommand: npm install && npm rebuild sqlite3 --build-from-source
     startCommand: node server.js
     envVars:
       - key: NODE_ENV
@@ -12,7 +12,7 @@ services:
       - key: LOCAL_AI_MODEL
         value: HuggingFaceTB/SmolLM2-360M-Instruct
       - key: ENABLE_LOCAL_AI
-        value: "true"
+        value: "false"
       - key: GEMINI_API_KEY
         sync: false
       - key: CLOUDFLARE_API_TOKEN

@@ -17,13 +17,10 @@ RUN npm rebuild sqlite3 --build-from-source
 # Copy source code including scripts
 COPY . .
 
-# Pre-cache HuggingFaceTB/SmolLM2-360M-Instruct model into Docker image layer
-RUN node scripts/download_model.js
-
 # Runtime settings
 ENV PORT=10000
 ENV NODE_ENV=production
-ENV ENABLE_LOCAL_AI=true
+ENV ENABLE_LOCAL_AI=false
 ENV LOCAL_AI_MODEL=HuggingFaceTB/SmolLM2-360M-Instruct
 
 EXPOSE 10000
