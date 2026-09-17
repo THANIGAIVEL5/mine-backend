@@ -7,4 +7,14 @@ database.sqlite
 venv
 __pycache__
 *.pyc
+gods-eye-view
+rust_backend
+firmware
+app
+.firebase
+.railway
+.cache
+*.md
+*.log
+scratch
 
