@@ -4,19 +4,11 @@ services:
     runtime: node
     plan: free
     region: oregon
-    buildCommand: npm install && npm rebuild sqlite3 --build-from-source && node scripts/download_model.js
-    startCommand: node --max-old-space-size=350 --optimize-for-size server.js
+    buildCommand: npm install && npm rebuild sqlite3 --build-from-source
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
-      - key: LOCAL_AI_MODEL
-        value: HuggingFaceTB/SmolLM2-360M-Instruct
-      - key: ENABLE_LOCAL_AI
-        value: "true"
-      - key: HF_HOME
-        value: /opt/render/project/src/.cache
-      - key: TRANSFORMERS_CACHE
-        value: /opt/render/project/src/.cache
       - key: GEMINI_API_KEY
         sync: false
       - key: CLOUDFLARE_API_TOKEN

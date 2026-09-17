@@ -13,40 +13,13 @@ const authRoutes = require('./routes/auth');
 const { router: chatRoutes, masterAi } = require('./routes/chat');
 const seedDatabase = require('./services/seedDatabase');
 
-const os = require('os');
-
 // Master AI Controller Initialization (SmolLM2-360M-Instruct / Cloud AI / DGMS Rule Core)
-const LOCAL_MODEL = process.env.LOCAL_AI_MODEL || 'HuggingFaceTB/SmolLM2-360M-Instruct';
-let activeModelName = LOCAL_MODEL;
-let aiGenerator = null;
+const MODEL_NAME = 'HuggingFaceTB/SmolLM2-360M-Instruct';
 let latestAiAnalysis = masterAi.getDeterministicDirective('STABLE', 0.5, 0.15, 12.0, 0.1);
 let currentAiPhase = null;
 let generatingAi = false;
 
-async function initAi() {
-  if (process.env.ENABLE_LOCAL_AI === 'false') {
-    console.log("Master AI operating via Cloud AI (Gemini / Workers AI / HuggingFace API) / DGMS Statutory Core.");
-    return;
-  }
-  try {
-    const { pipeline, env } = require('@huggingface/transformers');
-    env.cacheDir = path.join(__dirname, '.cache');
-    console.log(`🤖 Loading Neural Engine (${LOCAL_MODEL}) from ${env.cacheDir}...`);
-    aiGenerator = await pipeline('text-generation', LOCAL_MODEL, {
-      dtype: 'q4',
-      device: 'cpu'
-    });
-    console.log(`✅ Neural Engine [${LOCAL_MODEL}] Loaded Successfully!`);
-    latestAiAnalysis = `[MINE GUARDER MASTER AI] Neural Engine (${LOCAL_MODEL}) active. Full telemetry surveillance engaged.`;
-    if (global.gc) global.gc();
-  } catch (err) {
-    console.warn(`Neural engine load notice (${err.message}). Operating via Cloud AI / DGMS Core.`);
-  }
-}
-// Start background AI load after server is bound to port
-setTimeout(() => {
-  initAi();
-}, 1500);
+console.log(`🤖 MINE GUARDER MASTER AI online (Primary: ${MODEL_NAME} Serverless Engine / Multi-Tier AI).`);
 
 const app = express();
 const server = http.createServer(app);
@@ -60,8 +33,7 @@ const PORT = process.env.PORT || 3000;
 
 // Share Dependencies and Handlers across Express
 app.set('io', io);
-app.set('getAiGenerator', () => aiGenerator);
-app.set('getModelName', () => activeModelName);
+app.set('getModelName', () => MODEL_NAME);
 app.set('getLatestAiAnalysis', () => latestAiAnalysis);
 app.set('telemetryService', telemetryService);
 
@@ -135,8 +107,7 @@ io.on('connection', (socket) => {
 
     // Process through the Single Master AI Controller
     const result = await masterAi.processOperatorQuery(text, currentTelemetry, {
-      geminiApiKey,
-      aiGenerator
+      geminiApiKey
     });
 
     // If the operator intervened, directly apply physical simulation overrides
@@ -173,7 +144,7 @@ setInterval(() => {
     currentAiPhase = snapshot.phase;
     if (!generatingAi) {
       generatingAi = true;
-      masterAi.analyzeTelemetryStream(snapshot, aiGenerator).then(directive => {
+      masterAi.analyzeTelemetryStream(snapshot).then(directive => {
         latestAiAnalysis = directive;
         generatingAi = false;
       }).catch(e => {

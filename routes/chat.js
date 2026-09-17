@@ -18,33 +18,12 @@ class MineGuarderMasterAI {
   }
 
   // Real-time telemetry monitoring directive
-  async analyzeTelemetryStream(telemetry = {}, aiGenerator = null) {
+  async analyzeTelemetryStream(telemetry = {}) {
     const phase = telemetry.phase || 'STABLE';
     const pitch = Number(telemetry.pitch || 0.5).toFixed(1);
     const rms = Number(telemetry.rms || 0.15).toFixed(2);
     const co = Math.floor(telemetry.co || 12);
     const disp = Number(telemetry.disp || 0.1).toFixed(2);
-
-    if (aiGenerator) {
-      try {
-        const messages = [
-          {
-            role: 'system',
-            content: 'You are the TERRA-SENTINEL Master AI Controller for an underground coal mine. You govern all 5 sensor nodes and safety interlocks. Provide an urgent, authoritative 1-sentence geotechnical control directive citing sensor readings and immediate DGMS action.'
-          },
-          {
-            role: 'user',
-            content: `Mine Phase: ${phase}. Telemetry: Pitch ${pitch}°, Seismic RMS ${rms}g, CO ${co} ppm, Roof Delamination ${disp} mm. What is your control directive?`
-          }
-        ];
-        const output = await aiGenerator(messages, { max_new_tokens: 50, temperature: 0.6, do_sample: true });
-        const gen = output[0]?.generated_text;
-        const text = Array.isArray(gen) ? gen[gen.length - 1].content : (typeof gen === 'string' ? gen : '');
-        if (text && text.trim()) return text.trim();
-      } catch (e) {
-        // Fall through to deterministic directive
-      }
-    }
 
     return this.getDeterministicDirective(phase, pitch, rms, co, disp);
   }
@@ -69,43 +48,27 @@ class MineGuarderMasterAI {
   async processOperatorQuery(message, telemetry = {}, options = {}) {
     const msg = (message || '').toLowerCase();
     const apiKey = options.geminiApiKey || process.env.GEMINI_API_KEY;
-    const aiGenerator = options.aiGenerator;
 
     // 0. Direct Operator Interference / Intervention (Highest Priority Override)
     const intervention = this.checkInterventionCommand(msg, telemetry);
     if (intervention) {
       return {
         reply: intervention,
-        source: 'TERRA-SENTINEL Master AI // Operator Interference Executed',
+        source: 'MINE GUARDER Master AI // Operator Interference Executed',
         isIntervention: true
       };
     }
 
-    // 1. On-Device Neural Brain (SmolLM2-360M-Instruct local ONNX)
-    if (aiGenerator) {
-      try {
-        const neuralReply = await this.queryNeuralIntelligence(aiGenerator, message, telemetry);
-        if (neuralReply) {
-          return {
-            reply: neuralReply,
-            source: 'MINE GUARDER Master AI (HuggingFaceTB/SmolLM2-360M-Instruct Neural Engine)'
-          };
-        }
-      } catch (e) {
-        console.warn('Neural reasoning bypass:', e.message);
-      }
-    }
-
-    // 2. HuggingFace SmolLM2 Serverless Inference API
+    // 1. HuggingFace SmolLM2-360M-Instruct Inference API (Zero-RAM Cloud AI)
     const hfReply = await this.queryHuggingFaceInference(message, telemetry);
     if (hfReply) {
       return {
         reply: hfReply,
-        source: 'MINE GUARDER Master AI (HuggingFaceTB/SmolLM2-360M-Instruct API)'
+        source: 'MINE GUARDER Master AI (HuggingFaceTB/SmolLM2-360M-Instruct)'
       };
     }
 
-    // 3. Cloudflare Workers AI (Meta Llama 3.1 8B Edge GPU)
+    // 2. Cloudflare Workers AI (Meta Llama 3.1 8B Edge GPU)
     const cfReply = await this.queryCloudflareWorkersAi(message, telemetry);
     if (cfReply) {
       return {
@@ -114,7 +77,7 @@ class MineGuarderMasterAI {
       };
     }
 
-    // 4. Cloud-Augmented Reasoning (Gemini if key available)
+    // 3. Cloud-Augmented Reasoning (Gemini if key available)
     if (apiKey) {
       try {
         const cloudReply = await this.queryCloudIntelligence(apiKey, message, telemetry);
@@ -176,6 +139,9 @@ class MineGuarderMasterAI {
         `• Sensor Bus Status: 5 subterranean nodes reset to STABLE baseline surveillance mode.\n` +
         `• Safety Interlocks: Normal monitoring resumed under DGMS standards.`;
     }
+    return null;
+  }
+
   async queryHuggingFaceInference(message, telemetry = {}) {
     const model = process.env.LOCAL_AI_MODEL || 'HuggingFaceTB/SmolLM2-360M-Instruct';
     const hfToken = process.env.HUGGINGFACE_API_KEY || process.env.HF_TOKEN;
@@ -325,26 +291,6 @@ Instructions:
     return null;
   }
 
-  async queryNeuralIntelligence(aiGenerator, message, telemetry) {
-    const telemetryStr = `Phase: ${telemetry.phase || 'STABLE'}, Pitch: ${Number(telemetry.pitch || 0.5).toFixed(1)}°, RMS: ${Number(telemetry.rms || 0.15).toFixed(2)}g, CO: ${Math.floor(telemetry.co || 12)} ppm, Displacement: ${Number(telemetry.disp || 0.1).toFixed(2)} mm`;
-    
-    const messages = [
-      {
-        role: 'system',
-        content: 'You are TERRA-SENTINEL MASTER AI, the unified geotechnical and safety controller for this coal mine. Respond with a concise, authoritative 2-3 sentence assessment and action directive based on the live sensor data and DGMS statutory standards.'
-      },
-      {
-        role: 'user',
-        content: `Live Telemetry: [${telemetryStr}]. Operator query: "${message}". What is your command and assessment?`
-      }
-    ];
-
-    const output = await aiGenerator(messages, { max_new_tokens: 80, temperature: 0.6, do_sample: true });
-    const gen = output[0]?.generated_text;
-    const replyText = Array.isArray(gen) ? gen[gen.length - 1].content : (typeof gen === 'string' ? gen : '');
-    return replyText ? replyText.trim() : null;
-  }
-
   queryRegulatoryCore(message, telemetry = {}) {
     const msg = (message || '').toLowerCase();
     const phase = telemetry.phase || 'STABLE';
@@ -356,7 +302,7 @@ Instructions:
 
     // 1. Evacuation / Emergency / Protocols (Highest Priority)
     if (/\b(evacuat\w*|emergency|emergencies|protocol|protocols|alarm|alarms|danger|dangerous|help|escape|sos|klaxon)\b/i.test(msg)) {
-      return `[TERRA-SENTINEL MASTER AI // EMERGENCY DISPATCH PROTOCOL]\n` +
+      return `[MINE GUARDER MASTER AI // EMERGENCY DISPATCH PROTOCOL]\n` +
         `1. Continuous 3-tone acoustic klaxon activated across Sector 4B and Shaft 12.\n` +
         `2. All personnel must immediately don 60-minute SCSR (Self-Contained Self-Rescuers).\n` +
         `3. Proceed along primary illuminated escapeway to Sub-Level 3 Refuge Bay (Ref-Bay-3B).\n` +
@@ -366,7 +312,7 @@ Instructions:
 
     // 2. Current Status / Readings
     if (/\b(status|reading|readings|telemetry|current|condition|conditions)\b/i.test(msg)) {
-      return `[TERRA-SENTINEL MASTER AI // OMNI-TELEMETRY REPORT]\n` +
+      return `[MINE GUARDER MASTER AI // OMNI-TELEMETRY REPORT]\n` +
         `• Operational Phase: ${phase}\n` +
         `• Strata Displacement: ${disp} mm (${disp > 0.3 ? 'ELEVATED STRAIN DETECTED' : 'Nominal'})\n` +
         `• Micro-Seismic RMS: ${rms}g (${rms > 0.25 ? 'High Vibration Alarm' : 'Stable'})\n` +
@@ -378,7 +324,7 @@ Instructions:
 
     // 3. Gas / CO / Ventilation / Air Quality
     if (/\b(gas|gases|co|co2|carbon monoxide|methane|ch4|nh3|air|ventilation|atmosphere|atmospheric|fumes)\b/i.test(msg)) {
-      return `[TERRA-SENTINEL MASTER AI // ATMOSPHERIC SAFETY GOVERNANCE]\n` +
+      return `[MINE GUARDER MASTER AI // ATMOSPHERIC SAFETY GOVERNANCE]\n` +
         `Current Carbon Monoxide reading across Sector 4B is ${co} ppm.\n` +
         `• DGMS 8-Hour TWA Permissible Limit: 25 ppm\n` +
         `• DGMS Immediate Alarm Threshold: 50 ppm\n` +
@@ -388,7 +334,7 @@ Instructions:
 
     // 4. Subsidence / Strata / InSAR / Void Collapse
     if (/\b(subsidence|strata|collapse|collapsing|insar|roof|roofs|pillar|pillars|displacement|strain|geotech|geotechnical)\b/i.test(msg)) {
-      return `[TERRA-SENTINEL MASTER AI // STRATA STABILITY & SUBSIDENCE CONTROL]\n` +
+      return `[MINE GUARDER MASTER AI // STRATA STABILITY & SUBSIDENCE CONTROL]\n` +
         `• Roof Convergence / Displacement: ${disp} mm\n` +
         `• Predictive Engine: Integrated Random Forest + Sentinel-1 InSAR velocity interferometry.\n` +
         `• Goaf consolidation index: 94% compaction.\n` +
@@ -397,15 +343,15 @@ Instructions:
 
     // 5. Explainable AI / ML Model
     if (/\b(ai|model|models|ml|explain|explainable|shap|treeshap|algorithm|xgboost|rf)\b/i.test(msg)) {
-      return `[TERRA-SENTINEL MASTER AI // XAI PIPELINE GOVERNANCE]\n` +
-        `• Architecture: Unified Geotechnical Controller integrating Qwen 2.5 Neural Engine, XGBoost, and Time-Series LSTM.\n` +
+      return `[MINE GUARDER MASTER AI // XAI PIPELINE GOVERNANCE]\n` +
+        `• Architecture: Unified Geotechnical Controller integrating SmolLM2-360M-Instruct, XGBoost, and Time-Series LSTM.\n` +
         `• Explainability: TreeSHAP (SHapley Additive exPlanations) computing real-time local feature weights.\n` +
         `• Top Risk Drivers: 1) Micro-seismic RMS (38% weight), 2) Roof displacement velocity (32% weight), 3) Gas concentration delta (18% weight).\n` +
         `All pipelines are synthesized under this central controller.`;
     }
 
     // 6. Greetings / Default
-    return `Hello Operator. I am the TERRA-SENTINEL Master AI Controller.\n\n` +
+    return `Hello Operator. I am the MINE GUARDER MASTER AI Controller.\n\n` +
       `I have real-time oversight of all 5 sensor nodes, gas atmospheres, and strata stability across Sector 4B.\n` +
       `Current Mine Status: ${phase} (CO: ${co} ppm | RMS: ${rms}g | Displacement: ${disp} mm)\n\n` +
       `You can ask me to:\n` +
@@ -425,7 +371,7 @@ router.get('/status', (req, res) => {
     controller: masterAi.name,
     status: masterAi.status,
     hasCloudKey: !!process.env.GEMINI_API_KEY,
-    neuralModel: req.app.get('getModelName')?.() || 'HuggingFaceTB/SmolLM2-360M-Instruct (~260MB ONNX)',
+    neuralModel: 'HuggingFaceTB/SmolLM2-360M-Instruct',
     governance: '12 Telemetry Channels • 5 Sensor Nodes • Automated Interlocks'
   });
 });
@@ -440,12 +386,8 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Message or query text is required' });
     }
 
-    const getAiGenerator = req.app.get('getAiGenerator');
-    const aiGenerator = getAiGenerator ? getAiGenerator() : null;
-
     const result = await masterAi.processOperatorQuery(queryText, telemetry, {
-      geminiApiKey: geminiApiKey || req.headers['x-gemini-key'],
-      aiGenerator: aiGenerator
+      geminiApiKey: geminiApiKey || req.headers['x-gemini-key']
     });
 
     return res.json({
