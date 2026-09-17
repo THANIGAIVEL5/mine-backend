@@ -266,6 +266,39 @@
           });
         }
 
+        service.applyOperatorOverride = function (command) {
+          var cmd = (command || '').toLowerCase();
+          if (cmd.includes('evacuat') || cmd.includes('klaxon')) {
+            service.data.phase = 'CRITICAL';
+            service.data.pitch = 3.5;
+            service.data.disp = 0.85;
+            service.data.co = 54;
+            $rootScope.$broadcast('cmd:openEvac');
+          } else if (cmd.includes('ventilat') || cmd.includes('boost') || cmd.includes('100%') || cmd.includes('fan')) {
+            service.data.co = 8;
+            service.data.ch4 = 0.02;
+            service.latestAiText = '[MINE GUARDER MASTER AI] Twin centrifugal ventilation fans boosted to 100% capacity (4,500 m³/min). Desorption diluted.';
+          } else if (cmd.includes('pump') || cmd.includes('dewater') || cmd.includes('water')) {
+            service.data.sump = 1.10;
+            service.latestAiText = '[MINE GUARDER MASTER AI] 500 GPM primary dewatering pump at Shaft 12 forced online. Hydrostatic head dropping.';
+          } else if (cmd.includes('chock') || cmd.includes('pre-tension') || cmd.includes('pretension')) {
+            service.data.pitch = 0.35;
+            service.data.disp = 0.08;
+            service.data.rms = 0.12;
+            service.latestAiText = '[MINE GUARDER MASTER AI] Hydraulic powered roof chocks at Face 4B pre-tensioned to 350 bar yield pressure.';
+          } else if (cmd.includes('reset') || cmd.includes('stable')) {
+            service.data.phase = 'STABLE';
+            service.data.pitch = 0.50;
+            service.data.roll = -0.20;
+            service.data.rms = 0.15;
+            service.data.disp = 0.10;
+            service.data.co = 12;
+            service.data.sump = 1.30;
+            service.latestAiText = '[MINE GUARDER MASTER AI] Telemetry alarm state reset. 5 subterranean sensor nodes operating at baseline equilibrium.';
+          }
+          $rootScope.$applyAsync();
+        };
+
         service.reconnect = function (customUrl) {
           if (customUrl !== undefined) {
             if (customUrl) {
